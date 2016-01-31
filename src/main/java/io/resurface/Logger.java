@@ -13,7 +13,7 @@ public class Logger {
      * Returns version number from generated properties file.
      */
     public String getVersion() {
-        try (InputStream is = this.getClass().getResourceAsStream("/version.properties")) {
+        try (InputStream is = getClass().getResourceAsStream("/version.properties")) {
             Properties p = new Properties();
             p.load(is);
             return p.getProperty("version", null);
