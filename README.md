@@ -12,3 +12,7 @@
     git commit -m "#123 Updated readme"       (123 is the GitHub issue number)
     git pull
     git push origin master
+
+## Using Jar
+
+Do this until official versions are available: https://devcenter.heroku.com/articles/local-maven-dependencies
