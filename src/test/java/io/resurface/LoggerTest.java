@@ -12,7 +12,7 @@ import static org.junit.Assert.assertTrue;
 public class LoggerTest {
     @Test
     public void hasVersionNumber() {
-        String version = new Logger().getVersion();
+        String version = Logger.getVersion();
         assertTrue("version null check", version != null);
         assertTrue("version length check", version.length() > 0);
         assertTrue("version startsWith check", version.startsWith("1.0."));

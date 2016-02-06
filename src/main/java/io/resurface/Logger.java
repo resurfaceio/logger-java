@@ -12,8 +12,8 @@ public class Logger {
     /**
      * Returns version number from generated properties file.
      */
-    public String getVersion() {
-        try (InputStream is = getClass().getResourceAsStream("/version.properties")) {
+    public static String getVersion() {
+        try (InputStream is = Logger.class.getResourceAsStream("/version.properties")) {
             Properties p = new Properties();
             p.load(is);
             return p.getProperty("version", null);
