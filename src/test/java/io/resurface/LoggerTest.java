@@ -13,41 +13,44 @@ import static org.junit.Assert.assertTrue;
 public class LoggerTest {
 
     @Test
-    public void getDefaultURL() {
-        String url = Logger.getDefaultURL();
-        assertTrue("length check", url.length() > 0);
-        assertTrue("startsWith check", url.startsWith("https://"));
-        assertTrue("single quote check", !url.contains("'"));
-        assertTrue("double quote check", !url.contains("\""));
-    }
-
-    @Test
-    public void getVersionNumber() {
-        String version = Logger.getVersion();
-        assertTrue("null check", version != null);
-        assertTrue("length check", version.length() > 0);
-        assertTrue("startsWith check", version.startsWith("1.0."));
-        assertTrue("single quote check", !version.contains("'"));
-        assertTrue("double quote check", !version.contains("\""));
-    }
-
-    @Test
     public void formatStatus() {
-        String status = new Logger().formatStatus();
-        assertTrue("has type", status.contains("\"type\":\"STATUS\""));
+        String status = new Logger().formatStatus(1234);
+        assertTrue("has type", status.contains("\"type\":\"status\""));
         assertTrue("has source", status.contains("\"source\":\"resurfaceio-logger-java\""));
-        assertTrue("has version", status.contains("\"version\":\"" + Logger.getVersion() + "\""));
-        assertTrue("has now", status.contains("\"now\":\""));
+        assertTrue("has version", status.contains("\"version\":\"" + Logger.version_lookup() + "\""));
+        assertTrue("has now", status.contains("\"now\":\"1234\""));
     }
 
     @Test
     public void logStatus() {
         assertEquals(true, new Logger().logStatus());
+        assertEquals(false, new Logger(Logger.DEFAULT_URL + "/noway3is5this1valid2").logStatus());
+        assertEquals(false, new Logger("'https://www.noway3is5this1valid2.com/'").logStatus());
+        assertEquals(false, new Logger("'http://www.noway3is5this1valid2.com/'").logStatus());
     }
 
     @Test
-    public void logStatusToInvalidURL() {
-        assertEquals(false, new Logger(Logger.getDefaultURL() + "/noway3is5this1valid2").logStatus());
+    public void url() {
+        String url = Logger.DEFAULT_URL;
+        assertTrue("length check", url.length() > 0);
+        assertTrue("startsWith check", url.startsWith("https://"));
+        assertTrue("backslash check", !url.contains("\\"));
+        assertTrue("double quote check", !url.contains("\""));
+        assertTrue("single quote check", !url.contains("'"));
+        assertEquals(url, new Logger().url());
+        assertEquals("https://foobar.com", new Logger("https://foobar.com").url());
+    }
+
+    @Test
+    public void version() {
+        String version = Logger.version_lookup();
+        assertTrue("null check", version != null);
+        assertTrue("length check", version.length() > 0);
+        assertTrue("startsWith check", version.startsWith("1.0."));
+        assertTrue("backslash check", !version.contains("\\"));
+        assertTrue("double quote check", !version.contains("\""));
+        assertTrue("single quote check", !version.contains("'"));
+        assertEquals(version, new Logger().version());
     }
 
 }
