@@ -3,30 +3,67 @@
 package io.resurface;
 
 import org.junit.Test;
+import org.mockito.Mockito;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 /**
  * Tests against Java library for usage logging.
  */
 public class LoggerTest {
 
-    @Test
-    public void formatStatus() {
-        String status = new Logger().formatStatus(1234);
-        assertTrue("has type", status.contains("\"type\":\"status\""));
-        assertTrue("has source", status.contains("\"source\":\"resurfaceio-logger-java\""));
-        assertTrue("has version", status.contains("\"version\":\"" + Logger.version_lookup() + "\""));
-        assertTrue("has now", status.contains("\"now\":\"1234\""));
+    public HttpServletRequest buildHttpRequest() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        Mockito.when(request.getRequestURL()).thenReturn(new StringBuffer("http://something.com/index.html"));
+        return request;
+    }
+
+    public HttpServletResponse buildHttpResponse() {
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        Mockito.when(response.getStatus()).thenReturn(201);
+        return response;
     }
 
     @Test
-    public void logStatus() {
-        assertEquals(true, new Logger().logStatus());
-        assertEquals(false, new Logger(Logger.DEFAULT_URL + "/noway3is5this1valid2").logStatus());
-        assertEquals(false, new Logger("'https://www.noway3is5this1valid2.com/'").logStatus());
-        assertEquals(false, new Logger("'http://www.noway3is5this1valid2.com/'").logStatus());
+    public void formatEcho() {
+        String message = new Logger().formatEcho(new StringBuilder(), 1234).toString();
+        assertTrue("has type", message.contains("\"type\":\"echo\""));
+        assertTrue("has source", message.contains("\"source\":\"resurfaceio-logger-java\""));
+        assertTrue("has version", message.contains("\"version\":\"" + Logger.version_lookup() + "\""));
+        assertTrue("has now", message.contains("\"now\":1234"));
+    }
+
+    @Test
+    public void formatHttpRequest() {
+        String message = new Logger().formatHttpRequest(new StringBuilder(), 2345, buildHttpRequest()).toString();
+        assertTrue("has type", message.contains("\"type\":\"http_request\""));
+        assertTrue("has source", message.contains("\"source\":\"resurfaceio-logger-java\""));
+        assertTrue("has version", message.contains("\"version\":\"" + Logger.version_lookup() + "\""));
+        assertTrue("has now", message.contains("\"now\":2345"));
+        assertTrue("has url", message.contains("\"url\":\"http://something.com/index.html\""));
+    }
+
+    @Test
+    public void formatHttpResponse() {
+        String message = new Logger().formatHttpResponse(new StringBuilder(), 3456, buildHttpResponse()).toString();
+        assertTrue("has type", message.contains("\"type\":\"http_response\""));
+        assertTrue("has source", message.contains("\"source\":\"resurfaceio-logger-java\""));
+        assertTrue("has version", message.contains("\"version\":\"" + Logger.version_lookup() + "\""));
+        assertTrue("has now", message.contains("\"now\":3456"));
+        assertTrue("has url", message.contains("\"code\":201"));
+    }
+
+    @Test
+    public void logEcho() {
+        assertEquals(true, new Logger().logEcho());
+        assertEquals(false, new Logger(Logger.DEFAULT_URL + "/noway3is5this1valid2").logEcho());
+        assertEquals(false, new Logger("'https://www.noway3is5this1valid2.com/'").logEcho());
+        assertEquals(false, new Logger("'http://www.noway3is5this1valid2.com/'").logEcho());
     }
 
     @Test
