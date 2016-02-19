@@ -25,6 +25,12 @@ Add these sections to your pom.xml:
             </snapshots>
         </repository>
     </repositories>
+
+## Using with Spark Framework
+    
+    HttpLogger logger = new HttpLogger();
+    before((req, res) -> logger.logRequest(req.raw()));
+    after((req, res) -> logger.logResponse(res.raw()));    
     
 ## Git Workflow 
 

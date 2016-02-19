@@ -14,9 +14,9 @@ import java.util.Properties;
 import static io.resurface.Message.*;
 
 /**
- * Java library for usage logging.
+ * Java library for HTTP usage logging.
  */
-public class Logger {
+public class HttpLogger {
 
     /**
      * Default destination for log messages.
@@ -26,7 +26,7 @@ public class Logger {
     /**
      * Initialize using defaults.
      */
-    public Logger() {
+    public HttpLogger() {
         this.url = DEFAULT_URL;
         this.version = version_lookup();
     }
@@ -34,7 +34,7 @@ public class Logger {
     /**
      * Initialize using specified params.
      */
-    public Logger(String url) {
+    public HttpLogger(String url) {
         this.url = url;
         this.version = version_lookup();
     }
@@ -53,7 +53,7 @@ public class Logger {
     /**
      * Formats JSON message for HTTP request.
      */
-    public StringBuilder formatHttpRequest(StringBuilder json, long now, HttpServletRequest request) {
+    public StringBuilder formatRequest(StringBuilder json, long now, HttpServletRequest request) {
         define(json, "http_request", version, now).append(',');
         append(json, "url", request.getRequestURL());
         return finish(json);
@@ -62,7 +62,7 @@ public class Logger {
     /**
      * Formats JSON message for HTTP response.
      */
-    public StringBuilder formatHttpResponse(StringBuilder json, long now, HttpServletResponse response) {
+    public StringBuilder formatResponse(StringBuilder json, long now, HttpServletResponse response) {
         define(json, "http_response", version, now).append(',');
         append(json, "code", response.getStatus());
         return finish(json);
@@ -78,20 +78,20 @@ public class Logger {
     }
 
     /**
-     * Logs http request (in JSON format) to remote url.
+     * Logs HTTP request (in JSON format) to remote url.
      */
-    public boolean logHttpRequest(HttpServletRequest request) {
+    public boolean logRequest(HttpServletRequest request) {
         StringBuilder json = new StringBuilder(1024);
-        formatHttpRequest(json, System.currentTimeMillis(), request);
+        formatRequest(json, System.currentTimeMillis(), request);
         return post(json.toString()) == 200;
     }
 
     /**
-     * Logs http response (in JSON format) to remote url.
+     * Logs HTTP response (in JSON format) to remote url.
      */
-    public boolean logHttpResponse(HttpServletResponse response) {
+    public boolean logResponse(HttpServletResponse response) {
         StringBuilder json = new StringBuilder(1024);
-        formatHttpResponse(json, System.currentTimeMillis(), response);
+        formatResponse(json, System.currentTimeMillis(), response);
         return post(json.toString()) == 200;
     }
 
@@ -134,7 +134,7 @@ public class Logger {
      * Retrieves version number from runtime properties file.
      */
     public static String version_lookup() {
-        try (InputStream is = Logger.class.getResourceAsStream("/version.properties")) {
+        try (InputStream is = HttpLogger.class.getResourceAsStream("/version.properties")) {
             Properties p = new Properties();
             p.load(is);
             return p.getProperty("version", null);
