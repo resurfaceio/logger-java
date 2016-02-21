@@ -15,25 +15,11 @@ public class JsonMessageTest {
 
     @Test
     public void appendTest() {
-        // integer value
-        StringBuilder json = append(new StringBuilder(), "name1", 123);
-        assertEquals("\"name1\":123", json.toString());
-
-        // long value
-        json = append(new StringBuilder(), "1name1", 1455908665227L);
-        assertEquals("\"1name1\":1455908665227", json.toString());
-
-        // string value (nothing to escape)
-        json = append(new StringBuilder(), "name2", "value1");
-        assertEquals("\"name2\":\"value1\"", json.toString());
-
-        // string value (double quote to escape)
-        json = append(new StringBuilder(), "sand_castle", "the cow says \"moo");
-        assertEquals("\"sand_castle\":\"the cow says \\\"moo\"", json.toString());
-
-        // string value (double quotes to escape)
-        json = append(new StringBuilder(), "Sand-Castle", "the cow says \"moo\"");
-        assertEquals("\"Sand-Castle\":\"the cow says \\\"moo\\\"\"", json.toString());
+        assertEquals("\"name1\":123", append(new StringBuilder(), "name1", 123).toString());
+        assertEquals("\"1name1\":1455908665227", append(new StringBuilder(), "1name1", 1455908665227L).toString());
+        assertEquals("\"name2\":\"value1\"", append(new StringBuilder(), "name2", "value1").toString());
+        assertEquals("\"sand_castle\":\"the cow says \\\"moo\"", append(new StringBuilder(), "sand_castle", "the cow says \"moo").toString());
+        assertEquals("\"Sand-Castle\":\"the cow says \\\"moo\\\"\"", append(new StringBuilder(), "Sand-Castle", "the cow says \"moo\"").toString());
     }
 
     @Test
@@ -41,7 +27,6 @@ public class JsonMessageTest {
         assertEquals("\\\\the cow says moo", escape(new StringBuilder(), "\\the cow says moo").toString());
         assertEquals("the cow says moo\\\\", escape(new StringBuilder(), "the cow says moo\\").toString());
         assertEquals("the cow \\\\says moo", escape(new StringBuilder(), "the cow \\says moo").toString());
-
         assertEquals("\\\"the cow says moo", escape(new StringBuilder(), "\"the cow says moo").toString());
         assertEquals("the cow says moo\\\"", escape(new StringBuilder(), "the cow says moo\"").toString());
         assertEquals("the cow says \\\"moo", escape(new StringBuilder(), "the cow says \"moo").toString());
@@ -49,14 +34,13 @@ public class JsonMessageTest {
 
     @Test
     public void finishTest() {
-        StringBuilder json = finish(new StringBuilder());
-        assertEquals("}", json.toString());
+        assertEquals("}", finish(new StringBuilder()).toString());
     }
 
     @Test
     public void startTest() {
         StringBuilder json = start(new StringBuilder(), "category1", "source1", "version1", 1455908589662L);
-        assertTrue("has category", json.toString().contains("\"category\":\"category1\","));
+        assertTrue("has category", json.toString().contains("{\"category\":\"category1\","));
         assertTrue("has source", json.toString().contains("\"source\":\"source1\","));
         assertTrue("has version", json.toString().contains("\"version\":\"version1\","));
         assertTrue("has now", json.toString().contains("\"now\":1455908589662"));

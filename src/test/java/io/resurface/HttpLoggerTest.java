@@ -32,30 +32,30 @@ public class HttpLoggerTest {
     @Test
     public void formatEchoTest() {
         String message = new HttpLogger().formatEcho(new StringBuilder(), 12345).toString();
-        assertTrue("has category", message.contains("\"category\":\"echo\","));
+        assertTrue("has category", message.contains("{\"category\":\"echo\","));
         assertTrue("has source", message.contains("\"source\":\"" + HttpLogger.SOURCE + "\","));
         assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
-        assertTrue("has now", message.contains("\"now\":12345"));
+        assertTrue("has now", message.contains("\"now\":12345}"));
     }
 
     @Test
     public void formatRequestTest() {
         String message = new HttpLogger().formatRequest(new StringBuilder(), 1455908640173L, buildRequest()).toString();
-        assertTrue("has category", message.contains("\"category\":\"http_request\","));
+        assertTrue("has category", message.contains("{\"category\":\"http_request\","));
         assertTrue("has source", message.contains("\"source\":\"" + HttpLogger.SOURCE + "\","));
         assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
         assertTrue("has now", message.contains("\"now\":1455908640173,"));
-        assertTrue("has url", message.contains("\"url\":\"http://something.com/index.html\""));
+        assertTrue("has url", message.contains("\"url\":\"http://something.com/index.html\"}"));
     }
 
     @Test
     public void formatResponseTest() {
         String message = new HttpLogger().formatResponse(new StringBuilder(), 1455908665227L, buildResponse()).toString();
-        assertTrue("has category", message.contains("\"category\":\"http_response\","));
+        assertTrue("has category", message.contains("{\"category\":\"http_response\","));
         assertTrue("has source", message.contains("\"source\":\"" + HttpLogger.SOURCE + "\","));
         assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
         assertTrue("has now", message.contains("\"now\":1455908665227,"));
-        assertTrue("has url", message.contains("\"code\":201"));
+        assertTrue("has url", message.contains("\"code\":201}"));
     }
 
     @Test
