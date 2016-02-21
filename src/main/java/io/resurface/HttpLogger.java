@@ -11,7 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Properties;
 
-import static io.resurface.Message.*;
+import static io.resurface.JsonMessage.*;
 
 /**
  * Java library for HTTP usage logging.
@@ -19,15 +19,20 @@ import static io.resurface.Message.*;
 public class HttpLogger {
 
     /**
-     * Default destination for log messages.
+     * Source name for log messages.
      */
-    public static final String DEFAULT_URL = "https://resurfaceio.herokuapp.com/messages";
+    public static final String SOURCE = "resurfaceio-logger-java";
+
+    /**
+     * URL destination for log messages unless overridden.
+     */
+    public static final String URL = "https://resurfaceio.herokuapp.com/messages";
 
     /**
      * Initialize using defaults.
      */
     public HttpLogger() {
-        this.url = DEFAULT_URL;
+        this.url = URL;
         this.version = version_lookup();
     }
 
@@ -46,7 +51,7 @@ public class HttpLogger {
      * Formats JSON message for simple echo.
      */
     public StringBuilder formatEcho(StringBuilder json, long now) {
-        define(json, "echo", version, now);
+        start(json, "echo", SOURCE, version, now);
         return finish(json);
     }
 
@@ -54,7 +59,7 @@ public class HttpLogger {
      * Formats JSON message for HTTP request.
      */
     public StringBuilder formatRequest(StringBuilder json, long now, HttpServletRequest request) {
-        define(json, "http_request", version, now).append(',');
+        start(json, "http_request", SOURCE, version, now).append(',');
         append(json, "url", request.getRequestURL());
         return finish(json);
     }
@@ -63,7 +68,7 @@ public class HttpLogger {
      * Formats JSON message for HTTP response.
      */
     public StringBuilder formatResponse(StringBuilder json, long now, HttpServletResponse response) {
-        define(json, "http_response", version, now).append(',');
+        start(json, "http_response", SOURCE, version, now).append(',');
         append(json, "code", response.getStatus());
         return finish(json);
     }
@@ -117,7 +122,7 @@ public class HttpLogger {
     }
 
     /**
-     * Returns remote url where messages are sent.
+     * Returns url destination where messages are sent.
      */
     public String url() {
         return url;

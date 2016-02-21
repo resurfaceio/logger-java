@@ -3,12 +3,12 @@
 package io.resurface;
 
 /**
- * Utility methods for JSON messages.
+ * Utility methods for formatting JSON messages.
  */
-public class Message {
+public class JsonMessage {
 
     /**
-     * Adds name/value pair to JSON message.
+     * Adds name/value pair to message. (character sequence)
      */
     public static StringBuilder append(StringBuilder json, CharSequence key, CharSequence value) {
         json.append("\"").append(key.toString()).append("\":\"");
@@ -18,27 +18,21 @@ public class Message {
     }
 
     /**
-     * Adds name/value pair to JSON message.
+     * Adds name/value pair to message. (integer)
      */
     public static StringBuilder append(StringBuilder json, CharSequence key, Integer value) {
         return json.append("\"").append(key.toString()).append("\":").append(value);
     }
 
     /**
-     * Starts JSON message using given params.
+     * Adds name/value pair to message. (long)
      */
-    public static StringBuilder define(StringBuilder json, CharSequence type, CharSequence version, long now) {
-        json.append("{\"type\":\"")
-                .append(type)
-                .append("\",\"source\":\"resurfaceio-logger-java\",\"version\":\"")
-                .append(version)
-                .append("\",\"now\":")
-                .append(now);
-        return json;
+    public static StringBuilder append(StringBuilder json, CharSequence key, Long value) {
+        return json.append("\"").append(key.toString()).append("\":").append(value);
     }
 
     /**
-     * Escapes quotes and control characters in string value for use in JSON message.
+     * Escapes quotes and control characters in string value for use in message.
      * Adapted from https://code.google.com/archive/p/json-simple (JSONValue.java)
      * This version has several changes from the original:
      * 1) Uses StringBuilder in place of StringBuffer
@@ -89,9 +83,24 @@ public class Message {
     }
 
     /**
-     * Finishes JSON message.
+     * Finishes message.
      */
     public static StringBuilder finish(StringBuilder json) {
         return json.append('}');
     }
+
+    /**
+     * Starts message using given params.
+     */
+    public static StringBuilder start(StringBuilder json, CharSequence category, CharSequence source, CharSequence version, long now) {
+        return json.append("{\"category\":\"")
+                .append(category)
+                .append("\",\"source\":\"")
+                .append(source)
+                .append("\",\"version\":\"")
+                .append(version)
+                .append("\",\"now\":")
+                .append(now);
+    }
+
 }

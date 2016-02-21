@@ -30,45 +30,55 @@ public class HttpLoggerTest {
     }
 
     @Test
-    public void formatEcho() {
-        String message = new HttpLogger().formatEcho(new StringBuilder(), 1234).toString();
-        assertTrue("has type", message.contains("\"type\":\"echo\""));
-        assertTrue("has source", message.contains("\"source\":\"resurfaceio-logger-java\""));
-        assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\""));
-        assertTrue("has now", message.contains("\"now\":1234"));
+    public void formatEchoTest() {
+        String message = new HttpLogger().formatEcho(new StringBuilder(), 12345).toString();
+        assertTrue("has category", message.contains("\"category\":\"echo\","));
+        assertTrue("has source", message.contains("\"source\":\"" + HttpLogger.SOURCE + "\","));
+        assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
+        assertTrue("has now", message.contains("\"now\":12345"));
     }
 
     @Test
-    public void formatRequest() {
-        String message = new HttpLogger().formatRequest(new StringBuilder(), 2345, buildRequest()).toString();
-        assertTrue("has type", message.contains("\"type\":\"http_request\""));
-        assertTrue("has source", message.contains("\"source\":\"resurfaceio-logger-java\""));
-        assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\""));
-        assertTrue("has now", message.contains("\"now\":2345"));
+    public void formatRequestTest() {
+        String message = new HttpLogger().formatRequest(new StringBuilder(), 1455908640173L, buildRequest()).toString();
+        assertTrue("has category", message.contains("\"category\":\"http_request\","));
+        assertTrue("has source", message.contains("\"source\":\"" + HttpLogger.SOURCE + "\","));
+        assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
+        assertTrue("has now", message.contains("\"now\":1455908640173,"));
         assertTrue("has url", message.contains("\"url\":\"http://something.com/index.html\""));
     }
 
     @Test
-    public void formatResponse() {
-        String message = new HttpLogger().formatResponse(new StringBuilder(), 3456, buildResponse()).toString();
-        assertTrue("has type", message.contains("\"type\":\"http_response\""));
-        assertTrue("has source", message.contains("\"source\":\"resurfaceio-logger-java\""));
-        assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\""));
-        assertTrue("has now", message.contains("\"now\":3456"));
+    public void formatResponseTest() {
+        String message = new HttpLogger().formatResponse(new StringBuilder(), 1455908665227L, buildResponse()).toString();
+        assertTrue("has category", message.contains("\"category\":\"http_response\","));
+        assertTrue("has source", message.contains("\"source\":\"" + HttpLogger.SOURCE + "\","));
+        assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
+        assertTrue("has now", message.contains("\"now\":1455908665227,"));
         assertTrue("has url", message.contains("\"code\":201"));
     }
 
     @Test
-    public void logEcho() {
+    public void logEchoTest() {
         assertEquals(true, new HttpLogger().logEcho());
-        assertEquals(false, new HttpLogger(HttpLogger.DEFAULT_URL + "/noway3is5this1valid2").logEcho());
+        assertEquals(false, new HttpLogger(HttpLogger.URL + "/noway3is5this1valid2").logEcho());
         assertEquals(false, new HttpLogger("'https://www.noway3is5this1valid2.com/'").logEcho());
         assertEquals(false, new HttpLogger("'http://www.noway3is5this1valid2.com/'").logEcho());
     }
 
     @Test
-    public void url() {
-        String url = HttpLogger.DEFAULT_URL;
+    public void sourceTest() {
+        String source = HttpLogger.SOURCE;
+        assertTrue("length check", source.length() > 0);
+        assertTrue("startsWith check", source.startsWith("resurfaceio-"));
+        assertTrue("backslash check", !source.contains("\\"));
+        assertTrue("double quote check", !source.contains("\""));
+        assertTrue("single quote check", !source.contains("'"));
+    }
+
+    @Test
+    public void urlTest() {
+        String url = HttpLogger.URL;
         assertTrue("length check", url.length() > 0);
         assertTrue("startsWith check", url.startsWith("https://"));
         assertTrue("backslash check", !url.contains("\\"));
@@ -79,7 +89,7 @@ public class HttpLoggerTest {
     }
 
     @Test
-    public void version() {
+    public void versionTest() {
         String version = HttpLogger.version_lookup();
         assertTrue("null check", version != null);
         assertTrue("length check", version.length() > 0);
