@@ -31,15 +31,3 @@ Add these sections to your pom.xml:
     HttpLogger logger = new HttpLogger();
     before((req, res) -> logger.logRequest(req.raw()));
     after((req, res) -> logger.logResponse(res.raw()));    
-    
-## Git Workflow 
-
-    git clone git@github.com:resurfaceio/resurfaceio-logger-java.git ~/resurfaceio-logger-java
-    cd ~/resurfaceio-logger-java
-    git pull
-    (make changes)
-    git status                                (review changes)
-    git add -A
-    git commit -m "#123 Updated readme"       (123 is the GitHub issue number)
-    git pull
-    git push origin master    
