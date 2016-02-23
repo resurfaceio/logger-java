@@ -9,7 +9,7 @@ Add these sections to your pom.xml:
         <dependency>
             <groupId>io.resurface</groupId>
             <artifactId>resurfaceio-logger</artifactId>
-            <version>1.0.5-SNAPSHOT</version>
+            <version>1.0.11-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
