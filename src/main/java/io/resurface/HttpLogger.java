@@ -14,7 +14,7 @@ import java.util.Properties;
 import static io.resurface.JsonMessage.*;
 
 /**
- * Java library for HTTP usage logging.
+ * Logger for HTTP usage.
  */
 public class HttpLogger {
 
@@ -29,23 +29,49 @@ public class HttpLogger {
     public static final String URL = "https://resurfaceio.herokuapp.com/messages";
 
     /**
-     * Initialize using defaults.
+     * Initialize enabled logger using default url.
      */
     public HttpLogger() {
+        this.enabled = true;
         this.url = URL;
         this.version = version_lookup();
     }
 
     /**
-     * Initialize using specified params.
+     * Initialize enabled logger using custom url.
      */
     public HttpLogger(String url) {
+        this.enabled = true;
         this.url = url;
         this.version = version_lookup();
     }
 
+    /**
+     * Initialize enabled or disabled logger using custom url.
+     */
+    public HttpLogger(String url, boolean enabled) {
+        this.enabled = enabled;
+        this.url = url;
+        this.version = version_lookup();
+    }
+
+    private boolean enabled;
     private final String url;
     private final String version;
+
+    /**
+     * Disable this logger.
+     */
+    public void disable() {
+        enabled = false;
+    }
+
+    /**
+     * Enable this logger.
+     */
+    public void enable() {
+        enabled = true;
+    }
 
     /**
      * Formats JSON message for simple echo.
@@ -74,30 +100,49 @@ public class HttpLogger {
     }
 
     /**
+     * Returns true if this logger is enabled.
+     */
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    /**
      * Logs echo (in JSON format) to remote url.
      */
     public boolean logEcho() {
-        StringBuilder json = new StringBuilder(64);
-        formatEcho(json, System.currentTimeMillis());
-        return post(json.toString()) == 200;
+        if (enabled) {
+            StringBuilder json = new StringBuilder(64);
+            formatEcho(json, System.currentTimeMillis());
+            return post(json.toString()) == 200;
+        } else {
+            return true;
+        }
     }
 
     /**
      * Logs HTTP request (in JSON format) to remote url.
      */
     public boolean logRequest(HttpServletRequest request) {
-        StringBuilder json = new StringBuilder(1024);
-        formatRequest(json, System.currentTimeMillis(), request);
-        return post(json.toString()) == 200;
+        if (enabled) {
+            StringBuilder json = new StringBuilder(1024);
+            formatRequest(json, System.currentTimeMillis(), request);
+            return post(json.toString()) == 200;
+        } else {
+            return true;
+        }
     }
 
     /**
      * Logs HTTP response (in JSON format) to remote url.
      */
     public boolean logResponse(HttpServletResponse response) {
-        StringBuilder json = new StringBuilder(1024);
-        formatResponse(json, System.currentTimeMillis(), response);
-        return post(json.toString()) == 200;
+        if (enabled) {
+            StringBuilder json = new StringBuilder(1024);
+            formatResponse(json, System.currentTimeMillis(), response);
+            return post(json.toString()) == 200;
+        } else {
+            return true;
+        }
     }
 
     /**

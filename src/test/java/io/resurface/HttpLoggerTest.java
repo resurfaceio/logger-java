@@ -13,7 +13,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 /**
- * Tests against Java library for HTTP usage logging.
+ * Tests against logger for HTTP usage.
  */
 public class HttpLoggerTest {
 
@@ -64,6 +64,13 @@ public class HttpLoggerTest {
         assertEquals(false, new HttpLogger(HttpLogger.URL + "/noway3is5this1valid2").logEcho());
         assertEquals(false, new HttpLogger("'https://www.noway3is5this1valid2.com/'").logEcho());
         assertEquals(false, new HttpLogger("'http://www.noway3is5this1valid2.com/'").logEcho());
+    }
+
+    @Test
+    public void skipsLoggingWhenDisabledTest() {
+        assertEquals(true, new HttpLogger(HttpLogger.URL + "/noway3is5this1valid2", false).logEcho());
+        assertEquals(true, new HttpLogger("'https://www.noway3is5this1valid2.com/'", false).logEcho());
+        assertEquals(true, new HttpLogger("'http://www.noway3is5this1valid2.com/'", false).logEcho());
     }
 
     @Test
