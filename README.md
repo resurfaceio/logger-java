@@ -31,12 +31,12 @@ Add these sections to your pom.xml:
     import io.resurface.HttpLogger;
     import io.resurface.HttpLoggerFactory;
     
-    HttpLogger logger = HttpLoggerFactory.get();  // returns default cached logger
-    logger.logRequest(request);                   // log http request details
-    logger.logResponse(response);                 // log http response details
-    if (logger.isEnabled()) ...                   // intending to send messages?
-    logger.enable();                              // enable sending for dev/staging/production
-    logger.disable();                             // disable sending for automated tests
+    HttpLogger logger = HttpLoggerFactory.get();     // returns default cached HTTP logger
+    logger.logRequest(request);                      // log HTTP request details
+    logger.logResponse(response);                    // log HTTP response details
+    if (logger.isEnabled()) ...                      // intending to log stuff?
+    logger.enable();                                 // enable logging for dev/staging/production
+    logger.disable();                                // disable logging for automated tests
 
 ## Using with Spark Framework
 
