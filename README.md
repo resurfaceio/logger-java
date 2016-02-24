@@ -1,6 +1,12 @@
 # resurfaceio-logger-java
 &copy; 2016 Resurface Labs LLC, All Rights Reserved
 
+This library makes it easy to log server usage including HTTP request/response details.
+
+## Dependencies
+
+No runtime dependencies to conflict with your app. Requires Java 8.
+
 ## Installing with Maven
 
 Add these sections to your pom.xml:
@@ -40,16 +46,16 @@ Add these sections to your pom.xml:
 
 ## Using with Spark Framework
 
-### Logging HTTP requests and responses
+### Logging requests and responses
 
     HttpLogger logger = HttpLoggerFactory.get();
     before((req, res) -> logger.logRequest(req.raw()));
     after((req, res) -> logger.logResponse(res.raw()));    
 
-### Logging just HTTP requests
+### Logging requests only
 
     before((req, res) -> HttpLoggerFactory.get().logRequest(req.raw()));
 
-### Logging just HTTP responses
+### Logging responses only
 
     after((req, res) -> HttpLoggerFactory.get().logResponse(res.raw()));    
