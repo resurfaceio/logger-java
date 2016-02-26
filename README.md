@@ -39,23 +39,13 @@ Add these sections to your pom.xml:
     
     HttpLogger logger = HttpLoggerFactory.get();     // returns default cached HTTP logger
     logger.logRequest(request);                      // log HTTP request details
-    logger.logResponse(response);                    // log HTTP response details
+    logger.logResponse(response, body);              // log HTTP response details, body is optional
     if (logger.isEnabled()) ...                      // intending to log stuff?
     logger.enable();                                 // enable logging for dev/staging/production
     logger.disable();                                // disable logging for automated tests
 
 ## Using with Spark Framework
 
-### Logging requests and responses
-
     HttpLogger logger = HttpLoggerFactory.get();
-    before((req, res) -> logger.logRequest(req.raw()));
-    after((req, res) -> logger.logResponse(res.raw()));    
-
-### Logging requests only
-
-    before((req, res) -> HttpLoggerFactory.get().logRequest(req.raw()));
-
-### Logging responses only
-
-    after((req, res) -> HttpLoggerFactory.get().logResponse(res.raw()));    
+    before((request, response) -> logger.logRequest(request.raw()));
+    after((request, response) -> logger.logResponse(response.raw(), response.body()));    

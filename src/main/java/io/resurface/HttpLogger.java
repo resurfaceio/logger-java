@@ -93,9 +93,13 @@ public class HttpLogger {
     /**
      * Formats JSON message for HTTP response.
      */
-    public StringBuilder formatResponse(StringBuilder json, long now, HttpServletResponse response) {
+    public StringBuilder formatResponse(StringBuilder json, long now, HttpServletResponse response, String body) {
         start(json, "http_response", SOURCE, version, now).append(',');
         append(json, "code", response.getStatus());
+        if (body != null) {
+            json.append(',');
+            append(json, "body", body);
+        }
         return finish(json);
     }
 
@@ -135,10 +139,10 @@ public class HttpLogger {
     /**
      * Logs HTTP response (in JSON format) to remote url.
      */
-    public boolean logResponse(HttpServletResponse response) {
+    public boolean logResponse(HttpServletResponse response, String body) {
         if (enabled) {
             StringBuilder json = new StringBuilder(1024);
-            formatResponse(json, System.currentTimeMillis(), response);
+            formatResponse(json, System.currentTimeMillis(), response, body);
             return post(json.toString()) == 200;
         } else {
             return true;
