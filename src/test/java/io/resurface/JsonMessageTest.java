@@ -23,13 +23,52 @@ public class JsonMessageTest {
     }
 
     @Test
-    public void escapeTest() {
+    public void escapeBackslashTest() {
         assertEquals("\\\\the cow says moo", escape(new StringBuilder(), "\\the cow says moo").toString());
         assertEquals("the cow says moo\\\\", escape(new StringBuilder(), "the cow says moo\\").toString());
         assertEquals("the cow \\\\says moo", escape(new StringBuilder(), "the cow \\says moo").toString());
+    }
+
+    @Test
+    public void escapeBackspaceTest() {
+        assertEquals("\\bthe cow says moo", escape(new StringBuilder(), "\bthe cow says moo").toString());
+        assertEquals("the cow\\b says moo", escape(new StringBuilder(), "the cow\b says moo").toString());
+        assertEquals("the cow says moo\\b", escape(new StringBuilder(), "the cow says moo\b").toString());
+    }
+
+    @Test
+    public void escapeFormFeedTest() {
+        assertEquals("\\fthe cow says moo", escape(new StringBuilder(), "\fthe cow says moo").toString());
+        assertEquals("the cow\\f says moo", escape(new StringBuilder(), "the cow\f says moo").toString());
+        assertEquals("the cow says moo\\f", escape(new StringBuilder(), "the cow says moo\f").toString());
+    }
+
+    @Test
+    public void escapeNewLineTest() {
+        assertEquals("\\nthe cow says moo", escape(new StringBuilder(), "\nthe cow says moo").toString());
+        assertEquals("the cow\\n says moo", escape(new StringBuilder(), "the cow\n says moo").toString());
+        assertEquals("the cow says moo\\n", escape(new StringBuilder(), "the cow says moo\n").toString());
+    }
+
+    @Test
+    public void escapeQuoteTest() {
         assertEquals("\\\"the cow says moo", escape(new StringBuilder(), "\"the cow says moo").toString());
         assertEquals("the cow says moo\\\"", escape(new StringBuilder(), "the cow says moo\"").toString());
         assertEquals("the cow says \\\"moo", escape(new StringBuilder(), "the cow says \"moo").toString());
+    }
+
+    @Test
+    public void escapeReturnTest() {
+        assertEquals("\\rthe cow says moo", escape(new StringBuilder(), "\rthe cow says moo").toString());
+        assertEquals("the cow\\r says moo", escape(new StringBuilder(), "the cow\r says moo").toString());
+        assertEquals("the cow says moo\\r", escape(new StringBuilder(), "the cow says moo\r").toString());
+    }
+
+    @Test
+    public void escapeTabTest() {
+        assertEquals("\\tthe cow says moo", escape(new StringBuilder(), "\tthe cow says moo").toString());
+        assertEquals("the cow\\t says moo", escape(new StringBuilder(), "the cow\t says moo").toString());
+        assertEquals("the cow says moo\\t", escape(new StringBuilder(), "the cow says moo\t").toString());
     }
 
     @Test

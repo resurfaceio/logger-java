@@ -49,6 +49,17 @@ public class HttpLoggerTest {
     }
 
     @Test
+    public void formatResponseTest() {
+        String message = new HttpLogger().formatResponse(new StringBuilder(), 1455908665227L, buildResponse(), null).toString();
+        assertTrue("has category", message.contains("{\"category\":\"http_response\","));
+        assertTrue("has source", message.contains("\"source\":\"" + HttpLogger.SOURCE + "\","));
+        assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
+        assertTrue("has now", message.contains("\"now\":1455908665227,"));
+        assertTrue("has code", message.contains("\"code\":201}"));
+        assertTrue("omits body", !message.contains("\"body\""));
+    }
+
+    @Test
     public void formatResponseWithBodyTest() {
         String body = "<html><h1>We want the funk</h1><p>Gotta have that funk</p></html>";
         String message = new HttpLogger().formatResponse(new StringBuilder(), 1455908665227L, buildResponse(), body).toString();
@@ -58,17 +69,6 @@ public class HttpLoggerTest {
         assertTrue("has now", message.contains("\"now\":1455908665227,"));
         assertTrue("has code", message.contains("\"code\":201,"));
         assertTrue("has body", message.contains("\"body\":\"" + body + "\"}"));
-    }
-
-    @Test
-    public void formatResponseWithoutBodyTest() {
-        String message = new HttpLogger().formatResponse(new StringBuilder(), 1455908665227L, buildResponse(), null).toString();
-        assertTrue("has category", message.contains("{\"category\":\"http_response\","));
-        assertTrue("has source", message.contains("\"source\":\"" + HttpLogger.SOURCE + "\","));
-        assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
-        assertTrue("has now", message.contains("\"now\":1455908665227,"));
-        assertTrue("has code", message.contains("\"code\":201}"));
-        assertTrue("omits body", !message.contains("\"body\""));
     }
 
     @Test
