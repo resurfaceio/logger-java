@@ -17,13 +17,13 @@ import static org.mockito.Mockito.mock;
  */
 public class HttpLoggerTest {
 
-    public HttpServletRequest buildRequest() {
+    private HttpServletRequest buildRequest() {
         HttpServletRequest request = mock(HttpServletRequest.class);
         Mockito.when(request.getRequestURL()).thenReturn(new StringBuffer("http://something.com/index.html"));
         return request;
     }
 
-    public HttpServletResponse buildResponse() {
+    private HttpServletResponse buildResponse() {
         HttpServletResponse response = mock(HttpServletResponse.class);
         Mockito.when(response.getStatus()).thenReturn(201);
         return response;
@@ -72,18 +72,40 @@ public class HttpLoggerTest {
     }
 
     @Test
-    public void logEchoTest() {
-        assertEquals(true, new HttpLogger().logEcho());
-        assertEquals(false, new HttpLogger(HttpLogger.URL + "/noway3is5this1valid2").logEcho());
-        assertEquals(false, new HttpLogger("'https://www.noway3is5this1valid2.com/'").logEcho());
-        assertEquals(false, new HttpLogger("'http://www.noway3is5this1valid2.com/'").logEcho());
+    public void logEchoToDefaultUrlTest() {
+        HttpLogger logger = new HttpLogger();
+        assertTrue("log echo succeeds", logger.logEcho());
+        assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
     }
 
     @Test
-    public void skipsLoggingWhenDisabledTest() {
-        assertEquals(true, new HttpLogger(HttpLogger.URL + "/noway3is5this1valid2", false).logEcho());
-        assertEquals(true, new HttpLogger("'https://www.noway3is5this1valid2.com/'", false).logEcho());
-        assertEquals(true, new HttpLogger("'http://www.noway3is5this1valid2.com/'", false).logEcho());
+    public void logEchoToInvalidUrlTest() {
+        HttpLogger logger = new HttpLogger(HttpLogger.URL + "/noway3is5this1valid2");
+        assertTrue("log echo fails", !logger.logEcho());
+        assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
+
+        logger = new HttpLogger("'https://www.noway3is5this1valid2.com/'");
+        assertTrue("log echo fails", !logger.logEcho());
+        assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
+
+        logger = new HttpLogger("'http://www.noway3is5this1valid2.com/'");
+        assertTrue("log echo fails", !logger.logEcho());
+        assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
+    }
+
+    @Test
+    public void skipsLoggingAndTracingWhenDisabledTest() {
+        HttpLogger logger = new HttpLogger(HttpLogger.URL + "/noway3is5this1valid2", false);
+        assertTrue("log echo succeeds", logger.logEcho());
+        assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
+
+        logger = new HttpLogger("'https://www.noway3is5this1valid2.com/'", false);
+        assertTrue("log echo succeeds", logger.logEcho());
+        assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
+
+        logger = new HttpLogger("'http://www.noway3is5this1valid2.com/'", false);
+        assertTrue("log echo succeeds", logger.logEcho());
+        assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
     }
 
     @Test
@@ -94,6 +116,31 @@ public class HttpLoggerTest {
         assertTrue("backslash check", !source.contains("\\"));
         assertTrue("double quote check", !source.contains("\""));
         assertTrue("single quote check", !source.contains("'"));
+    }
+
+    @Test
+    public void tracingTest() {
+        HttpLogger logger = new HttpLogger().disable();
+        assertTrue("logger disabled at first", !logger.isEnabled());
+        assertTrue("logger tracing inactive at first", !logger.isTracing());
+        assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
+        logger.tracingStart();
+        try {
+            assertTrue("logger tracing active", logger.isTracing());
+            assertTrue("log echo succeeds (1)", logger.logEcho());
+            assertTrue("tracing history is 1", logger.tracingHistory().size() == 1);
+            assertTrue("log echo succeeds (2)", logger.logEcho());
+            assertTrue("tracing history is 2", logger.tracingHistory().size() == 2);
+            assertTrue("log echo succeeds (3)", logger.logEcho());
+            assertTrue("tracing history is 3", logger.tracingHistory().size() == 3);
+            assertTrue("log echo succeeds (4)", logger.logEcho());
+            assertTrue("tracing history is 4", logger.tracingHistory().size() == 4);
+        } finally {
+            logger.tracingStop().enable();
+            assertTrue("logger enabled at end", logger.isEnabled());
+            assertTrue("logger tracing inactive at end", !logger.isTracing());
+            assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
+        }
     }
 
     @Test

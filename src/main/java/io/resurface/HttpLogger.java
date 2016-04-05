@@ -9,6 +9,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import static io.resurface.JsonMessage.*;
@@ -56,21 +59,25 @@ public class HttpLogger {
     }
 
     private boolean enabled;
+    private boolean tracing = false;
+    private final List<String> tracing_history = new ArrayList<>();
     private final String url;
     private final String version;
 
     /**
      * Disable this logger.
      */
-    public void disable() {
+    public HttpLogger disable() {
         enabled = false;
+        return this;
     }
 
     /**
      * Enable this logger.
      */
-    public void enable() {
+    public HttpLogger enable() {
         enabled = true;
+        return this;
     }
 
     /**
@@ -111,10 +118,17 @@ public class HttpLogger {
     }
 
     /**
+     * Returns true if keeping a copy of all posted messages.
+     */
+    public boolean isTracing() {
+        return tracing;
+    }
+
+    /**
      * Logs echo (in JSON format) to remote url.
      */
     public boolean logEcho() {
-        if (enabled) {
+        if (enabled || tracing) {
             StringBuilder json = new StringBuilder(64);
             formatEcho(json, System.currentTimeMillis());
             return post(json.toString()) == 200;
@@ -127,7 +141,7 @@ public class HttpLogger {
      * Logs HTTP request (in JSON format) to remote url.
      */
     public boolean logRequest(HttpServletRequest request) {
-        if (enabled) {
+        if (enabled || tracing) {
             StringBuilder json = new StringBuilder(1024);
             formatRequest(json, System.currentTimeMillis(), request);
             return post(json.toString()) == 200;
@@ -140,7 +154,7 @@ public class HttpLogger {
      * Logs HTTP response (in JSON format) to remote url.
      */
     public boolean logResponse(HttpServletResponse response, String body) {
-        if (enabled) {
+        if (enabled || tracing) {
             StringBuilder json = new StringBuilder(1024);
             formatResponse(json, System.currentTimeMillis(), response, body);
             return post(json.toString()) == 200;
@@ -152,22 +166,52 @@ public class HttpLogger {
     /**
      * Logs message (via HTTP post) to remote url.
      */
-    public int post(String message) {
-        try {
-            URL url = new URL(this.url);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setConnectTimeout(5000);
-            con.setReadTimeout(1000);
-            con.setRequestMethod("POST");
-            con.setDoOutput(true);
-            try (OutputStream os = con.getOutputStream()) {
-                os.write(message.getBytes());
-                os.flush();
+    public int post(String json) {
+        if (tracing) {
+            tracing_history.add(json);
+            return 200;
+        } else {
+            try {
+                URL url = new URL(this.url);
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setConnectTimeout(5000);
+                con.setReadTimeout(1000);
+                con.setRequestMethod("POST");
+                con.setDoOutput(true);
+                try (OutputStream os = con.getOutputStream()) {
+                    os.write(json.getBytes());
+                    os.flush();
+                }
+                return con.getResponseCode();
+            } catch (IOException ioe) {
+                return 404;
             }
-            return con.getResponseCode();
-        } catch (IOException ioe) {
-            return 404;
         }
+    }
+
+    /**
+     * Returns unmodifiable copy of recently posted messages.
+     */
+    public List<String> tracingHistory() {
+        return Collections.unmodifiableList(tracing_history);
+    }
+
+    /**
+     * Starts keeping copy of all posted messages.
+     */
+    public HttpLogger tracingStart() {
+        tracing = true;
+        tracing_history.clear();
+        return this;
+    }
+
+    /**
+     * Stops tracing and clears current tracing history.
+     */
+    public HttpLogger tracingStop() {
+        tracing = false;
+        tracing_history.clear();
+        return this;
     }
 
     /**
