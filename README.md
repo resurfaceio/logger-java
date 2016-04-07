@@ -53,11 +53,11 @@ Copy resurfaceio-logger-1.0.X.jar into the appropriate /lib directory. (no other
 Now configure the filter in web.xml as shown below. You can optionally use a specific url-pattern to limit logging to specific areas of your application.
 
     <filter>
-        <filter-name>HttpLoggerFilter</filter-name>
-        <filter-class>io.resurface.HttpLoggerFilter</filter-class>
+        <filter-name>HttpLoggerForServlets</filter-name>
+        <filter-class>io.resurface.HttpLoggerForServlets</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>HttpLoggerFilter</filter-name>
+        <filter-name>HttpLoggerForServlets</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     

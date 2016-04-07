@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  * Servlet filter for HTTP usage logging.
  */
-public class HttpLoggerFilter implements Filter {
+public class HttpLoggerForServlets implements Filter {
 
     /**
      * Called when filter is placed into service.
