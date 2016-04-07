@@ -78,34 +78,24 @@ public class HttpLoggerTest {
         assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
     }
 
+    String[] INVALID_URLS = {HttpLogger.URL + "/noway3is5this1valid2", "https://www.noway3is5this1valid2.com/", "http://www.noway3is5this1valid2.com/"};
+
     @Test
     public void logEchoToInvalidUrlTest() {
-        HttpLogger logger = new HttpLogger(HttpLogger.URL + "/noway3is5this1valid2");
-        assertTrue("log echo fails", !logger.logEcho());
-        assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
-
-        logger = new HttpLogger("'https://www.noway3is5this1valid2.com/'");
-        assertTrue("log echo fails", !logger.logEcho());
-        assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
-
-        logger = new HttpLogger("'http://www.noway3is5this1valid2.com/'");
-        assertTrue("log echo fails", !logger.logEcho());
-        assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
+        for (String url : INVALID_URLS) {
+            HttpLogger logger = new HttpLogger(url);
+            assertTrue("log echo fails", !logger.logEcho());
+            assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
+        }
     }
 
     @Test
     public void skipsLoggingAndTracingWhenDisabledTest() {
-        HttpLogger logger = new HttpLogger(HttpLogger.URL + "/noway3is5this1valid2", false);
-        assertTrue("log echo succeeds", logger.logEcho());
-        assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
-
-        logger = new HttpLogger("'https://www.noway3is5this1valid2.com/'", false);
-        assertTrue("log echo succeeds", logger.logEcho());
-        assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
-
-        logger = new HttpLogger("'http://www.noway3is5this1valid2.com/'", false);
-        assertTrue("log echo succeeds", logger.logEcho());
-        assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
+        for (String url : INVALID_URLS) {
+            HttpLogger logger = new HttpLogger(url, false);
+            assertTrue("log echo succeeds", logger.logEcho());
+            assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
+        }
     }
 
     @Test
