@@ -49,8 +49,8 @@ Now configure the filter in web.xml as shown below. You can optionally use a spe
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     
-All requests/responses mapping to the filter will be logged. The filter will record the response body only when the response content type starts with "text/", when a valid 
-character encoding is available, and when the response code is not 304 (cache not modified).
+HttpLoggerForServlets performs some basic filtering: it ignores redirects (304 response codes), and only logs responses for content types matching a predefined list
+(including 'text/html' and 'application/json').
 
 ## Logging From Spark
 
@@ -64,7 +64,7 @@ A logger can be used selectively for simple cases like this:
         return body;
     });
 
-NOTE: We don't recommend logging from before/after filters because of quirks in intercepting body content.
+NOTE: Logging from before/after filters is discouraged because of quirks in handling body content.
 
 ## Using API Directly
 
