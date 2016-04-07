@@ -8,8 +8,6 @@ import java.io.OutputStream;
 
 /**
  * Servlet output stream allowing data to be read after being written/flushed.
- *
- * @todo missing test case
  */
 public class LoggedOutputStream extends javax.servlet.ServletOutputStream {
 

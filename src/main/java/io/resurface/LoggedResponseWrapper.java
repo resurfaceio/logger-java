@@ -10,7 +10,6 @@ import java.io.PrintWriter;
 
 /**
  * Servlet response wrapper for HTTP usage logging.
- * @todo missing test case
  */
 public class LoggedResponseWrapper extends javax.servlet.http.HttpServletResponseWrapper {
 

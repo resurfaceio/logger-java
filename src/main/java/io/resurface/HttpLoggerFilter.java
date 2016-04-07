@@ -9,7 +9,6 @@ import java.io.IOException;
 
 /**
  * Servlet filter for HTTP usage logging.
- * @todo missing test case
  */
 public class HttpLoggerFilter implements Filter {
 
