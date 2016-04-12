@@ -56,10 +56,13 @@ HttpLoggerForServlets performs some basic filtering: it ignores redirects (304 r
 
 A logger can be used selectively for simple cases like this:
 
+    import io.resurface.HttpLogger;
+    import io.resurface.HttpLoggerFactory;
+
     get("/hello", (req, res) -> {
+        String body = "Hello World";
         HttpLogger logger = HttpLoggerFactory.get();
         logger.logRequest(req.raw());
-        String body = "...";
         logger.logResponse(res.raw(), body);
         return body;
     });
