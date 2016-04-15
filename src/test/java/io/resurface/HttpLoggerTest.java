@@ -3,31 +3,18 @@
 package io.resurface;
 
 import org.junit.Test;
-import org.mockito.Mockito;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
+import static io.resurface.Mocks.mockRequest;
+import static io.resurface.Mocks.mockResponse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 
 /**
  * Tests against logger for HTTP usage.
  */
 public class HttpLoggerTest {
-
-    private HttpServletRequest buildRequest() {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        Mockito.when(request.getRequestURL()).thenReturn(new StringBuffer("http://something.com/index.html"));
-        return request;
-    }
-
-    private HttpServletResponse buildResponse() {
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        Mockito.when(response.getStatus()).thenReturn(201);
-        return response;
-    }
 
     @Test
     public void formatEchoTest() {
@@ -40,7 +27,7 @@ public class HttpLoggerTest {
 
     @Test
     public void formatRequestTest() {
-        String message = new HttpLogger().formatRequest(new StringBuilder(), 1455908640173L, buildRequest()).toString();
+        String message = new HttpLogger().formatRequest(new StringBuilder(), 1455908640173L, mockRequest()).toString();
         assertTrue("has category", message.contains("{\"category\":\"http_request\","));
         assertTrue("has source", message.contains("\"source\":\"" + HttpLogger.SOURCE + "\","));
         assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
@@ -49,8 +36,8 @@ public class HttpLoggerTest {
     }
 
     @Test
-    public void formatResponseTest() {
-        String message = new HttpLogger().formatResponse(new StringBuilder(), 1455908665227L, buildResponse(), null).toString();
+    public void formatResponseTest() throws IOException {
+        String message = new HttpLogger().formatResponse(new StringBuilder(), 1455908665227L, mockResponse(), null).toString();
         assertTrue("has category", message.contains("{\"category\":\"http_response\","));
         assertTrue("has source", message.contains("\"source\":\"" + HttpLogger.SOURCE + "\","));
         assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
@@ -60,9 +47,9 @@ public class HttpLoggerTest {
     }
 
     @Test
-    public void formatResponseWithBodyTest() {
+    public void formatResponseWithBodyTest() throws IOException {
         String body = "<html><h1>We want the funk</h1><p>Gotta have that funk</p></html>";
-        String message = new HttpLogger().formatResponse(new StringBuilder(), 1455908665227L, buildResponse(), body).toString();
+        String message = new HttpLogger().formatResponse(new StringBuilder(), 1455908665227L, mockResponse(), body).toString();
         assertTrue("has category", message.contains("{\"category\":\"http_response\","));
         assertTrue("has source", message.contains("\"source\":\"" + HttpLogger.SOURCE + "\","));
         assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
@@ -78,11 +65,9 @@ public class HttpLoggerTest {
         assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
     }
 
-    String[] INVALID_URLS = {HttpLogger.URL + "/noway3is5this1valid2", "https://www.noway3is5this1valid2.com/", "http://www.noway3is5this1valid2.com/"};
-
     @Test
     public void logEchoToInvalidUrlTest() {
-        for (String url : INVALID_URLS) {
+        for (String url : Mocks.MOCK_INVALID_URLS) {
             HttpLogger logger = new HttpLogger(url);
             assertTrue("log echo fails", !logger.logEcho());
             assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
@@ -91,7 +76,7 @@ public class HttpLoggerTest {
 
     @Test
     public void skipsLoggingAndTracingWhenDisabledTest() {
-        for (String url : INVALID_URLS) {
+        for (String url : Mocks.MOCK_INVALID_URLS) {
             HttpLogger logger = new HttpLogger(url, false);
             assertTrue("log echo succeeds", logger.logEcho());
             assertTrue("tracing history empty", logger.tracingHistory().size() == 0);

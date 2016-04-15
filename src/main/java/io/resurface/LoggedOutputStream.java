@@ -12,6 +12,7 @@ import java.io.OutputStream;
 public class LoggedOutputStream extends javax.servlet.ServletOutputStream {
 
     public LoggedOutputStream(OutputStream response) {
+        if (response == null) throw new IllegalArgumentException("Null response");
         this.response = response;
         this.stream = new ByteArrayOutputStream();
     }
@@ -24,7 +25,11 @@ public class LoggedOutputStream extends javax.servlet.ServletOutputStream {
         try {
             response.close();
         } finally {
-            stream.close();
+            try {
+                stream.close();
+            } catch (IOException ioe) {
+                // do nothing
+            }
         }
     }
 
@@ -33,7 +38,11 @@ public class LoggedOutputStream extends javax.servlet.ServletOutputStream {
         try {
             response.flush();
         } finally {
-            stream.flush();
+            try {
+                stream.flush();
+            } catch (IOException ioe) {
+                // do nothing
+            }
         }
     }
 
@@ -55,7 +64,11 @@ public class LoggedOutputStream extends javax.servlet.ServletOutputStream {
         try {
             response.write(b);
         } finally {
-            stream.write(b);
+            try {
+                stream.write(b);
+            } catch (IOException ioe) {
+                // do nothing
+            }
         }
     }
 
