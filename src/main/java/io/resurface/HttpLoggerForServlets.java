@@ -34,24 +34,24 @@ public class HttpLoggerForServlets implements Filter {
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
-
-        HttpLogger logger = HttpLoggerFactory.get();
-        logger.logRequest(request);
         LoggedResponseWrapper wrapper = new LoggedResponseWrapper(response);
         chain.doFilter(request, wrapper);
-
-        String content_type = response.getContentType();
-        String encoding = response.getCharacterEncoding();
-        String url = request.getRequestURL().toString();
-        String fake_body = "request.getRequestURL()=" + url + " | response.getContentType()=" + content_type + " | response.getCharacterEncoding()=" + encoding + " | ";
-        boolean is_text = (encoding != null) && (content_type != null) && content_type.toLowerCase().startsWith("text/") && (response.getStatus() != 304);
-        if (is_text) {
-            fake_body += new String(wrapper.read(), encoding);
-        } else {
-            fake_body += "IS_NOT_TEXT";
+        if (response.getStatus() != 304) {
+            String content_type = response.getContentType();
+            String encoding = response.getCharacterEncoding();
+            if ((content_type != null) && (encoding != null)) {
+                boolean is_html = content_type.startsWith("text/html");
+                boolean is_json = content_type.startsWith("application/json");
+                boolean is_soap = content_type.startsWith("application/soap+xml");
+                boolean is_xml1 = content_type.startsWith("application/xml");
+                boolean is_xml2 = content_type.startsWith("text/xml");
+                if (is_html || is_json || is_soap || is_xml1 || is_xml2) {
+                    HttpLogger logger = HttpLoggerFactory.get();
+                    logger.logRequest(request);
+                    logger.logResponse(response, new String(wrapper.read(), encoding));
+                }
+            }
         }
-
-        logger.logResponse(response, fake_body);
     }
 
 }

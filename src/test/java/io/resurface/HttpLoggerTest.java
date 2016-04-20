@@ -6,8 +6,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 
+import static io.resurface.Mocks.MOCK_URL;
 import static io.resurface.Mocks.mockRequest;
-import static io.resurface.Mocks.mockResponse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -32,29 +32,29 @@ public class HttpLoggerTest {
         assertTrue("has source", message.contains("\"source\":\"" + HttpLogger.SOURCE + "\","));
         assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
         assertTrue("has now", message.contains("\"now\":1455908640173,"));
-        assertTrue("has url", message.contains("\"url\":\"http://something.com/index.html\"}"));
+        assertTrue("has url", message.contains("\"url\":\"" + MOCK_URL + "\"}"));
     }
 
     @Test
     public void formatResponseTest() throws IOException {
-        String message = new HttpLogger().formatResponse(new StringBuilder(), 1455908665227L, mockResponse(), null).toString();
+        String message = new HttpLogger().formatResponse(new StringBuilder(), 1455908665227L, Mocks.mockResponse(), null).toString();
         assertTrue("has category", message.contains("{\"category\":\"http_response\","));
         assertTrue("has source", message.contains("\"source\":\"" + HttpLogger.SOURCE + "\","));
         assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
         assertTrue("has now", message.contains("\"now\":1455908665227,"));
-        assertTrue("has code", message.contains("\"code\":201}"));
+        assertTrue("has code", message.contains("\"code\":200}"));
         assertTrue("omits body", !message.contains("\"body\""));
     }
 
     @Test
     public void formatResponseWithBodyTest() throws IOException {
         String body = "<html><h1>We want the funk</h1><p>Gotta have that funk</p></html>";
-        String message = new HttpLogger().formatResponse(new StringBuilder(), 1455908665227L, mockResponse(), body).toString();
+        String message = new HttpLogger().formatResponse(new StringBuilder(), 1455908665227L, Mocks.mockResponse(), body).toString();
         assertTrue("has category", message.contains("{\"category\":\"http_response\","));
         assertTrue("has source", message.contains("\"source\":\"" + HttpLogger.SOURCE + "\","));
         assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
         assertTrue("has now", message.contains("\"now\":1455908665227,"));
-        assertTrue("has code", message.contains("\"code\":201,"));
+        assertTrue("has code", message.contains("\"code\":200,"));
         assertTrue("has body", message.contains("\"body\":\"" + body + "\"}"));
     }
 
