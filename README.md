@@ -74,17 +74,17 @@ NOTE: Logging from before/after filters is discouraged because of quirks in hand
     import io.resurface.*;
 
     // manage default logger
-    HttpLogger logger = HttpLoggerFactory.get();              // returns cached HTTP logger
-    logger.disable();                                         // disable logging for automated tests
-    logger.enable();                                          // re-enable logging after being disabled
-    if (logger.isEnabled()) ...                               // branch on logging being enabled
+    HttpLogger logger = HttpLoggerFactory.get();               // returns cached HTTP logger
+    logger.disable();                                          // disable logging for automated tests
+    logger.enable();                                           // re-enable logging after being disabled
+    if (logger.isEnabled()) ...                                // branch on logging being enabled
 
     // log a HTTP exchange
-    HttpServletRequest req = new HttpServletRequestImpl();    // define request to log
+    HttpServletRequest req = new HttpServletRequestImpl();     // define request to log
     req.setRequestURL("http://google.com");
-    HttpServletResponse res = new HttpServletResponseImpl();  // define response to log
+    HttpServletResponse res = new HttpServletResponseImpl();   // define response to log
     res.setCharacterEncoding("UTF-8");
     res.setContentType("text/html");
     res.setStatus(200);
-    logger.logRequest(req);                                   // log the request
-    logger.logResponse(res, "<html></html>");                 // log the response
+    logger.logRequest(req);                                    // log the request
+    logger.logResponse(res, "<html></html>");                  // log the response
