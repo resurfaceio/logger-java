@@ -5,7 +5,6 @@ package io.resurface;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
@@ -17,11 +16,10 @@ import java.util.Locale;
 public class HttpServletResponseImpl implements HttpServletResponse {
 
     public HttpServletResponseImpl() {
-        byteArrayStream = new ByteArrayOutputStream(512);
         servletOutputStream = new ServletOutputStream() {
             @Override
             public void write(int b) throws IOException {
-                byteArrayStream.write(b);
+                // do nothing
             }
         };
     }
@@ -207,7 +205,6 @@ public class HttpServletResponseImpl implements HttpServletResponse {
         this.status = status;
     }
 
-    private final ByteArrayOutputStream byteArrayStream;
     private final ServletOutputStream servletOutputStream;
     private String characterEncoding;
     private String contentType;
