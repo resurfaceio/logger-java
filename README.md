@@ -15,7 +15,7 @@ Add these sections to your pom.xml:
         <dependency>
             <groupId>io.resurface</groupId>
             <artifactId>resurfaceio-logger</artifactId>
-            <version>1.1.0-SNAPSHOT</version>
+            <version>1.1.3-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
@@ -36,7 +36,7 @@ Add these sections to your pom.xml:
 
 This works for Tomcat, Jetty and other application servers that support standard servlet filters.
 
-Copy resurfaceio-logger-1.1.0.jar into the appropriate /lib directory. (no other dependencies required)
+Copy resurfaceio-logger-1.1.3.jar into the appropriate /lib directory. (no other dependencies required)
 
 Now configure the filter in web.xml as shown below. You can optionally use a specific url-pattern to limit logging to specific areas of your application.
 
