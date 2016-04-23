@@ -77,6 +77,13 @@ public abstract class UsageLogger<T extends UsageLogger> {
     }
 
     /**
+     * Returns true if this logger is enabled or tracing.
+     */
+    public boolean isActive() {
+        return enabled || tracing;
+    }
+
+    /**
      * Returns true if this logger is enabled.
      */
     public boolean isEnabled() {

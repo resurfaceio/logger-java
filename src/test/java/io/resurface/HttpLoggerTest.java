@@ -96,12 +96,14 @@ public class HttpLoggerTest {
     @Test
     public void tracingTest() {
         HttpLogger logger = new HttpLogger().disable();
+        assertTrue("logger not active at first", !logger.isActive());
         assertTrue("logger disabled at first", !logger.isEnabled());
-        assertTrue("logger tracing inactive at first", !logger.isTracing());
+        assertTrue("logger not tracing at first", !logger.isTracing());
         assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
         logger.tracingStart();
         try {
-            assertTrue("logger tracing active", logger.isTracing());
+            assertTrue("logger now active", logger.isActive());
+            assertTrue("logger now tracing", logger.isTracing());
             assertTrue("log echo succeeds (1)", logger.logEcho());
             assertTrue("tracing history is 1", logger.tracingHistory().size() == 1);
             assertTrue("log echo succeeds (2)", logger.logEcho());
@@ -112,8 +114,9 @@ public class HttpLoggerTest {
             assertTrue("tracing history is 4", logger.tracingHistory().size() == 4);
         } finally {
             logger.tracingStop().enable();
+            assertTrue("logger active at end", logger.isActive());
             assertTrue("logger enabled at end", logger.isEnabled());
-            assertTrue("logger tracing inactive at end", !logger.isTracing());
+            assertTrue("logger not tracing at end", !logger.isTracing());
             assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
         }
     }
