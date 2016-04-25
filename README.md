@@ -32,9 +32,12 @@ Add these sections to your pom.xml:
         </repository>
     </repositories>
 
-## Logging From Spark
+## Logging From Spark Framework
 
-A logger can be used selectively for simple cases like this:
+Spark Framework is a popular micro-framework, and is nicely introduced by the
+[Getting Started on Heroku with Java](https://devcenter.heroku.com/articles/getting-started-with-java) tutorial.
+
+A logger can be used within simple Spark handlers like this:
 
     import io.resurface.HttpLogger;
     import io.resurface.HttpLoggerFactory;
@@ -55,7 +58,8 @@ This works for Tomcat, Jetty and other application servers that support standard
 
 Copy resurfaceio-logger-1.2.0.jar into the appropriate /lib directory. (no other dependencies required)
 
-Now configure the filter in web.xml as shown below. You can optionally use a specific url-pattern to limit logging to specific areas of your application.
+Now configure the filter in web.xml as shown below. You can optionally use a specific url-pattern to limit logging
+to specific areas of your application.
 
     <filter>
         <filter-name>HttpLoggerForServlets</filter-name>
@@ -66,8 +70,8 @@ Now configure the filter in web.xml as shown below. You can optionally use a spe
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     
-HttpLoggerForServlets performs some basic filtering: it ignores redirects (304 response codes), and only logs responses for content types matching a predefined list
-(including 'text/html' and 'application/json').
+HttpLoggerForServlets performs some basic filtering: it ignores redirects (304 response codes), and only logs
+responses for content types matching a predefined list (including 'text/html' and 'application/json').
 
 ## Using API Directly
 
