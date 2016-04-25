@@ -13,6 +13,11 @@ import static io.resurface.JsonMessage.*;
 public class HttpLogger extends UsageLogger<HttpLogger> {
 
     /**
+     * Agent string identifying this logger.
+     */
+    public static final String AGENT = "HttpLogger.java";
+
+    /**
      * Initialize enabled logger using default url.
      */
     public HttpLogger() {
@@ -34,33 +39,41 @@ public class HttpLogger extends UsageLogger<HttpLogger> {
     }
 
     /**
+     * Returns agent string identifying this logger.
+     */
+    @Override
+    public String agent() {
+        return AGENT;
+    }
+
+    /**
      * Formats JSON message for simple echo.
      */
     public StringBuilder formatEcho(StringBuilder json, long now) {
-        start(json, "echo", SOURCE, version, now);
-        return finish(json);
+        start(json, "echo", agent(), version(), now);
+        return stop(json);
     }
 
     /**
      * Formats JSON message for HTTP request.
      */
     public StringBuilder formatRequest(StringBuilder json, long now, HttpServletRequest request) {
-        start(json, "http_request", SOURCE, version, now).append(',');
+        start(json, "http_request", agent(), version(), now).append(',');
         append(json, "url", request.getRequestURL());
-        return finish(json);
+        return stop(json);
     }
 
     /**
      * Formats JSON message for HTTP response.
      */
     public StringBuilder formatResponse(StringBuilder json, long now, HttpServletResponse response, String body) {
-        start(json, "http_response", SOURCE, version, now).append(',');
+        start(json, "http_response", agent(), version(), now).append(',');
         append(json, "code", response.getStatus());
         if (body != null) {
             json.append(',');
             append(json, "body", body);
         }
-        return finish(json);
+        return stop(json);
     }
 
     /**
@@ -70,7 +83,7 @@ public class HttpLogger extends UsageLogger<HttpLogger> {
         if (enabled || tracing) {
             StringBuilder json = new StringBuilder(64);
             formatEcho(json, System.currentTimeMillis());
-            return post(json.toString()) == 200;
+            return post(json.toString());
         } else {
             return true;
         }
@@ -83,7 +96,7 @@ public class HttpLogger extends UsageLogger<HttpLogger> {
         if (enabled || tracing) {
             StringBuilder json = new StringBuilder(1024);
             formatRequest(json, System.currentTimeMillis(), request);
-            return post(json.toString()) == 200;
+            return post(json.toString());
         } else {
             return true;
         }
@@ -96,7 +109,7 @@ public class HttpLogger extends UsageLogger<HttpLogger> {
         if (enabled || tracing) {
             StringBuilder json = new StringBuilder(1024);
             formatResponse(json, System.currentTimeMillis(), response, body);
-            return post(json.toString()) == 200;
+            return post(json.toString());
         } else {
             return true;
         }

@@ -5,7 +5,7 @@ This library makes it easy to log server usage including HTTP request/response d
 
 ## Dependencies
 
-No runtime dependencies to conflict with your app. Requires Java 8.
+Requires Java 8. No other dependencies to conflict with your app.
 
 ## Installing with Maven
 

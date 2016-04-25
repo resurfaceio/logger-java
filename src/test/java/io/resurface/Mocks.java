@@ -19,7 +19,8 @@ public class Mocks {
 
     static final String MOCK_HTML_ESCAPED = JsonMessage.escape(new StringBuilder(), MOCK_HTML).toString();
 
-    static final String[] MOCK_INVALID_URLS = {HttpLogger.URL + "/noway3is5this1valid2", "https://www.noway3is5this1valid2.com/", "http://www.noway3is5this1valid2.com/"};
+    static final String[] MOCK_INVALID_URLS = {HttpLogger.DEFAULT_URL + "/noway3is5this1valid2",
+            "https://www.noway3is5this1valid2.com/", "http://www.noway3is5this1valid2.com/"};
 
     static final String MOCK_URL = "http://something.com/index.html";
 

@@ -18,21 +18,16 @@ import java.util.Properties;
 public abstract class UsageLogger<T extends UsageLogger> {
 
     /**
-     * Source name for log messages.
-     */
-    public static final String SOURCE = "resurfaceio-logger-java";
-
-    /**
      * URL destination for log messages unless overridden.
      */
-    public static final String URL = "https://resurfaceio.herokuapp.com/messages";
+    public static final String DEFAULT_URL = "https://resurfaceio.herokuapp.com/messages";
 
     /**
      * Initialize enabled logger using default url.
      */
     public UsageLogger() {
         this.enabled = true;
-        this.url = URL;
+        this.url = DEFAULT_URL;
         this.version = version_lookup();
     }
 
@@ -59,6 +54,11 @@ public abstract class UsageLogger<T extends UsageLogger> {
     protected final List<String> tracing_history = new ArrayList<>();
     protected final String url;
     protected final String version;
+
+    /**
+     * Returns agent string identifying this logger.
+     */
+    public abstract String agent();
 
     /**
      * Disable this logger.
@@ -149,15 +149,13 @@ public abstract class UsageLogger<T extends UsageLogger> {
         }
     }
 
-    // TEMPORARY, THIS WILL BE CHANGING TO PROTECTED
-
     /**
      * Logs message (via HTTP post) to remote url.
      */
-    public int post(String json) {
+    protected boolean post(String json) {
         if (tracing) {
             tracing_history.add(json);
-            return 200;
+            return true;
         } else {
             try {
                 URL url = new URL(this.url);
@@ -170,9 +168,9 @@ public abstract class UsageLogger<T extends UsageLogger> {
                     os.write(json.getBytes());
                     os.flush();
                 }
-                return con.getResponseCode();
+                return con.getResponseCode() == 200;
             } catch (IOException ioe) {
-                return 404;
+                return false;
             }
         }
     }

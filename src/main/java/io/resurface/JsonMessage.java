@@ -83,24 +83,25 @@ public class JsonMessage {
     }
 
     /**
-     * Finishes message.
+     * Starts message payload including the beginning brace.
      */
-    public static StringBuilder finish(StringBuilder json) {
-        return json.append('}');
-    }
-
-    /**
-     * Starts message using given params.
-     */
-    public static StringBuilder start(StringBuilder json, CharSequence category, CharSequence source, CharSequence version, long now) {
+    public static StringBuilder start(StringBuilder json, CharSequence category, CharSequence agent,
+                                      CharSequence version, long now) {
         return json.append("{\"category\":\"")
                 .append(category)
-                .append("\",\"source\":\"")
-                .append(source)
+                .append("\",\"agent\":\"")
+                .append(agent)
                 .append("\",\"version\":\"")
                 .append(version)
                 .append("\",\"now\":")
                 .append(now);
+    }
+
+    /**
+     * Finishes message payload including the closing brace.
+     */
+    public static StringBuilder stop(StringBuilder json) {
+        return json.append('}');
     }
 
 }

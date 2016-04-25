@@ -17,10 +17,20 @@ import static org.junit.Assert.assertTrue;
 public class HttpLoggerTest {
 
     @Test
+    public void agentTest() {
+        String agent = HttpLogger.AGENT;
+        assertTrue("length check", agent.length() > 0);
+        assertTrue("endsWith check", agent.endsWith(".java"));
+        assertTrue("backslash check", !agent.contains("\\"));
+        assertTrue("double quote check", !agent.contains("\""));
+        assertTrue("single quote check", !agent.contains("'"));
+    }
+
+    @Test
     public void formatEchoTest() {
         String message = new HttpLogger().formatEcho(new StringBuilder(), 12345).toString();
         assertTrue("has category", message.contains("{\"category\":\"echo\","));
-        assertTrue("has source", message.contains("\"source\":\"" + HttpLogger.SOURCE + "\","));
+        assertTrue("has agent", message.contains("\"agent\":\"" + HttpLogger.AGENT + "\","));
         assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
         assertTrue("has now", message.contains("\"now\":12345}"));
     }
@@ -29,7 +39,7 @@ public class HttpLoggerTest {
     public void formatRequestTest() {
         String message = new HttpLogger().formatRequest(new StringBuilder(), 1455908640173L, mockRequest()).toString();
         assertTrue("has category", message.contains("{\"category\":\"http_request\","));
-        assertTrue("has source", message.contains("\"source\":\"" + HttpLogger.SOURCE + "\","));
+        assertTrue("has agent", message.contains("\"agent\":\"" + HttpLogger.AGENT + "\","));
         assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
         assertTrue("has now", message.contains("\"now\":1455908640173,"));
         assertTrue("has url", message.contains("\"url\":\"" + MOCK_URL + "\"}"));
@@ -39,7 +49,7 @@ public class HttpLoggerTest {
     public void formatResponseTest() throws IOException {
         String message = new HttpLogger().formatResponse(new StringBuilder(), 1455908665227L, Mocks.mockResponse(), null).toString();
         assertTrue("has category", message.contains("{\"category\":\"http_response\","));
-        assertTrue("has source", message.contains("\"source\":\"" + HttpLogger.SOURCE + "\","));
+        assertTrue("has agent", message.contains("\"agent\":\"" + HttpLogger.AGENT + "\","));
         assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
         assertTrue("has now", message.contains("\"now\":1455908665227,"));
         assertTrue("has code", message.contains("\"code\":200}"));
@@ -51,7 +61,7 @@ public class HttpLoggerTest {
         String body = "<html><h1>We want the funk</h1><p>Gotta have that funk</p></html>";
         String message = new HttpLogger().formatResponse(new StringBuilder(), 1455908665227L, Mocks.mockResponse(), body).toString();
         assertTrue("has category", message.contains("{\"category\":\"http_response\","));
-        assertTrue("has source", message.contains("\"source\":\"" + HttpLogger.SOURCE + "\","));
+        assertTrue("has agent", message.contains("\"agent\":\"" + HttpLogger.AGENT + "\","));
         assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
         assertTrue("has now", message.contains("\"now\":1455908665227,"));
         assertTrue("has code", message.contains("\"code\":200,"));
@@ -84,16 +94,6 @@ public class HttpLoggerTest {
     }
 
     @Test
-    public void sourceTest() {
-        String source = HttpLogger.SOURCE;
-        assertTrue("length check", source.length() > 0);
-        assertTrue("startsWith check", source.startsWith("resurfaceio-"));
-        assertTrue("backslash check", !source.contains("\\"));
-        assertTrue("double quote check", !source.contains("\""));
-        assertTrue("single quote check", !source.contains("'"));
-    }
-
-    @Test
     public void tracingTest() {
         HttpLogger logger = new HttpLogger().disable();
         assertTrue("logger not active at first", !logger.isActive());
@@ -123,7 +123,7 @@ public class HttpLoggerTest {
 
     @Test
     public void urlTest() {
-        String url = HttpLogger.URL;
+        String url = HttpLogger.DEFAULT_URL;
         assertTrue("length check", url.length() > 0);
         assertTrue("startsWith check", url.startsWith("https://"));
         assertTrue("backslash check", !url.contains("\\"));
@@ -138,7 +138,7 @@ public class HttpLoggerTest {
         String version = HttpLogger.version_lookup();
         assertTrue("null check", version != null);
         assertTrue("length check", version.length() > 0);
-        assertTrue("startsWith check", version.startsWith("1.1."));
+        assertTrue("startsWith check", version.startsWith("1.2."));
         assertTrue("backslash check", !version.contains("\\"));
         assertTrue("double quote check", !version.contains("\""));
         assertTrue("single quote check", !version.contains("'"));
