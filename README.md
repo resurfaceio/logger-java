@@ -32,6 +32,23 @@ Add these sections to your pom.xml:
         </repository>
     </repositories>
 
+## Logging From Spark
+
+A logger can be used selectively for simple cases like this:
+
+    import io.resurface.HttpLogger;
+    import io.resurface.HttpLoggerFactory;
+
+    get("/hello", (req, res) -> {
+        String body = "Hello World";
+        HttpLogger logger = HttpLoggerFactory.get();
+        logger.logRequest(req.raw());
+        logger.logResponse(res.raw(), body);
+        return body;
+    });
+
+NOTE: Logging from before/after filters is discouraged because of quirks in handling body content.
+
 ## Logging From Servlet Filter
 
 This works for Tomcat, Jetty and other application servers that support standard servlet filters.
@@ -51,23 +68,6 @@ Now configure the filter in web.xml as shown below. You can optionally use a spe
     
 HttpLoggerForServlets performs some basic filtering: it ignores redirects (304 response codes), and only logs responses for content types matching a predefined list
 (including 'text/html' and 'application/json').
-
-## Logging From Spark
-
-A logger can be used selectively for simple cases like this:
-
-    import io.resurface.HttpLogger;
-    import io.resurface.HttpLoggerFactory;
-
-    get("/hello", (req, res) -> {
-        String body = "Hello World";
-        HttpLogger logger = HttpLoggerFactory.get();
-        logger.logRequest(req.raw());
-        logger.logResponse(res.raw(), body);
-        return body;
-    });
-
-NOTE: Logging from before/after filters is discouraged because of quirks in handling body content.
 
 ## Using API Directly
 
