@@ -34,7 +34,7 @@ Add these sections to your pom.xml:
 
 ## Logging From Spark Framework
 
-Spark Framework is a popular micro-framework, and is nicely introduced by the
+Spark Framework is a popular micro-framework, nicely introduced by the
 [Getting Started on Heroku with Java](https://devcenter.heroku.com/articles/getting-started-with-java) tutorial.
 
 A logger can be used within simple Spark handlers like this:
