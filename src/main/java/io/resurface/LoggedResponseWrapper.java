@@ -38,8 +38,8 @@ public class LoggedResponseWrapper extends javax.servlet.http.HttpServletRespons
         return writer;
     }
 
-    public byte[] read() {
-        return stream == null ? "NO_RESPONSE_BODY".getBytes() : stream.read();
+    public byte[] logged() {
+        return stream == null ? "NO_RESPONSE_BODY".getBytes() : stream.logged();
     }
 
 }

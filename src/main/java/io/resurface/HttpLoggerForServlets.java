@@ -53,7 +53,7 @@ public class HttpLoggerForServlets implements Filter {
                     boolean is_xml2 = content_type.startsWith("text/xml");
                     if (is_html || is_json || is_soap || is_xml1 || is_xml2) {
                         logger.logRequest(request);
-                        logger.logResponse(response, new String(wrapper.read(), encoding));
+                        logger.logResponse(response, new String(wrapper.logged(), encoding));
                     }
                 }
             }

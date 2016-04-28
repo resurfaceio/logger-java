@@ -11,22 +11,22 @@ import java.io.OutputStream;
  */
 public class LoggedOutputStream extends javax.servlet.ServletOutputStream {
 
-    public LoggedOutputStream(OutputStream response) {
-        if (response == null) throw new IllegalArgumentException("Null response");
-        this.response = response;
-        this.stream = new ByteArrayOutputStream();
+    public LoggedOutputStream(OutputStream output) {
+        if (output == null) throw new IllegalArgumentException("Null output");
+        this.logged = new ByteArrayOutputStream();
+        this.output = output;
     }
 
-    private final OutputStream response;
-    private final ByteArrayOutputStream stream;
+    private final ByteArrayOutputStream logged;
+    private final OutputStream output;
 
     @Override
     public void close() throws IOException {
         try {
-            response.close();
+            output.close();
         } finally {
             try {
-                stream.close();
+                logged.close();
             } catch (IOException ioe) {
                 // do nothing
             }
@@ -36,36 +36,36 @@ public class LoggedOutputStream extends javax.servlet.ServletOutputStream {
     @Override
     public void flush() throws IOException {
         try {
-            response.flush();
+            output.flush();
         } finally {
             try {
-                stream.flush();
+                logged.flush();
             } catch (IOException ioe) {
                 // do nothing
             }
         }
     }
 
-    public byte[] read() {
-        return stream.toByteArray();
+    public byte[] logged() {
+        return logged.toByteArray();
     }
 
     @Override
     public void write(int b) throws IOException {
         try {
-            response.write(b);
+            output.write(b);
         } finally {
-            stream.write(b);
+            logged.write(b);
         }
     }
 
     @Override
     public void write(byte[] b) throws IOException {
         try {
-            response.write(b);
+            output.write(b);
         } finally {
             try {
-                stream.write(b);
+                logged.write(b);
             } catch (IOException ioe) {
                 // do nothing
             }
@@ -75,9 +75,9 @@ public class LoggedOutputStream extends javax.servlet.ServletOutputStream {
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
         try {
-            response.write(b, off, len);
+            output.write(b, off, len);
         } finally {
-            stream.write(b, off, len);
+            logged.write(b, off, len);
         }
     }
 
