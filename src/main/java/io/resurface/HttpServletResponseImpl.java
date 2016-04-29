@@ -16,7 +16,7 @@ import java.util.Locale;
 public class HttpServletResponseImpl implements HttpServletResponse {
 
     public HttpServletResponseImpl() {
-        servletOutputStream = new ServletOutputStream() {
+        stream = new ServletOutputStream() {
             @Override
             public void write(int b) throws IOException {
                 // do nothing
@@ -112,7 +112,7 @@ public class HttpServletResponseImpl implements HttpServletResponse {
 
     @Override
     public ServletOutputStream getOutputStream() throws IOException {
-        return servletOutputStream;
+        return stream;
     }
 
     @Override
@@ -205,8 +205,9 @@ public class HttpServletResponseImpl implements HttpServletResponse {
         this.status = status;
     }
 
-    private final ServletOutputStream servletOutputStream;
     private String characterEncoding;
     private String contentType;
     private int status;
+    private final ServletOutputStream stream;
+
 }

@@ -7,13 +7,16 @@ package io.resurface;
  */
 public final class HttpLoggerFactory {
 
-    private static final HttpLogger default_logger = new HttpLogger();
-
     /**
      * Returns cached default HTTP logger.
      */
     public static HttpLogger get() {
         return default_logger;
     }
+
+    /**
+     * Cached default HTTP logger.
+     */
+    private static final HttpLogger default_logger = new HttpLogger();
 
 }

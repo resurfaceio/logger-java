@@ -49,12 +49,6 @@ public abstract class UsageLogger<T extends UsageLogger> {
         this.version = version_lookup();
     }
 
-    protected boolean enabled;
-    protected boolean tracing = false;
-    protected final List<String> tracing_history = new ArrayList<>();
-    protected final String url;
-    protected final String version;
-
     /**
      * Returns agent string identifying this logger.
      */
@@ -174,5 +168,11 @@ public abstract class UsageLogger<T extends UsageLogger> {
             }
         }
     }
+
+    protected boolean enabled;
+    protected boolean tracing = false;
+    protected final List<String> tracing_history = new ArrayList<>();
+    protected final String url;
+    protected final String version;
 
 }

@@ -28,9 +28,6 @@ public class HttpLoggerForServlets implements Filter {
         this.logger = null;
     }
 
-    protected FilterConfig config;
-    protected HttpLogger logger;
-
     /**
      * Called when request/response passes through the filter chain.
      */
@@ -59,5 +56,8 @@ public class HttpLoggerForServlets implements Filter {
             }
         }
     }
+
+    protected FilterConfig config;
+    protected HttpLogger logger;
 
 }

@@ -11,15 +11,18 @@ import java.io.OutputStream;
  */
 public class LoggedOutputStream extends javax.servlet.ServletOutputStream {
 
+    /**
+     * Constructor taking original output stream to wrap.
+     */
     public LoggedOutputStream(OutputStream output) {
         if (output == null) throw new IllegalArgumentException("Null output");
         this.logged = new ByteArrayOutputStream();
         this.output = output;
     }
 
-    private final ByteArrayOutputStream logged;
-    private final OutputStream output;
-
+    /**
+     * Closes this output stream and releases any system resources associated with this stream.
+     */
     @Override
     public void close() throws IOException {
         try {
@@ -33,6 +36,9 @@ public class LoggedOutputStream extends javax.servlet.ServletOutputStream {
         }
     }
 
+    /**
+     * Flushes this output stream and forces any buffered output bytes to be written out.
+     */
     @Override
     public void flush() throws IOException {
         try {
@@ -46,10 +52,16 @@ public class LoggedOutputStream extends javax.servlet.ServletOutputStream {
         }
     }
 
+    /**
+     * Return raw data logged so far.
+     */
     public byte[] logged() {
         return logged.toByteArray();
     }
 
+    /**
+     * Writes the specified byte to this output stream.
+     */
     @Override
     public void write(int b) throws IOException {
         try {
@@ -59,6 +71,9 @@ public class LoggedOutputStream extends javax.servlet.ServletOutputStream {
         }
     }
 
+    /**
+     * Writes the specified byte array to this output stream.
+     */
     @Override
     public void write(byte[] b) throws IOException {
         try {
@@ -72,6 +87,9 @@ public class LoggedOutputStream extends javax.servlet.ServletOutputStream {
         }
     }
 
+    /**
+     * Writes len bytes from the specified byte array starting at offset off to this output stream.
+     */
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
         try {
@@ -80,5 +98,8 @@ public class LoggedOutputStream extends javax.servlet.ServletOutputStream {
             logged.write(b, off, len);
         }
     }
+
+    private final ByteArrayOutputStream logged;
+    private final OutputStream output;
 
 }

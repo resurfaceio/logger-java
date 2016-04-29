@@ -13,15 +13,17 @@ import java.io.PrintWriter;
  */
 public class LoggedResponseWrapper extends javax.servlet.http.HttpServletResponseWrapper {
 
+    /**
+     * Constructor taking original response to wrap.
+     */
     public LoggedResponseWrapper(HttpServletResponse response) {
         super(response);
         this.response = response;
     }
 
-    private final HttpServletResponse response;
-    private LoggedOutputStream stream;
-    private PrintWriter writer;
-
+    /**
+     * Returns output stream against the wrapped response.
+     */
     @Override
     public ServletOutputStream getOutputStream() throws IOException {
         if (stream == null) {
@@ -30,6 +32,9 @@ public class LoggedResponseWrapper extends javax.servlet.http.HttpServletRespons
         return stream;
     }
 
+    /**
+     * Returns writer against the wrapped response.
+     */
     @Override
     public PrintWriter getWriter() throws IOException {
         if (writer == null) {
@@ -38,8 +43,15 @@ public class LoggedResponseWrapper extends javax.servlet.http.HttpServletRespons
         return writer;
     }
 
+    /**
+     * Return all bytes logged so far.
+     */
     public byte[] logged() {
         return stream == null ? "NO_RESPONSE_BODY".getBytes() : stream.logged();
     }
+
+    private final HttpServletResponse response;
+    private LoggedOutputStream stream;
+    private PrintWriter writer;
 
 }
