@@ -1,13 +1,16 @@
 // Copyright (c) 2016 Resurface Labs LLC, All Rights Reserved
 
-package io.resurface;
+package io.resurface.tests;
 
+import io.resurface.HttpLogger;
+import io.resurface.HttpLoggerFactory;
+import io.resurface.HttpLoggerForServlets;
 import org.junit.Test;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
 
-import static io.resurface.Mocks.*;
+import static io.resurface.tests.Mocks.*;
 import static org.junit.Assert.assertTrue;
 
 /**

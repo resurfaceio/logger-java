@@ -1,6 +1,6 @@
 // Copyright (c) 2016 Resurface Labs LLC, All Rights Reserved
 
-package io.resurface;
+package io.resurface.tests;
 
 import org.junit.Test;
 

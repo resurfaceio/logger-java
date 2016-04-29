@@ -1,7 +1,8 @@
 // Copyright (c) 2016 Resurface Labs LLC, All Rights Reserved
 
-package io.resurface;
+package io.resurface.tests;
 
+import io.resurface.HttpLoggerFactory;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;

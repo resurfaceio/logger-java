@@ -1,13 +1,14 @@
 // Copyright (c) 2016 Resurface Labs LLC, All Rights Reserved
 
-package io.resurface;
+package io.resurface.tests;
 
+import io.resurface.HttpLogger;
 import org.junit.Test;
 
 import java.io.IOException;
 
-import static io.resurface.Mocks.MOCK_URL;
-import static io.resurface.Mocks.mockRequest;
+import static io.resurface.tests.Mocks.MOCK_URL;
+import static io.resurface.tests.Mocks.mockRequest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -89,6 +90,8 @@ public class HttpLoggerTest {
         for (String url : Mocks.MOCK_INVALID_URLS) {
             HttpLogger logger = new HttpLogger(url, false);
             assertTrue("log echo succeeds", logger.logEcho());
+            assertTrue("log request succeeds on null object", logger.logRequest(null));
+            assertTrue("log response succeeds on null object", logger.logResponse(null, null));
             assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
         }
     }

@@ -1,7 +1,9 @@
 // Copyright (c) 2016 Resurface Labs LLC, All Rights Reserved
 
-package io.resurface;
+package io.resurface.tests;
 
+import io.resurface.LoggedInputStream;
+import io.resurface.LoggedRequestWrapper;
 import org.junit.Test;
 
 import java.io.IOException;

@@ -1,6 +1,11 @@
 // Copyright (c) 2016 Resurface Labs LLC, All Rights Reserved
 
-package io.resurface;
+package io.resurface.tests;
+
+import io.resurface.HttpLogger;
+import io.resurface.HttpServletRequestImpl;
+import io.resurface.HttpServletResponseImpl;
+import io.resurface.JsonMessage;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
