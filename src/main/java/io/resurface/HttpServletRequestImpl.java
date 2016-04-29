@@ -18,6 +18,14 @@ import java.util.Map;
  */
 public class HttpServletRequestImpl implements HttpServletRequest {
 
+    public HttpServletRequestImpl() {
+        this(new byte[0]);
+    }
+
+    public HttpServletRequestImpl(byte[] bytes) {
+        stream = new LoggedInputStream(bytes);
+    }
+
     @Override
     public boolean authenticate(HttpServletResponse response) throws IOException, ServletException {
         return false;
@@ -95,7 +103,7 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public ServletInputStream getInputStream() throws IOException {
-        return null;
+        return stream;
     }
 
     @Override
@@ -348,9 +356,12 @@ public class HttpServletRequestImpl implements HttpServletRequest {
     }
 
     @Override
-    public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse) throws IllegalStateException {
+    public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse)
+            throws IllegalStateException {
         return null;
     }
 
     private String requestURL;
+    private final ServletInputStream stream;
+
 }
