@@ -17,9 +17,9 @@ public class LoggedRequestWrapperTest {
 
     @Test
     public void inputStreamTest() throws IOException {
-        LoggedRequestWrapper wrapper = new LoggedRequestWrapper(Mocks.mockRequest());
-        assertTrue("input stream is present", wrapper.getInputStream() != null);
-        assertTrue("input stream is expected class", wrapper.getInputStream().getClass().equals(LoggedInputStream.class));
+        LoggedRequestWrapper w = new LoggedRequestWrapper(Mocks.mockRequest());
+        assertTrue("input stream is present", w.getInputStream() != null);
+        assertTrue("input stream is expected class", w.getInputStream().getClass().equals(LoggedInputStream.class));
     }
 
 }

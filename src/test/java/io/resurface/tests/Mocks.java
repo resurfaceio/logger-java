@@ -27,6 +27,8 @@ public class Mocks {
     static final String[] MOCK_INVALID_URLS = {HttpLogger.DEFAULT_URL + "/noway3is5this1valid2",
             "https://www.noway3is5this1valid2.com/", "http://www.noway3is5this1valid2.com/"};
 
+    static final long MOCK_NOW = 1455908640173L;
+
     static final String MOCK_URL = "http://something.com/index.html";
 
     static FilterChain mockCustomApp() {

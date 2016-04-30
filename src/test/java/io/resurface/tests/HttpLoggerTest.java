@@ -5,10 +5,7 @@ package io.resurface.tests;
 import io.resurface.HttpLogger;
 import org.junit.Test;
 
-import java.io.IOException;
-
-import static io.resurface.tests.Mocks.MOCK_URL;
-import static io.resurface.tests.Mocks.mockRequest;
+import static io.resurface.tests.Mocks.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -29,44 +26,55 @@ public class HttpLoggerTest {
 
     @Test
     public void formatEchoTest() {
-        String message = new HttpLogger().formatEcho(new StringBuilder(), 12345).toString();
-        assertTrue("has category", message.contains("{\"category\":\"echo\","));
-        assertTrue("has agent", message.contains("\"agent\":\"" + HttpLogger.AGENT + "\","));
-        assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
-        assertTrue("has now", message.contains("\"now\":12345}"));
+        String s = new HttpLogger().formatEcho(new StringBuilder(), 12345).toString();
+        assertTrue("has category", s.contains("{\"category\":\"echo\","));
+        assertTrue("has agent", s.contains("\"agent\":\"" + HttpLogger.AGENT + "\","));
+        assertTrue("has version", s.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
+        assertTrue("has now", s.contains("\"now\":12345}"));
     }
 
     @Test
     public void formatRequestTest() {
-        String message = new HttpLogger().formatRequest(new StringBuilder(), 1455908640173L, mockRequest()).toString();
-        assertTrue("has category", message.contains("{\"category\":\"http_request\","));
-        assertTrue("has agent", message.contains("\"agent\":\"" + HttpLogger.AGENT + "\","));
-        assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
-        assertTrue("has now", message.contains("\"now\":1455908640173,"));
-        assertTrue("has url", message.contains("\"url\":\"" + MOCK_URL + "\"}"));
+        String s = new HttpLogger().formatRequest(new StringBuilder(), MOCK_NOW, mockRequest(), null).toString();
+        assertTrue("has category", s.contains("{\"category\":\"http_request\","));
+        assertTrue("has agent", s.contains("\"agent\":\"" + HttpLogger.AGENT + "\","));
+        assertTrue("has version", s.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
+        assertTrue("has now", s.contains("\"now\":" + MOCK_NOW + ","));
+        assertTrue("has url", s.contains("\"url\":\"" + MOCK_URL + "\"}"));
+        assertTrue("omits body", !s.contains("\"body\""));
     }
 
     @Test
-    public void formatResponseTest() throws IOException {
-        String message = new HttpLogger().formatResponse(new StringBuilder(), 1455908665227L, Mocks.mockResponse(), null).toString();
-        assertTrue("has category", message.contains("{\"category\":\"http_response\","));
-        assertTrue("has agent", message.contains("\"agent\":\"" + HttpLogger.AGENT + "\","));
-        assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
-        assertTrue("has now", message.contains("\"now\":1455908665227,"));
-        assertTrue("has code", message.contains("\"code\":200}"));
-        assertTrue("omits body", !message.contains("\"body\""));
+    public void formatRequestWithBodyTest() {
+        String s = new HttpLogger().formatRequest(new StringBuilder(), MOCK_NOW, mockRequest(), MOCK_JSON).toString();
+        assertTrue("has category", s.contains("{\"category\":\"http_request\","));
+        assertTrue("has agent", s.contains("\"agent\":\"" + HttpLogger.AGENT + "\","));
+        assertTrue("has version", s.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
+        assertTrue("has now", s.contains("\"now\":" + MOCK_NOW + ","));
+        assertTrue("has url", s.contains("\"url\":\"" + MOCK_URL + "\","));
+        assertTrue("has body", s.contains("\"body\":\"" + MOCK_JSON_ESCAPED + "\"}"));
     }
 
     @Test
-    public void formatResponseWithBodyTest() throws IOException {
-        String body = "<html><h1>We want the funk</h1><p>Gotta have that funk</p></html>";
-        String message = new HttpLogger().formatResponse(new StringBuilder(), 1455908665227L, Mocks.mockResponse(), body).toString();
-        assertTrue("has category", message.contains("{\"category\":\"http_response\","));
-        assertTrue("has agent", message.contains("\"agent\":\"" + HttpLogger.AGENT + "\","));
-        assertTrue("has version", message.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
-        assertTrue("has now", message.contains("\"now\":1455908665227,"));
-        assertTrue("has code", message.contains("\"code\":200,"));
-        assertTrue("has body", message.contains("\"body\":\"" + body + "\"}"));
+    public void formatResponseTest() {
+        String s = new HttpLogger().formatResponse(new StringBuilder(), MOCK_NOW, mockResponse(), null).toString();
+        assertTrue("has category", s.contains("{\"category\":\"http_response\","));
+        assertTrue("has agent", s.contains("\"agent\":\"" + HttpLogger.AGENT + "\","));
+        assertTrue("has version", s.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
+        assertTrue("has now", s.contains("\"now\":" + MOCK_NOW + ","));
+        assertTrue("has code", s.contains("\"code\":200}"));
+        assertTrue("omits body", !s.contains("\"body\""));
+    }
+
+    @Test
+    public void formatResponseWithBodyTest() {
+        String s = new HttpLogger().formatResponse(new StringBuilder(), MOCK_NOW, mockResponse(), MOCK_HTML).toString();
+        assertTrue("has category", s.contains("{\"category\":\"http_response\","));
+        assertTrue("has agent", s.contains("\"agent\":\"" + HttpLogger.AGENT + "\","));
+        assertTrue("has version", s.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
+        assertTrue("has now", s.contains("\"now\":" + MOCK_NOW + ","));
+        assertTrue("has code", s.contains("\"code\":200,"));
+        assertTrue("has body", s.contains("\"body\":\"" + MOCK_HTML_ESCAPED + "\"}"));
     }
 
     @Test
@@ -78,7 +86,7 @@ public class HttpLoggerTest {
 
     @Test
     public void logEchoToInvalidUrlTest() {
-        for (String url : Mocks.MOCK_INVALID_URLS) {
+        for (String url : MOCK_INVALID_URLS) {
             HttpLogger logger = new HttpLogger(url);
             assertTrue("log echo fails", !logger.logEcho());
             assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
@@ -87,10 +95,10 @@ public class HttpLoggerTest {
 
     @Test
     public void skipsLoggingAndTracingWhenDisabledTest() {
-        for (String url : Mocks.MOCK_INVALID_URLS) {
+        for (String url : MOCK_INVALID_URLS) {
             HttpLogger logger = new HttpLogger(url, false);
             assertTrue("log echo succeeds", logger.logEcho());
-            assertTrue("log request succeeds on null object", logger.logRequest(null));
+            assertTrue("log request succeeds on null object", logger.logRequest(null, null));
             assertTrue("log response succeeds on null object", logger.logResponse(null, null));
             assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
         }

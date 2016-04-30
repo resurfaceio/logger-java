@@ -57,9 +57,13 @@ public class HttpLogger extends UsageLogger<HttpLogger> {
     /**
      * Formats JSON message for HTTP request.
      */
-    public StringBuilder formatRequest(StringBuilder json, long now, HttpServletRequest request) {
+    public StringBuilder formatRequest(StringBuilder json, long now, HttpServletRequest request, String body) {
         start(json, "http_request", agent(), version(), now).append(',');
         append(json, "url", request.getRequestURL());
+        if (body != null) {
+            json.append(',');
+            append(json, "body", body);
+        }
         return stop(json);
     }
 
@@ -92,10 +96,10 @@ public class HttpLogger extends UsageLogger<HttpLogger> {
     /**
      * Logs HTTP request (in JSON format) to remote url.
      */
-    public boolean logRequest(HttpServletRequest request) {
+    public boolean logRequest(HttpServletRequest request, String body) {
         if (enabled || tracing) {
             StringBuilder json = new StringBuilder(1024);
-            formatRequest(json, System.currentTimeMillis(), request);
+            formatRequest(json, System.currentTimeMillis(), request, body);
             return post(json.toString());
         } else {
             return true;

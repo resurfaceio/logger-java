@@ -18,16 +18,16 @@ public class LoggedResponseWrapperTest {
 
     @Test
     public void outputStreamTest() throws IOException {
-        LoggedResponseWrapper wrapper = new LoggedResponseWrapper(Mocks.mockResponse());
-        assertTrue("output stream is present", wrapper.getOutputStream() != null);
-        assertTrue("output stream is expected class", wrapper.getOutputStream().getClass().equals(LoggedOutputStream.class));
+        LoggedResponseWrapper w = new LoggedResponseWrapper(Mocks.mockResponse());
+        assertTrue("output stream is present", w.getOutputStream() != null);
+        assertTrue("output stream is proper class", w.getOutputStream().getClass().equals(LoggedOutputStream.class));
     }
 
     @Test
     public void printWriterTest() throws IOException {
-        LoggedResponseWrapper wrapper = new LoggedResponseWrapper(Mocks.mockResponse());
-        assertTrue("print writer is present", wrapper.getWriter() != null);
-        assertTrue("print writer is expected class", wrapper.getWriter().getClass().equals(PrintWriter.class));
+        LoggedResponseWrapper w = new LoggedResponseWrapper(Mocks.mockResponse());
+        assertTrue("print writer is present", w.getWriter() != null);
+        assertTrue("print writer is proper class", w.getWriter().getClass().equals(PrintWriter.class));
     }
 
 }
