@@ -42,12 +42,20 @@ A logger can be used within simple Spark handlers like this:
     import io.resurface.HttpLogger;
     import io.resurface.HttpLoggerFactory;
 
-    get("/hello", (req, res) -> {
-        String body = "Hello World";
+    get("/hello", (request, response) -> {
+        String response_body = "Hello World";
         HttpLogger logger = HttpLoggerFactory.get();
-        logger.logRequest(req.raw());
-        logger.logResponse(res.raw(), body);
+        logger.logRequest(request.raw());
+        logger.logResponse(response.raw(), response_body);
         return body;
+    });
+
+    post("/hello_post", (request, response) -> {
+        response.setStatus(401);
+        HttpLogger logger = HttpLoggerFactory.get();
+        logger.logRequest(request.raw(), request.body());
+        logger.logResponse(response.raw());
+        return "";
     });
 
 NOTE: Logging from before/after filters is discouraged because of quirks in handling body content.
