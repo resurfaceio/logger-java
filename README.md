@@ -51,7 +51,7 @@ A logger can be used within simple Spark handlers like this:
     });
 
     post("/hello_post", (request, response) -> {
-        response.setStatus(401);
+        response.status(401);
         HttpLogger logger = HttpLoggerFactory.get();
         logger.logRequest(request.raw(), request.body());
         logger.logResponse(response.raw());
