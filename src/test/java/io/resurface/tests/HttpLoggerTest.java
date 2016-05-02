@@ -98,8 +98,10 @@ public class HttpLoggerTest {
         for (String url : MOCK_INVALID_URLS) {
             HttpLogger logger = new HttpLogger(url, false);
             assertTrue("log echo succeeds", logger.logEcho());
-            assertTrue("log request succeeds on null object", logger.logRequest(null, null));
-            assertTrue("log response succeeds on null object", logger.logResponse(null, null));
+            assertTrue("log request succeeds on null object", logger.logRequest(null));
+            assertTrue("log request succeeds on null objects", logger.logRequest(null, null));
+            assertTrue("log response succeeds on null object", logger.logResponse(null));
+            assertTrue("log response succeeds on null objects", logger.logResponse(null, null));
             assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
         }
     }

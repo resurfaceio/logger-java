@@ -96,6 +96,13 @@ public class HttpLogger extends UsageLogger<HttpLogger> {
     /**
      * Logs HTTP request (in JSON format) to remote url.
      */
+    public boolean logRequest(HttpServletRequest request) {
+        return logRequest(request, null);
+    }
+
+    /**
+     * Logs HTTP request with body (in JSON format) to remote url.
+     */
     public boolean logRequest(HttpServletRequest request, String body) {
         if (enabled || tracing) {
             StringBuilder json = new StringBuilder(1024);
@@ -108,6 +115,13 @@ public class HttpLogger extends UsageLogger<HttpLogger> {
 
     /**
      * Logs HTTP response (in JSON format) to remote url.
+     */
+    public boolean logResponse(HttpServletResponse response) {
+        return logResponse(response, null);
+    }
+
+    /**
+     * Logs HTTP response with body (in JSON format) to remote url.
      */
     public boolean logResponse(HttpServletResponse response, String body) {
         if (enabled || tracing) {
