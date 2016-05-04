@@ -99,4 +99,6 @@ responses for content types matching a predefined list (including 'text/html' an
     res.setContentType("text/html");
     res.setStatus(200);
     logger.logRequest(req);                                    // log the request
-    logger.logResponse(res, "<html></html>");                  // log the response
+    logger.logRequest(req, "...");                             // log the request  (with body)
+    logger.logResponse(res);                                   // log the response
+    logger.logResponse(res, "...");                            // log the response (with body)
