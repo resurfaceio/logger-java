@@ -53,7 +53,7 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public String getCharacterEncoding() {
-        return null;
+        return characterEncoding;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public String getContentType() {
-        return null;
+        return contentType;
     }
 
     @Override
@@ -341,9 +341,12 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     }
 
-    @Override
-    public void setCharacterEncoding(String env) throws UnsupportedEncodingException {
+    public void setCharacterEncoding(String characterEncoding) throws UnsupportedEncodingException {
+        this.characterEncoding = characterEncoding;
+    }
 
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
     public void setRequestURL(String requestURL) {
@@ -357,10 +360,13 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse)
-            throws IllegalStateException {
+            throws IllegalStateException
+    {
         return null;
     }
 
+    private String characterEncoding;
+    private String contentType;
     private String requestURL;
     private final ServletInputStream stream;
 

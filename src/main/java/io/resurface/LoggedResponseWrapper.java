@@ -38,15 +38,17 @@ public class LoggedResponseWrapper extends javax.servlet.http.HttpServletRespons
     @Override
     public PrintWriter getWriter() throws IOException {
         if (writer == null) {
-            writer = new PrintWriter(new OutputStreamWriter(getOutputStream()));
+            // @todo this fails if character encoding hasn't been set already, what to do?
+            writer = new PrintWriter(new OutputStreamWriter(getOutputStream(), getCharacterEncoding()));
         }
         return writer;
     }
 
     /**
-     * Return all bytes logged so far.
+     * Flushes underlying stream and returns all bytes logged so far.
      */
     public byte[] logged() {
+        if (writer != null) writer.flush();
         return stream == null ? new byte[0] : stream.logged();
     }
 

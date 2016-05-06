@@ -95,6 +95,7 @@ public class Mocks {
 
     static HttpServletResponse mockResponse() {
         HttpServletResponseImpl r = new HttpServletResponseImpl();
+        r.setCharacterEncoding("UTF-8");
         r.setStatus(200);
         return r;
     }
