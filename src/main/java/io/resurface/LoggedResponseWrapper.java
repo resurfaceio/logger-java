@@ -22,6 +22,15 @@ public class LoggedResponseWrapper extends javax.servlet.http.HttpServletRespons
     }
 
     /**
+     * Flushes any buffered output.
+     */
+    @Override
+    public void flushBuffer() throws IOException {
+        if (writer != null) writer.flush();
+        super.flushBuffer();
+    }
+
+    /**
      * Returns output stream against the wrapped response.
      */
     @Override
@@ -48,9 +57,13 @@ public class LoggedResponseWrapper extends javax.servlet.http.HttpServletRespons
      * Flushes underlying stream and returns all bytes logged so far.
      */
     public byte[] logged() {
-        if (writer != null) writer.flush();
-        return stream == null ? new byte[0] : stream.logged();
+        return stream == null ? LOGGED_NOTHING : stream.logged();
     }
+
+    /**
+     * Value returned when nothing was logged.
+     */
+    public static final byte[] LOGGED_NOTHING = new byte[0];
 
     private final HttpServletResponse response;
     private LoggedOutputStream stream;

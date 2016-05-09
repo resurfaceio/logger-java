@@ -18,33 +18,45 @@ import static org.junit.Assert.assertTrue;
 public class LoggedResponseWrapperTest {
 
     @Test
-    public void outputStreamPresentTest() throws IOException {
+    public void outputStreamClassTest() throws IOException {
         LoggedResponseWrapper w = new LoggedResponseWrapper(Mocks.mockResponse());
         assertTrue("output stream is present", w.getOutputStream() != null);
         assertTrue("output stream is proper class", w.getOutputStream().getClass().equals(LoggedOutputStream.class));
     }
 
     @Test
-    public void outputStreamWriteTest() throws IOException {
+    public void outputStreamOutputTest() throws IOException {
         byte[] test_bytes = {1, 21, 66};
         LoggedResponseWrapper w = new LoggedResponseWrapper(Mocks.mockResponse());
+        assertArrayEquals(LoggedResponseWrapper.LOGGED_NOTHING, w.logged());
         for (byte b : test_bytes) w.getOutputStream().write(b);
+        w.flushBuffer();
         assertArrayEquals(test_bytes, w.logged());
     }
 
     @Test
-    public void printWriterPresentTest() throws IOException {
+    public void printWriterClassTest() throws IOException {
         LoggedResponseWrapper w = new LoggedResponseWrapper(Mocks.mockResponse());
         assertTrue("print writer is present", w.getWriter() != null);
         assertTrue("print writer is proper class", w.getWriter().getClass().equals(PrintWriter.class));
     }
 
     @Test
-    public void printWriterWriteTest() throws IOException {
+    public void printWriterOutputTest() throws IOException {
         String test_string = "What would Brian Boitano do?";
         LoggedResponseWrapper w = new LoggedResponseWrapper(Mocks.mockResponse());
+        assertArrayEquals(LoggedResponseWrapper.LOGGED_NOTHING, w.logged());
         w.getWriter().print(test_string);
+        w.flushBuffer();
         assertArrayEquals(test_string.getBytes(), w.logged());
+    }
+
+    @Test
+    public void printWriterWithoutFlushTest() throws IOException {
+        String test_string = "I bet he'd kick an ass or two";
+        LoggedResponseWrapper w = new LoggedResponseWrapper(Mocks.mockResponse());
+        w.getWriter().print(test_string);
+        assertTrue("nothing logged", w.logged().length == 0);
     }
 
 }
