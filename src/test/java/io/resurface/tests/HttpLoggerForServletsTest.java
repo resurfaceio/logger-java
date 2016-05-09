@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
 public class HttpLoggerForServletsTest {
 
     @Test
-    public void logsHtmlCallTest() throws IOException, ServletException {
+    public void logsHtmlTest() throws IOException, ServletException {
         HttpLogger logger = HttpLoggerFactory.get().disable().tracingStart();
         try {
             HttpLoggerForServlets filter = new HttpLoggerForServlets();
@@ -29,6 +29,7 @@ public class HttpLoggerForServletsTest {
             String message = logger.tracingHistory().get(0);
             assertTrue("has category", message.contains("{\"category\":\"http_request\","));
             assertTrue("has url", message.contains("\"url\":\"" + MOCK_URL + "\"}"));
+            assertTrue("omits body", !message.contains("\"body\""));
             message = logger.tracingHistory().get(1);
             assertTrue("has category", message.contains("{\"category\":\"http_response\","));
             assertTrue("has code", message.contains("\"code\":404,"));
@@ -39,7 +40,7 @@ public class HttpLoggerForServletsTest {
     }
 
     @Test
-    public void logsJsonCallTest() throws IOException, ServletException {
+    public void logsJsonTest() throws IOException, ServletException {
         HttpLogger logger = HttpLoggerFactory.get().disable().tracingStart();
         try {
             HttpLoggerForServlets filter = new HttpLoggerForServlets();
@@ -49,6 +50,7 @@ public class HttpLoggerForServletsTest {
             String message = logger.tracingHistory().get(0);
             assertTrue("has category", message.contains("{\"category\":\"http_request\","));
             assertTrue("has url", message.contains("\"url\":\"" + MOCK_URL + "\"}"));
+            assertTrue("omits body", !message.contains("\"body\""));
             message = logger.tracingHistory().get(1);
             assertTrue("has category", message.contains("{\"category\":\"http_response\","));
             assertTrue("has code", message.contains("\"code\":500,"));
@@ -59,7 +61,28 @@ public class HttpLoggerForServletsTest {
     }
 
     @Test
-    public void skipsLoggingForUnmatchedCallTest() throws IOException, ServletException {
+    public void logsJsonPostTest() throws IOException, ServletException {
+        HttpLogger logger = HttpLoggerFactory.get().disable().tracingStart();
+        try {
+            HttpLoggerForServlets filter = new HttpLoggerForServlets();
+            filter.init(null);
+            filter.doFilter(Mocks.mockPostRequest(), Mocks.mockResponse(), Mocks.mockJsonApp());
+            assertTrue("tracing history is 2", logger.tracingHistory().size() == 2);
+            String message = logger.tracingHistory().get(0);
+            assertTrue("has category", message.contains("{\"category\":\"http_request\","));
+            assertTrue("has url", message.contains("\"url\":\"" + MOCK_URL + "\","));
+            assertTrue("has body", message.contains("\"body\":\"" + MOCK_JSON_ESCAPED + "\"}"));
+            message = logger.tracingHistory().get(1);
+            assertTrue("has category", message.contains("{\"category\":\"http_response\","));
+            assertTrue("has code", message.contains("\"code\":500,"));
+            assertTrue("has body", message.contains("\"body\":\"" + MOCK_JSON_ESCAPED + "\"}"));
+        } finally {
+            logger.tracingStop().enable();
+        }
+    }
+
+    @Test
+    public void skipsLoggingTest() throws IOException, ServletException {
         HttpLogger logger = HttpLoggerFactory.get().disable().tracingStart();
         try {
             HttpLoggerForServlets filter = new HttpLoggerForServlets();

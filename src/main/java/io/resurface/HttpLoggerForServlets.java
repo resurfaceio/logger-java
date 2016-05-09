@@ -31,31 +31,54 @@ public class HttpLoggerForServlets implements Filter {
     /**
      * Called when request/response passes through the filter chain.
      */
-    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
-            throws IOException, ServletException {
-        if (!logger.isActive()) {
-            chain.doFilter(req, res);
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException
+    {
+        if (logger.isActive()) {
+            process((HttpServletRequest) request, (HttpServletResponse) response, chain);
         } else {
-            HttpServletRequest request = (HttpServletRequest) req;
-            HttpServletResponse response = (HttpServletResponse) res;
-            LoggedResponseWrapper response_wrapper = new LoggedResponseWrapper(response);
-            chain.doFilter(request, response_wrapper);
-            if (response.getStatus() != 304) {
-                String response_type = response.getContentType();
-                String response_encoding = response.getCharacterEncoding();
-                if ((response_type != null) && (response_encoding != null)) {
-                    boolean is_html = response_type.startsWith("text/html");
-                    boolean is_json = response_type.startsWith("application/json");
-                    boolean is_soap = response_type.startsWith("application/soap+xml");
-                    boolean is_xml1 = response_type.startsWith("application/xml");
-                    boolean is_xml2 = response_type.startsWith("text/xml");
-                    if (is_html || is_json || is_soap || is_xml1 || is_xml2) {
-                        logger.logRequest(request, null);
-                        logger.logResponse(response, new String(response_wrapper.logged(), response_encoding));
-                    }
+            chain.doFilter(request, response);
+        }
+    }
+
+    /**
+     * Called when an active logger passes a request/response through the filter chain.
+     */
+    protected void process(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws IOException, ServletException
+    {
+        // Construct request wrapper for string content types
+        LoggedRequestWrapper request_wrapper = null;
+        String request_encoding = request.getCharacterEncoding();
+        if ((request_encoding != null) && isStringContentType(request.getContentType())) {
+            request_wrapper = new LoggedRequestWrapper(request);
+        }
+
+        // Pass request & response wrappers through filter chain
+        LoggedResponseWrapper response_wrapper = new LoggedResponseWrapper(response);
+        chain.doFilter(request_wrapper != null ? request_wrapper : request, response_wrapper);
+        response_wrapper.flushBuffer();
+        if (response.getStatus() != 304) {
+            String response_encoding = response.getCharacterEncoding();
+            if ((response_encoding != null) && isStringContentType(response.getContentType())) {
+                if (request_wrapper == null) {
+                    logger.logRequest(request);
+                } else {
+                    logger.logRequest(request, new String(request_wrapper.logged(), request_encoding));
                 }
+                logger.logResponse(response, new String(response_wrapper.logged(), response_encoding));
             }
         }
+    }
+
+    /**
+     * Returns true if content type indicates string data.
+     */
+    protected boolean isStringContentType(String content_type) {
+        return content_type != null && (content_type.startsWith("application/x-www-form-urlencoded")
+                || content_type.startsWith("application/json") || content_type.startsWith("application/soap+xml")
+                || content_type.startsWith("application/xml") || content_type.startsWith("text/html")
+                || content_type.startsWith("text/plain") || content_type.startsWith("text/xml"));
     }
 
     protected FilterConfig config;

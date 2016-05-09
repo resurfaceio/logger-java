@@ -10,6 +10,7 @@ import io.resurface.JsonMessage;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Provides mock objects used for testing.
@@ -85,6 +86,14 @@ public class Mocks {
             response.setContentType("text/html; charset=utf-8");
             response.setStatus(304);
         };
+    }
+
+    static HttpServletRequest mockPostRequest() throws UnsupportedEncodingException {
+        HttpServletRequestImpl r = new HttpServletRequestImpl(MOCK_JSON.getBytes());
+        r.setCharacterEncoding("UTF-8");
+        r.setContentType("application/json");
+        r.setRequestURL(MOCK_URL);
+        return r;
     }
 
     static HttpServletRequest mockRequest() {
