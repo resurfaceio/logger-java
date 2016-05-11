@@ -66,7 +66,7 @@ public class HttpLoggerForServletsTest {
         try {
             HttpLoggerForServlets filter = new HttpLoggerForServlets();
             filter.init(null);
-            filter.doFilter(Mocks.mockPostRequest(), Mocks.mockResponse(), Mocks.mockJsonApp());
+            filter.doFilter(Mocks.mockRequestWithBody(), Mocks.mockResponse(), Mocks.mockJsonApp());
             assertTrue("tracing history is 2", logger.tracingHistory().size() == 2);
             String message = logger.tracingHistory().get(0);
             assertTrue("has category", message.contains("{\"category\":\"http_request\","));

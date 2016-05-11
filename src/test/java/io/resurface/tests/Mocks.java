@@ -35,7 +35,6 @@ public class Mocks {
     static FilterChain mockCustomApp() {
         return (req, res) -> {
             HttpServletResponse response = (HttpServletResponse) res;
-            response.setCharacterEncoding("UTF-8");
             response.setContentType("application/super-troopers");
             response.setStatus(999);
         };
@@ -88,16 +87,16 @@ public class Mocks {
         };
     }
 
-    static HttpServletRequest mockPostRequest() throws UnsupportedEncodingException {
-        HttpServletRequestImpl r = new HttpServletRequestImpl(MOCK_JSON.getBytes());
-        r.setCharacterEncoding("UTF-8");
-        r.setContentType("application/json");
+    static HttpServletRequest mockRequest() {
+        HttpServletRequestImpl r = new HttpServletRequestImpl();
         r.setRequestURL(MOCK_URL);
         return r;
     }
 
-    static HttpServletRequest mockRequest() {
-        HttpServletRequestImpl r = new HttpServletRequestImpl();
+    static HttpServletRequest mockRequestWithBody() throws UnsupportedEncodingException {
+        HttpServletRequestImpl r = new HttpServletRequestImpl(MOCK_JSON.getBytes());
+        r.setCharacterEncoding("UTF-8");
+        r.setContentType("application/json");
         r.setRequestURL(MOCK_URL);
         return r;
     }
