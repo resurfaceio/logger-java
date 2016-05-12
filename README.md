@@ -98,7 +98,7 @@ responses for content types matching a predefined list (including 'text/html' an
     res.setCharacterEncoding("UTF-8");
     res.setContentType("text/html");
     res.setStatus(200);
-    logger.logRequest(req);                                    // log the request
+    logger.logRequest(req);                                    // log the request  (no body)
     logger.logRequest(req, "...");                             // log the request  (with body)
-    logger.logResponse(res);                                   // log the response
+    logger.logResponse(res);                                   // log the response (no body)
     logger.logResponse(res, "...");                            // log the response (with body)
