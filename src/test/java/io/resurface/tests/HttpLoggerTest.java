@@ -56,6 +56,17 @@ public class HttpLoggerTest {
     }
 
     @Test
+    public void formatRequestWithEmptyBodyTest() {
+        String s = new HttpLogger().formatRequest(new StringBuilder(), MOCK_NOW, mockRequest(), "").toString();
+        assertTrue("has category", s.contains("{\"category\":\"http_request\","));
+        assertTrue("has agent", s.contains("\"agent\":\"" + HttpLogger.AGENT + "\","));
+        assertTrue("has version", s.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
+        assertTrue("has now", s.contains("\"now\":" + MOCK_NOW + ","));
+        assertTrue("has url", s.contains("\"url\":\"" + MOCK_URL + "\","));
+        assertTrue("has body", s.contains("\"body\":\"\"}"));
+    }
+
+    @Test
     public void formatResponseTest() {
         String s = new HttpLogger().formatResponse(new StringBuilder(), MOCK_NOW, mockResponse(), null).toString();
         assertTrue("has category", s.contains("{\"category\":\"http_response\","));
@@ -75,6 +86,17 @@ public class HttpLoggerTest {
         assertTrue("has now", s.contains("\"now\":" + MOCK_NOW + ","));
         assertTrue("has code", s.contains("\"code\":200,"));
         assertTrue("has body", s.contains("\"body\":\"" + MOCK_HTML_ESCAPED + "\"}"));
+    }
+
+    @Test
+    public void formatResponseWithEmptyBodyTest() {
+        String s = new HttpLogger().formatResponse(new StringBuilder(), MOCK_NOW, mockResponse(), "").toString();
+        assertTrue("has category", s.contains("{\"category\":\"http_response\","));
+        assertTrue("has agent", s.contains("\"agent\":\"" + HttpLogger.AGENT + "\","));
+        assertTrue("has version", s.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
+        assertTrue("has now", s.contains("\"now\":" + MOCK_NOW + ","));
+        assertTrue("has code", s.contains("\"code\":200,"));
+        assertTrue("has body", s.contains("\"body\":\"\"}"));
     }
 
     @Test
