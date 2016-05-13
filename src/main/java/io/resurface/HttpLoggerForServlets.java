@@ -74,11 +74,10 @@ public class HttpLoggerForServlets implements Filter {
     /**
      * Returns true if content type indicates string data.
      */
-    protected boolean isStringContentType(String content_type) {
-        return content_type != null && (content_type.startsWith("application/x-www-form-urlencoded")
-                || content_type.startsWith("application/json") || content_type.startsWith("application/soap+xml")
-                || content_type.startsWith("application/xml") || content_type.startsWith("text/html")
-                || content_type.startsWith("text/plain") || content_type.startsWith("text/xml"));
+    protected boolean isStringContentType(String s) {
+        return s != null && (s.startsWith("text/html") || s.startsWith("text/plain") || s.startsWith("text/xml")
+                || s.startsWith("application/json") || s.startsWith("application/soap+xml")
+                || s.startsWith("application/xml") || s.startsWith("application/x-www-form-urlencoded"));
     }
 
     protected FilterConfig config;
