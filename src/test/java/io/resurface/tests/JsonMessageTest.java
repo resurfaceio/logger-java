@@ -14,24 +14,29 @@ import static org.junit.Assert.assertTrue;
 public class JsonMessageTest {
 
     @Test
-    public void appendTest() {
+    public void appendNumbersTest() {
+        assertEquals("\"name\":-1", append(new StringBuilder(), "name", -1).toString());
         assertEquals("\"name1\":123", append(new StringBuilder(), "name1", 123).toString());
-        assertEquals("\"1name1\":1455908665227", append(new StringBuilder(), "1name1", 1455908665227L).toString());
-        assertEquals("\"name2\":\"value1\"", append(new StringBuilder(), "name2", "value1").toString());
-        assertEquals("\"sand_castle\":\"the cow says \\\"moo\"", append(new StringBuilder(), "sand_castle", "the cow says \"moo").toString());
-        assertEquals("\"Sand-Castle\":\"the cow says \\\"moo\\\"\"", append(new StringBuilder(), "Sand-Castle", "the cow says \"moo\"").toString());
+        assertEquals("{\"1_name1\":1455908665227", append(new StringBuilder("{"), "1_name1", 1455908665227L).toString());
+    }
+
+    @Test
+    public void appendStringsTest() {
+        assertEquals("!\"name-2\":\"value1\"", append(new StringBuilder("!"), "name-2", "value1").toString());
+        assertEquals("\"s\":\"the cow says \\\"moo\"", append(new StringBuilder(), "s", "the cow says \"moo").toString());
+        assertEquals("\"1\":\"the cow says \\\"moo\\\"\"", append(new StringBuilder(), "1", "the cow says \"moo\"").toString());
     }
 
     @Test
     public void escapeBackslashTest() {
         assertEquals("\\\\the cow says moo", escape(new StringBuilder(), "\\the cow says moo").toString());
         assertEquals("the cow says moo\\\\", escape(new StringBuilder(), "the cow says moo\\").toString());
-        assertEquals("the cow \\\\says moo", escape(new StringBuilder(), "the cow \\says moo").toString());
+        assertEquals("{the cow \\\\says moo", escape(new StringBuilder("{"), "the cow \\says moo").toString());
     }
 
     @Test
     public void escapeBackspaceTest() {
-        assertEquals("\\bthe cow says moo", escape(new StringBuilder(), "\bthe cow says moo").toString());
+        assertEquals("{\\bthe cow says moo", escape(new StringBuilder("{"), "\bthe cow says moo").toString());
         assertEquals("the cow\\b says moo", escape(new StringBuilder(), "the cow\b says moo").toString());
         assertEquals("the cow says moo\\b", escape(new StringBuilder(), "the cow says moo\b").toString());
     }
