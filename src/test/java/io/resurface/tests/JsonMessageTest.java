@@ -22,6 +22,11 @@ public class JsonMessageTest {
 
     @Test
     public void appendStringsTest() {
+        assertEquals("\"A\":\"\"", append(new StringBuilder(), "A", "").toString());
+        assertEquals("\"B\":\" \"", append(new StringBuilder(), "B", " ").toString());
+        assertEquals("\"C\":\"   \"", append(new StringBuilder(), "C", "   ").toString());
+        assertEquals("\"D\":\"\\t\"", append(new StringBuilder(), "D", "\t").toString());
+        assertEquals("\"E\":\"\\t\\t \"", append(new StringBuilder(), "E", "\t\t ").toString());
         assertEquals("!\"name-2\":\"value1\"", append(new StringBuilder("!"), "name-2", "value1").toString());
         assertEquals("\"s\":\"the cow says \\\"moo\"", append(new StringBuilder(), "s", "the cow says \"moo").toString());
         assertEquals("\"1\":\"the cow says \\\"moo\\\"\"", append(new StringBuilder(), "1", "the cow says \"moo\"").toString());
