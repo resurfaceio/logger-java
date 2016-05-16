@@ -138,7 +138,7 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public String getMethod() {
-        return null;
+        return method;
     }
 
     @Override
@@ -349,6 +349,10 @@ public class HttpServletRequestImpl implements HttpServletRequest {
         this.contentType = contentType;
     }
 
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
     public void setRequestURL(String requestURL) {
         this.requestURL = requestURL;
     }
@@ -367,6 +371,7 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     private String characterEncoding;
     private String contentType;
+    private String method;
     private String requestURL;
     private final ServletInputStream stream;
 

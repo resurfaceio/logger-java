@@ -89,6 +89,7 @@ public class Mocks {
 
     static HttpServletRequest mockRequest() {
         HttpServletRequestImpl r = new HttpServletRequestImpl();
+        r.setMethod("GET");
         r.setRequestURL(MOCK_URL);
         return r;
     }
@@ -97,6 +98,7 @@ public class Mocks {
         HttpServletRequestImpl r = new HttpServletRequestImpl(MOCK_JSON.getBytes());
         r.setCharacterEncoding("UTF-8");
         r.setContentType("application/json");
+        r.setMethod("POST");
         r.setRequestURL(MOCK_URL);
         return r;
     }

@@ -28,6 +28,7 @@ public class HttpLoggerForServletsTest {
             assertTrue("tracing history is 2", logger.tracingHistory().size() == 2);
             String message = logger.tracingHistory().get(0);
             assertTrue("has category", message.contains("{\"category\":\"http_request\","));
+            assertTrue("has method", message.contains("\"method\":\"GET\","));
             assertTrue("has url", message.contains("\"url\":\"" + MOCK_URL + "\"}"));
             assertTrue("omits body", !message.contains("\"body\""));
             message = logger.tracingHistory().get(1);
@@ -49,6 +50,7 @@ public class HttpLoggerForServletsTest {
             assertTrue("tracing history is 2", logger.tracingHistory().size() == 2);
             String message = logger.tracingHistory().get(0);
             assertTrue("has category", message.contains("{\"category\":\"http_request\","));
+            assertTrue("has method", message.contains("\"method\":\"GET\","));
             assertTrue("has url", message.contains("\"url\":\"" + MOCK_URL + "\"}"));
             assertTrue("omits body", !message.contains("\"body\""));
             message = logger.tracingHistory().get(1);
@@ -70,6 +72,7 @@ public class HttpLoggerForServletsTest {
             assertTrue("tracing history is 2", logger.tracingHistory().size() == 2);
             String message = logger.tracingHistory().get(0);
             assertTrue("has category", message.contains("{\"category\":\"http_request\","));
+            assertTrue("has method", message.contains("\"method\":\"POST\","));
             assertTrue("has url", message.contains("\"url\":\"" + MOCK_URL + "\","));
             assertTrue("has body", message.contains("\"body\":\"" + MOCK_JSON_ESCAPED + "\"}"));
             message = logger.tracingHistory().get(1);

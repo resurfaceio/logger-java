@@ -33,6 +33,15 @@ public class HttpServletRequestImplTest {
     }
 
     @Test
+    public void useMethod() {
+        String val = "!METHOD!";
+        HttpServletRequestImpl impl = new HttpServletRequestImpl();
+        assertTrue("null by default", impl.getMethod() == null);
+        impl.setMethod(val);
+        assertTrue("value set ok", impl.getMethod().equals(val));
+    }
+
+    @Test
     public void useRequestURL() {
         String val = "http://resurface.io/yadda";
         HttpServletRequestImpl impl = new HttpServletRequestImpl();

@@ -59,6 +59,7 @@ public class HttpLogger extends UsageLogger<HttpLogger> {
      */
     public StringBuilder formatRequest(StringBuilder json, long now, HttpServletRequest request, String body) {
         start(json, "http_request", agent(), version(), now).append(',');
+        append(json, "method", request.getMethod()).append(',');
         append(json, "url", request.getRequestURL());
         if (body != null) {
             json.append(',');
