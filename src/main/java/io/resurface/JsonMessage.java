@@ -8,7 +8,7 @@ package io.resurface;
 public class JsonMessage {
 
     /**
-     * Adds name/value pair to message. (character sequence)
+     * Adds name/value pair to message.
      */
     public static StringBuilder append(StringBuilder json, CharSequence key, CharSequence value) {
         json.append("\"").append(key.toString()).append("\":\"");
@@ -18,16 +18,9 @@ public class JsonMessage {
     }
 
     /**
-     * Adds name/value pair to message. (integer)
+     * Adds name/value pair to message.
      */
-    public static StringBuilder append(StringBuilder json, CharSequence key, Integer value) {
-        return json.append("\"").append(key.toString()).append("\":").append(value);
-    }
-
-    /**
-     * Adds name/value pair to message. (long)
-     */
-    public static StringBuilder append(StringBuilder json, CharSequence key, Long value) {
+    public static StringBuilder append(StringBuilder json, CharSequence key, long value) {
         return json.append("\"").append(key.toString()).append("\":").append(value);
     }
 
@@ -86,7 +79,8 @@ public class JsonMessage {
      * Starts message payload including the beginning brace.
      */
     public static StringBuilder start(StringBuilder json, CharSequence category, CharSequence agent,
-                                      CharSequence version, long now) {
+                                      CharSequence version, long now)
+    {
         return json.append("{\"category\":\"")
                 .append(category)
                 .append("\",\"agent\":\"")
