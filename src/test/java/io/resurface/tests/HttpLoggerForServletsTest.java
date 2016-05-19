@@ -29,11 +29,13 @@ public class HttpLoggerForServletsTest {
             String message = logger.tracingHistory().get(0);
             assertTrue("has category", message.contains("{\"category\":\"http_request\","));
             assertTrue("has method", message.contains("\"method\":\"GET\","));
-            assertTrue("has url", message.contains("\"url\":\"" + MOCK_URL + "\"}"));
+            assertTrue("has url", message.contains("\"url\":\"" + MOCK_URL + "\","));
+            assertTrue("has headers", message.contains("\"headers\":[]}"));
             assertTrue("omits body", !message.contains("\"body\""));
             message = logger.tracingHistory().get(1);
             assertTrue("has category", message.contains("{\"category\":\"http_response\","));
             assertTrue("has code", message.contains("\"code\":404,"));
+            assertTrue("has headers", message.contains("\"headers\":[],"));
             assertTrue("has body", message.contains("\"body\":\"" + MOCK_HTML_ESCAPED + "\"}"));
         } finally {
             logger.tracingStop().enable();
@@ -51,11 +53,13 @@ public class HttpLoggerForServletsTest {
             String message = logger.tracingHistory().get(0);
             assertTrue("has category", message.contains("{\"category\":\"http_request\","));
             assertTrue("has method", message.contains("\"method\":\"GET\","));
-            assertTrue("has url", message.contains("\"url\":\"" + MOCK_URL + "\"}"));
+            assertTrue("has url", message.contains("\"url\":\"" + MOCK_URL + "\","));
+            assertTrue("has headers", message.contains("\"headers\":[]}"));
             assertTrue("omits body", !message.contains("\"body\""));
             message = logger.tracingHistory().get(1);
             assertTrue("has category", message.contains("{\"category\":\"http_response\","));
             assertTrue("has code", message.contains("\"code\":500,"));
+            assertTrue("has headers", message.contains("\"headers\":[],"));
             assertTrue("has body", message.contains("\"body\":\"" + MOCK_JSON_ESCAPED + "\"}"));
         } finally {
             logger.tracingStop().enable();
@@ -74,10 +78,12 @@ public class HttpLoggerForServletsTest {
             assertTrue("has category", message.contains("{\"category\":\"http_request\","));
             assertTrue("has method", message.contains("\"method\":\"POST\","));
             assertTrue("has url", message.contains("\"url\":\"" + MOCK_URL + "\","));
+            assertTrue("has headers", message.contains("\"headers\":[],"));
             assertTrue("has body", message.contains("\"body\":\"" + MOCK_JSON_ESCAPED + "\"}"));
             message = logger.tracingHistory().get(1);
             assertTrue("has category", message.contains("{\"category\":\"http_response\","));
             assertTrue("has code", message.contains("\"code\":500,"));
+            assertTrue("has headers", message.contains("\"headers\":[],"));
             assertTrue("has body", message.contains("\"body\":\"" + MOCK_JSON_ESCAPED + "\"}"));
         } finally {
             logger.tracingStop().enable();

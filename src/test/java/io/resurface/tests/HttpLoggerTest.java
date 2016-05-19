@@ -41,7 +41,8 @@ public class HttpLoggerTest {
         assertTrue("has version", s.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
         assertTrue("has now", s.contains("\"now\":" + MOCK_NOW + ","));
         assertTrue("has method", s.contains("\"method\":\"GET\","));
-        assertTrue("has url", s.contains("\"url\":\"" + MOCK_URL + "\"}"));
+        assertTrue("has url", s.contains("\"url\":\"" + MOCK_URL + "\","));
+        assertTrue("has headers", s.contains("\"headers\":[]}"));
         assertTrue("omits body", !s.contains("\"body\""));
     }
 
@@ -54,6 +55,7 @@ public class HttpLoggerTest {
         assertTrue("has now", s.contains("\"now\":" + MOCK_NOW + ","));
         assertTrue("has method", s.contains("\"method\":\"GET\","));
         assertTrue("has url", s.contains("\"url\":\"" + MOCK_URL + "\","));
+        assertTrue("has headers", s.contains("\"headers\":[],"));
         assertTrue("has body", s.contains("\"body\":\"" + MOCK_JSON_ESCAPED + "\"}"));
     }
 
@@ -66,6 +68,7 @@ public class HttpLoggerTest {
         assertTrue("has now", s.contains("\"now\":" + MOCK_NOW + ","));
         assertTrue("has method", s.contains("\"method\":\"GET\","));
         assertTrue("has url", s.contains("\"url\":\"" + MOCK_URL + "\","));
+        assertTrue("has headers", s.contains("\"headers\":[],"));
         assertTrue("has body", s.contains("\"body\":\"\"}"));
     }
 
@@ -76,7 +79,8 @@ public class HttpLoggerTest {
         assertTrue("has agent", s.contains("\"agent\":\"" + HttpLogger.AGENT + "\","));
         assertTrue("has version", s.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
         assertTrue("has now", s.contains("\"now\":" + MOCK_NOW + ","));
-        assertTrue("has code", s.contains("\"code\":200}"));
+        assertTrue("has code", s.contains("\"code\":200,"));
+        assertTrue("has headers", s.contains("\"headers\":[]}"));
         assertTrue("omits body", !s.contains("\"body\""));
     }
 
@@ -88,6 +92,7 @@ public class HttpLoggerTest {
         assertTrue("has version", s.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
         assertTrue("has now", s.contains("\"now\":" + MOCK_NOW + ","));
         assertTrue("has code", s.contains("\"code\":200,"));
+        assertTrue("has headers", s.contains("\"headers\":[],"));
         assertTrue("has body", s.contains("\"body\":\"" + MOCK_HTML_ESCAPED + "\"}"));
     }
 
@@ -99,6 +104,7 @@ public class HttpLoggerTest {
         assertTrue("has version", s.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
         assertTrue("has now", s.contains("\"now\":" + MOCK_NOW + ","));
         assertTrue("has code", s.contains("\"code\":200,"));
+        assertTrue("has headers", s.contains("\"headers\":[],"));
         assertTrue("has body", s.contains("\"body\":\"\"}"));
     }
 

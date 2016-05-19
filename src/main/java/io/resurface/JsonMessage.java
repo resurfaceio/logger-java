@@ -8,20 +8,25 @@ package io.resurface;
 public class JsonMessage {
 
     /**
-     * Adds name/value pair to message.
+     * Adds quote-delimited string to message.
      */
-    public static StringBuilder append(StringBuilder json, CharSequence key, CharSequence value) {
-        json.append("\"").append(key.toString()).append("\":\"");
-        escape(json, value);
-        json.append("\"");
-        return json;
+    public static StringBuilder append(StringBuilder json, CharSequence value) {
+        return json.append("\"").append(value.toString()).append("\"");
     }
 
     /**
-     * Adds name/value pair to message.
+     * Adds key/value pair to message.
+     */
+    public static StringBuilder append(StringBuilder json, CharSequence key, CharSequence value) {
+        append(json, key).append(":\"");
+        return escape(json, value).append("\"");
+    }
+
+    /**
+     * Adds key/value pair to message.
      */
     public static StringBuilder append(StringBuilder json, CharSequence key, long value) {
-        return json.append("\"").append(key.toString()).append("\":").append(value);
+        return append(json, key).append(':').append(value);
     }
 
     /**

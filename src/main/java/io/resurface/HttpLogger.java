@@ -60,7 +60,10 @@ public class HttpLogger extends UsageLogger<HttpLogger> {
     public StringBuilder formatRequest(StringBuilder json, long now, HttpServletRequest request, String body) {
         start(json, "http_request", agent(), version(), now).append(',');
         append(json, "method", request.getMethod()).append(',');
-        append(json, "url", request.getRequestURL());
+        append(json, "url", request.getRequestURL()).append(',');
+        append(json, "headers").append(":[");
+        // add the headers here
+        json.append("]");
         if (body != null) {
             json.append(',');
             append(json, "body", body);
@@ -73,7 +76,10 @@ public class HttpLogger extends UsageLogger<HttpLogger> {
      */
     public StringBuilder formatResponse(StringBuilder json, long now, HttpServletResponse response, String body) {
         start(json, "http_response", agent(), version(), now).append(',');
-        append(json, "code", response.getStatus());
+        append(json, "code", response.getStatus()).append(',');
+        append(json, "headers").append(":[");
+        // add the headers here
+        json.append("]");
         if (body != null) {
             json.append(',');
             append(json, "body", body);
