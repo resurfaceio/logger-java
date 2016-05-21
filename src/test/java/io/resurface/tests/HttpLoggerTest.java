@@ -5,7 +5,7 @@ package io.resurface.tests;
 import io.resurface.HttpLogger;
 import org.junit.Test;
 
-import static io.resurface.tests.Mocks.*;
+import static io.resurface.tests.Helper.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -26,86 +26,93 @@ public class HttpLoggerTest {
 
     @Test
     public void formatEchoTest() {
-        String s = new HttpLogger().formatEcho(new StringBuilder(), 12345).toString();
-        assertTrue("has category", s.contains("{\"category\":\"echo\","));
-        assertTrue("has agent", s.contains("\"agent\":\"" + HttpLogger.AGENT + "\","));
-        assertTrue("has version", s.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
-        assertTrue("has now", s.contains("\"now\":12345}"));
+        String json = new HttpLogger().formatEcho(new StringBuilder(), 12345).toString();
+        assertTrue("json is valid", parseable(json));
+        assertTrue("has agent", json.contains("\"agent\":\"" + HttpLogger.AGENT + "\""));
+        assertTrue("has category", json.contains("\"category\":\"echo\""));
+        assertTrue("has now", json.contains("\"now\":12345"));
+        assertTrue("has version", json.contains("\"version\":\"" + HttpLogger.version_lookup() + "\""));
     }
 
     @Test
     public void formatRequestTest() {
-        String s = new HttpLogger().formatRequest(new StringBuilder(), MOCK_NOW, mockRequest(), null).toString();
-        assertTrue("has category", s.contains("{\"category\":\"http_request\","));
-        assertTrue("has agent", s.contains("\"agent\":\"" + HttpLogger.AGENT + "\","));
-        assertTrue("has version", s.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
-        assertTrue("has now", s.contains("\"now\":" + MOCK_NOW + ","));
-        assertTrue("has method", s.contains("\"method\":\"GET\","));
-        assertTrue("has url", s.contains("\"url\":\"" + MOCK_URL + "\","));
-        assertTrue("has headers", s.contains("\"headers\":[]}"));
-        assertTrue("omits body", !s.contains("\"body\""));
+        String json = new HttpLogger().formatRequest(new StringBuilder(), MOCK_NOW, mockRequest(), null).toString();
+        assertTrue("json is valid", parseable(json));
+        assertTrue("has agent", json.contains("\"agent\":\"" + HttpLogger.AGENT + "\""));
+        assertTrue("has body", !json.contains("\"body\""));
+        assertTrue("has category", json.contains("\"category\":\"http_request\""));
+        assertTrue("has headers", json.contains("\"headers\":[]"));
+        assertTrue("has method", json.contains("\"method\":\"GET\""));
+        assertTrue("has now", json.contains("\"now\":" + MOCK_NOW));
+        assertTrue("has url", json.contains("\"url\":\"" + MOCK_URL + "\""));
+        assertTrue("has version", json.contains("\"version\":\"" + HttpLogger.version_lookup() + "\""));
     }
 
     @Test
     public void formatRequestWithBodyTest() {
-        String s = new HttpLogger().formatRequest(new StringBuilder(), MOCK_NOW, mockRequest(), MOCK_JSON).toString();
-        assertTrue("has category", s.contains("{\"category\":\"http_request\","));
-        assertTrue("has agent", s.contains("\"agent\":\"" + HttpLogger.AGENT + "\","));
-        assertTrue("has version", s.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
-        assertTrue("has now", s.contains("\"now\":" + MOCK_NOW + ","));
-        assertTrue("has method", s.contains("\"method\":\"GET\","));
-        assertTrue("has url", s.contains("\"url\":\"" + MOCK_URL + "\","));
-        assertTrue("has headers", s.contains("\"headers\":[],"));
-        assertTrue("has body", s.contains("\"body\":\"" + MOCK_JSON_ESCAPED + "\"}"));
+        String json = new HttpLogger().formatRequest(new StringBuilder(), MOCK_NOW, mockRequest(), MOCK_JSON).toString();
+        assertTrue("json is valid", parseable(json));
+        assertTrue("has agent", json.contains("\"agent\":\"" + HttpLogger.AGENT + "\""));
+        assertTrue("has body", json.contains("\"body\":\"" + MOCK_JSON_ESCAPED + "\""));
+        assertTrue("has category", json.contains("\"category\":\"http_request\""));
+        assertTrue("has headers", json.contains("\"headers\":[]"));
+        assertTrue("has method", json.contains("\"method\":\"GET\""));
+        assertTrue("has now", json.contains("\"now\":" + MOCK_NOW));
+        assertTrue("has url", json.contains("\"url\":\"" + MOCK_URL + "\""));
+        assertTrue("has version", json.contains("\"version\":\"" + HttpLogger.version_lookup() + "\""));
     }
 
     @Test
     public void formatRequestWithEmptyBodyTest() {
-        String s = new HttpLogger().formatRequest(new StringBuilder(), MOCK_NOW, mockRequest(), "").toString();
-        assertTrue("has category", s.contains("{\"category\":\"http_request\","));
-        assertTrue("has agent", s.contains("\"agent\":\"" + HttpLogger.AGENT + "\","));
-        assertTrue("has version", s.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
-        assertTrue("has now", s.contains("\"now\":" + MOCK_NOW + ","));
-        assertTrue("has method", s.contains("\"method\":\"GET\","));
-        assertTrue("has url", s.contains("\"url\":\"" + MOCK_URL + "\","));
-        assertTrue("has headers", s.contains("\"headers\":[],"));
-        assertTrue("has body", s.contains("\"body\":\"\"}"));
+        String json = new HttpLogger().formatRequest(new StringBuilder(), MOCK_NOW, mockRequest(), "").toString();
+        assertTrue("json is valid", parseable(json));
+        assertTrue("has agent", json.contains("\"agent\":\"" + HttpLogger.AGENT + "\""));
+        assertTrue("has body", json.contains("\"body\":\"\""));
+        assertTrue("has category", json.contains("\"category\":\"http_request\""));
+        assertTrue("has headers", json.contains("\"headers\":[]"));
+        assertTrue("has method", json.contains("\"method\":\"GET\""));
+        assertTrue("has now", json.contains("\"now\":" + MOCK_NOW));
+        assertTrue("has url", json.contains("\"url\":\"" + MOCK_URL + "\""));
+        assertTrue("has version", json.contains("\"version\":\"" + HttpLogger.version_lookup() + "\""));
     }
 
     @Test
     public void formatResponseTest() {
-        String s = new HttpLogger().formatResponse(new StringBuilder(), MOCK_NOW, mockResponse(), null).toString();
-        assertTrue("has category", s.contains("{\"category\":\"http_response\","));
-        assertTrue("has agent", s.contains("\"agent\":\"" + HttpLogger.AGENT + "\","));
-        assertTrue("has version", s.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
-        assertTrue("has now", s.contains("\"now\":" + MOCK_NOW + ","));
-        assertTrue("has code", s.contains("\"code\":200,"));
-        assertTrue("has headers", s.contains("\"headers\":[]}"));
-        assertTrue("omits body", !s.contains("\"body\""));
+        String json = new HttpLogger().formatResponse(new StringBuilder(), MOCK_NOW, mockResponse(), null).toString();
+        assertTrue("json is valid", parseable(json));
+        assertTrue("has agent", json.contains("\"agent\":\"" + HttpLogger.AGENT + "\""));
+        assertTrue("has body", !json.contains("\"body\""));
+        assertTrue("has category", json.contains("\"category\":\"http_response\""));
+        assertTrue("has code", json.contains("\"code\":200"));
+        assertTrue("has headers", json.contains("\"headers\":[]"));
+        assertTrue("has now", json.contains("\"now\":" + MOCK_NOW));
+        assertTrue("has version", json.contains("\"version\":\"" + HttpLogger.version_lookup() + "\""));
     }
 
     @Test
     public void formatResponseWithBodyTest() {
-        String s = new HttpLogger().formatResponse(new StringBuilder(), MOCK_NOW, mockResponse(), MOCK_HTML).toString();
-        assertTrue("has category", s.contains("{\"category\":\"http_response\","));
-        assertTrue("has agent", s.contains("\"agent\":\"" + HttpLogger.AGENT + "\","));
-        assertTrue("has version", s.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
-        assertTrue("has now", s.contains("\"now\":" + MOCK_NOW + ","));
-        assertTrue("has code", s.contains("\"code\":200,"));
-        assertTrue("has headers", s.contains("\"headers\":[],"));
-        assertTrue("has body", s.contains("\"body\":\"" + MOCK_HTML_ESCAPED + "\"}"));
+        String json = new HttpLogger().formatResponse(new StringBuilder(), MOCK_NOW, mockResponse(), MOCK_HTML).toString();
+        assertTrue("json is valid", parseable(json));
+        assertTrue("has agent", json.contains("\"agent\":\"" + HttpLogger.AGENT + "\""));
+        assertTrue("has body", json.contains("\"body\":\"" + MOCK_HTML_ESCAPED + "\""));
+        assertTrue("has category", json.contains("\"category\":\"http_response\""));
+        assertTrue("has code", json.contains("\"code\":200"));
+        assertTrue("has headers", json.contains("\"headers\":[]"));
+        assertTrue("has now", json.contains("\"now\":" + MOCK_NOW));
+        assertTrue("has version", json.contains("\"version\":\"" + HttpLogger.version_lookup() + "\""));
     }
 
     @Test
     public void formatResponseWithEmptyBodyTest() {
-        String s = new HttpLogger().formatResponse(new StringBuilder(), MOCK_NOW, mockResponse(), "").toString();
-        assertTrue("has category", s.contains("{\"category\":\"http_response\","));
-        assertTrue("has agent", s.contains("\"agent\":\"" + HttpLogger.AGENT + "\","));
-        assertTrue("has version", s.contains("\"version\":\"" + HttpLogger.version_lookup() + "\","));
-        assertTrue("has now", s.contains("\"now\":" + MOCK_NOW + ","));
-        assertTrue("has code", s.contains("\"code\":200,"));
-        assertTrue("has headers", s.contains("\"headers\":[],"));
-        assertTrue("has body", s.contains("\"body\":\"\"}"));
+        String json = new HttpLogger().formatResponse(new StringBuilder(), MOCK_NOW, mockResponse(), "").toString();
+        assertTrue("json is valid", parseable(json));
+        assertTrue("has agent", json.contains("\"agent\":\"" + HttpLogger.AGENT + "\""));
+        assertTrue("has body", json.contains("\"body\":\"\""));
+        assertTrue("has category", json.contains("\"category\":\"http_response\""));
+        assertTrue("has code", json.contains("\"code\":200"));
+        assertTrue("has headers", json.contains("\"headers\":[]"));
+        assertTrue("has now", json.contains("\"now\":" + MOCK_NOW));
+        assertTrue("has version", json.contains("\"version\":\"" + HttpLogger.version_lookup() + "\""));
     }
 
     @Test

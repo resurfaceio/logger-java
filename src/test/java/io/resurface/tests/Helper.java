@@ -2,6 +2,7 @@
 
 package io.resurface.tests;
 
+import com.google.gson.Gson;
 import io.resurface.HttpLogger;
 import io.resurface.HttpServletRequestImpl;
 import io.resurface.HttpServletResponseImpl;
@@ -13,9 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 
 /**
- * Provides mock objects used for testing.
+ * Provides mock objects and utilities for testing.
  */
-public class Mocks {
+public class Helper {
 
     static final String MOCK_JSON = "{ \"hello\" : \"world\" }";
 
@@ -109,5 +110,17 @@ public class Mocks {
         r.setStatus(200);
         return r;
     }
+
+    static boolean parseable(String json) {
+        if (json == null || !json.startsWith("{") || !json.endsWith("}")) return false;
+        try {
+            parser.fromJson(json, Object.class);
+            return true;
+        } catch (com.google.gson.JsonSyntaxException ex) {
+            return false;
+        }
+    }
+
+    private static final Gson parser = new Gson();
 
 }
