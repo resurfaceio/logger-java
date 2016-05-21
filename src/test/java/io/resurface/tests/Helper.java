@@ -9,7 +9,6 @@ import io.resurface.HttpServletResponseImpl;
 import io.resurface.JsonMessage;
 
 import javax.servlet.FilterChain;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 
@@ -88,14 +87,14 @@ public class Helper {
         };
     }
 
-    static HttpServletRequest mockRequest() {
+    static HttpServletRequestImpl mockRequest() {
         HttpServletRequestImpl r = new HttpServletRequestImpl();
         r.setMethod("GET");
         r.setRequestURL(MOCK_URL);
         return r;
     }
 
-    static HttpServletRequest mockRequestWithBody() throws UnsupportedEncodingException {
+    static HttpServletRequestImpl mockRequestWithBody() throws UnsupportedEncodingException {
         HttpServletRequestImpl r = new HttpServletRequestImpl(MOCK_JSON.getBytes());
         r.setCharacterEncoding("UTF-8");
         r.setContentType("application/json");
@@ -104,7 +103,13 @@ public class Helper {
         return r;
     }
 
-    static HttpServletResponse mockResponse() {
+    static HttpServletRequestImpl mockRequestWithBodyAndHeaders() throws UnsupportedEncodingException {
+        HttpServletRequestImpl impl = mockRequestWithBody();
+        impl.setHeader("ABC", "123");
+        return impl;
+    }
+
+    static HttpServletResponseImpl mockResponse() {
         HttpServletResponseImpl r = new HttpServletResponseImpl();
         r.setCharacterEncoding("UTF-8");
         r.setStatus(200);

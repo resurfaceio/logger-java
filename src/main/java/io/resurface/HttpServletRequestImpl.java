@@ -8,10 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * HttpServletRequest implementation for custom usage logging.
@@ -24,6 +21,14 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     public HttpServletRequestImpl(byte[] bytes) {
         stream = new LoggedInputStream(bytes);
+    }
+
+    public void addHeader(String name, String value) {
+        if (headers.containsKey(name)) {
+            headers.get(name).add(value);
+        } else {
+            setHeader(name, value);
+        }
     }
 
     @Override
@@ -63,7 +68,7 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public String getContentType() {
-        return contentType;
+        return getHeader("Content-Type");
     }
 
     @Override
@@ -88,17 +93,17 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public String getHeader(String name) {
-        return null;
+        return headers.containsKey(name) ? headers.get(name).get(0) : null;
     }
 
     @Override
     public Enumeration<String> getHeaderNames() {
-        return null;
+        return Collections.enumeration(headers.keySet());
     }
 
     @Override
     public Enumeration<String> getHeaders(String name) {
-        return null;
+        return headers.containsKey(name) ? Collections.enumeration(headers.get(name)) : null;
     }
 
     @Override
@@ -346,7 +351,13 @@ public class HttpServletRequestImpl implements HttpServletRequest {
     }
 
     public void setContentType(String contentType) {
-        this.contentType = contentType;
+        setHeader("Content-Type", contentType);
+    }
+
+    public void setHeader(String name, String value) {
+        List<String> values = new ArrayList<>();
+        values.add(value);
+        headers.put(name, values);
     }
 
     public void setMethod(String method) {
@@ -370,7 +381,7 @@ public class HttpServletRequestImpl implements HttpServletRequest {
     }
 
     private String characterEncoding;
-    private String contentType;
+    private final Map<String, List<String>> headers = new HashMap<>();
     private String method;
     private String requestURL;
     private final ServletInputStream stream;

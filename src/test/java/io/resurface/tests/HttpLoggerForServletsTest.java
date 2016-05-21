@@ -82,7 +82,7 @@ public class HttpLoggerForServletsTest {
             assertTrue("json is valid", parseable(json));
             assertTrue("has body", json.contains("\"body\":\"" + MOCK_JSON_ESCAPED + "\""));
             assertTrue("has category", json.contains("\"category\":\"http_request\""));
-            assertTrue("has headers", json.contains("\"headers\":[]"));
+            assertTrue("has headers", json.contains("\"headers\":[{\"Content-Type\":\"application/json\"}]"));
             assertTrue("has method", json.contains("\"method\":\"POST\""));
             assertTrue("has url", json.contains("\"url\":\"" + MOCK_URL + "\""));
             json = logger.tracingHistory().get(1);
@@ -90,6 +90,32 @@ public class HttpLoggerForServletsTest {
             assertTrue("has body", json.contains("\"body\":\"" + MOCK_JSON_ESCAPED + "\""));
             assertTrue("has category", json.contains("\"category\":\"http_response\""));
             assertTrue("has code", json.contains("\"code\":500"));
+            assertTrue("has headers", json.contains("\"headers\":[]"));
+        } finally {
+            logger.tracingStop().enable();
+        }
+    }
+
+    @Test
+    public void logsJsonPostWithHeadersTest() throws IOException, ServletException {
+        HttpLogger logger = HttpLoggerFactory.get().disable().tracingStart();
+        try {
+            HttpLoggerForServlets filter = new HttpLoggerForServlets();
+            filter.init(null);
+            filter.doFilter(mockRequestWithBodyAndHeaders(), mockResponse(), mockHtmlApp());
+            assertTrue("tracing history is 2", logger.tracingHistory().size() == 2);
+            String json = logger.tracingHistory().get(0);
+            assertTrue("json is valid", parseable(json));
+            assertTrue("has body", json.contains("\"body\":\"" + MOCK_JSON_ESCAPED + "\""));
+            assertTrue("has category", json.contains("\"category\":\"http_request\""));
+            assertTrue("has headers", json.contains("\"headers\":[{\"ABC\":\"123\"},{\"Content-Type\":\"application/json\"}]"));
+            assertTrue("has method", json.contains("\"method\":\"POST\""));
+            assertTrue("has url", json.contains("\"url\":\"" + MOCK_URL + "\""));
+            json = logger.tracingHistory().get(1);
+            assertTrue("json is valid", parseable(json));
+            assertTrue("has body", json.contains("\"body\":\"" + MOCK_HTML_ESCAPED + "\""));
+            assertTrue("has category", json.contains("\"category\":\"http_response\""));
+            assertTrue("has code", json.contains("\"code\":404"));
             assertTrue("has headers", json.contains("\"headers\":[]"));
         } finally {
             logger.tracingStop().enable();

@@ -4,6 +4,7 @@ package io.resurface;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Enumeration;
 
 import static io.resurface.JsonMessage.*;
 
@@ -61,9 +62,18 @@ public class HttpLogger extends UsageLogger<HttpLogger> {
         start(json, "http_request", agent(), version(), now).append(',');
         append(json, "method", request.getMethod()).append(',');
         append(json, "url", request.getRequestURL()).append(',');
-        append(json, "headers").append(":[");
-        // add the headers here
-        json.append("]");
+        {
+            append(json, "headers").append(":[");
+            int index = 0;
+            Enumeration<String> names = request.getHeaderNames();
+            while (names.hasMoreElements()) {
+                String name = names.nextElement();
+                if (index++ > 0) json.append(',');
+                Enumeration<String> values = request.getHeaders(name);
+                while (values.hasMoreElements()) append(json.append('{'), name, values.nextElement()).append('}');
+            }
+            json.append("]");
+        }
         if (body != null) {
             json.append(',');
             append(json, "body", body);
