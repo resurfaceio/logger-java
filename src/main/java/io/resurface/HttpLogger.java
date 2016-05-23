@@ -62,14 +62,16 @@ public class HttpLogger extends UsageLogger<HttpLogger> {
         start(json, "http_request", agent(), version(), now).append(',');
         append(json, "method", request.getMethod()).append(',');
         append(json, "url", request.getRequestURL()).append(',');
+
         append(json, "headers").append(":[");
         Enumeration<String> headers = request.getHeaderNames();
-        for (int i = 0; headers.hasMoreElements(); i++) {
+        for (boolean first = true; headers.hasMoreElements(); first = false) {
             String name = headers.nextElement();
             Enumeration<String> e = request.getHeaders(name);
-            while (e.hasMoreElements()) append(json.append(i == 0 ? '{' : ",{"), name, e.nextElement()).append('}');
+            while (e.hasMoreElements()) append(json.append(first ? '{' : ",{"), name, e.nextElement()).append('}');
         }
         json.append("]");
+
         if (body != null) {
             json.append(',');
             append(json, "body", body);
@@ -83,9 +85,11 @@ public class HttpLogger extends UsageLogger<HttpLogger> {
     public StringBuilder formatResponse(StringBuilder json, long now, HttpServletResponse response, String body) {
         start(json, "http_response", agent(), version(), now).append(',');
         append(json, "code", response.getStatus()).append(',');
+
         append(json, "headers").append(":[");
         // add the headers here
         json.append("]");
+
         if (body != null) {
             json.append(',');
             append(json, "body", body);
