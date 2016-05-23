@@ -103,7 +103,7 @@ public class Helper {
         return r;
     }
 
-    static HttpServletRequestImpl mockRequestWithBodyAndHeaders() throws UnsupportedEncodingException {
+    static HttpServletRequestImpl mockRequestWithBody2() throws UnsupportedEncodingException {
         HttpServletRequestImpl impl = mockRequestWithBody();
         impl.setHeader("ABC", "123");
         return impl;

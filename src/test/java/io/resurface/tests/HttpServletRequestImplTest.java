@@ -48,12 +48,17 @@ public class HttpServletRequestImplTest {
         assertTrue("direct value read ok", impl.getHeader(key).equals(val));
         assertTrue("enumeration value read ok", impl.getHeaders(key).nextElement().equals(val));
 
-        impl.addHeader(key, val2);
+        impl.setHeader(key, val2);
         assertTrue("key set ok", impl.getHeaderNames().nextElement().equals(key));
-        assertTrue("direct value read ok", impl.getHeader(key).equals(val));
+        assertTrue("direct value2 read ok", impl.getHeader(key).equals(val2));
+        assertTrue("enumeration value2 read ok", impl.getHeaders(key).nextElement().equals(val2));
+
+        impl.addHeader(key, val);
+        assertTrue("key set ok", impl.getHeaderNames().nextElement().equals(key));
+        assertTrue("direct value read ok", impl.getHeader(key).equals(val2));
         Enumeration e = impl.getHeaders(key);
-        assertTrue("enumeration value read ok", e.nextElement().equals(val));
-        assertTrue("enumeration value2 read ok", e.nextElement().equals(val2));
+        assertTrue("enumeration value read ok", e.nextElement().equals(val2));
+        assertTrue("enumeration value2 read ok", e.nextElement().equals(val));
 
         impl.setHeader(key2, val2);
         e = impl.getHeaderNames();

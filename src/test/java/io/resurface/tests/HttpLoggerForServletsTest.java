@@ -102,7 +102,7 @@ public class HttpLoggerForServletsTest {
         try {
             HttpLoggerForServlets filter = new HttpLoggerForServlets();
             filter.init(null);
-            filter.doFilter(mockRequestWithBodyAndHeaders(), mockResponse(), mockHtmlApp());
+            filter.doFilter(mockRequestWithBody2(), mockResponse(), mockHtmlApp());
             assertTrue("tracing history is 2", logger.tracingHistory().size() == 2);
             String json = logger.tracingHistory().get(0);
             assertTrue("json is valid", parseable(json));

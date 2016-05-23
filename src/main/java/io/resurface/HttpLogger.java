@@ -62,18 +62,14 @@ public class HttpLogger extends UsageLogger<HttpLogger> {
         start(json, "http_request", agent(), version(), now).append(',');
         append(json, "method", request.getMethod()).append(',');
         append(json, "url", request.getRequestURL()).append(',');
-        {
-            append(json, "headers").append(":[");
-            int index = 0;
-            Enumeration<String> names = request.getHeaderNames();
-            while (names.hasMoreElements()) {
-                String name = names.nextElement();
-                if (index++ > 0) json.append(',');
-                Enumeration<String> values = request.getHeaders(name);
-                while (values.hasMoreElements()) append(json.append('{'), name, values.nextElement()).append('}');
-            }
-            json.append("]");
+        append(json, "headers").append(":[");
+        Enumeration<String> headers = request.getHeaderNames();
+        for (int i = 0; headers.hasMoreElements(); i++) {
+            String name = headers.nextElement();
+            Enumeration<String> e = request.getHeaders(name);
+            while (e.hasMoreElements()) append(json.append(i == 0 ? '{' : ",{"), name, e.nextElement()).append('}');
         }
+        json.append("]");
         if (body != null) {
             json.append(',');
             append(json, "body", body);
