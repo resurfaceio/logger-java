@@ -68,7 +68,7 @@ public class HttpLogger extends UsageLogger<HttpLogger> {
         for (boolean first = true; headers.hasMoreElements(); first = false) {
             String name = headers.nextElement();
             Enumeration<String> e = request.getHeaders(name);
-            while (e.hasMoreElements()) append(json.append(first ? '{' : ",{"), name, e.nextElement()).append('}');
+            while (e.hasMoreElements()) append(json.append(first ? '{' : ",{"), name.toLowerCase(), e.nextElement()).append('}');
         }
         json.append("]");
 
