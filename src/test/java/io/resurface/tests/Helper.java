@@ -30,6 +30,8 @@ public class Helper {
 
     static final long MOCK_NOW = 1455908640173L;
 
+    static final String MOCK_QUERY_STRING = "foo=bar";
+
     static final String MOCK_URL = "http://something.com/index.html";
 
     static FilterChain mockCustomApp() {
@@ -99,6 +101,7 @@ public class Helper {
         r.setCharacterEncoding("UTF-8");
         r.setContentType("application/json");
         r.setMethod("POST");
+        r.setQueryString(MOCK_QUERY_STRING);
         r.setRequestURL(MOCK_URL);
         return r;
     }

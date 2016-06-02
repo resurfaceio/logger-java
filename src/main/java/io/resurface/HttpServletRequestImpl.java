@@ -193,7 +193,7 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public String getQueryString() {
-        return null;
+        return queryString;
     }
 
     @Override
@@ -364,6 +364,10 @@ public class HttpServletRequestImpl implements HttpServletRequest {
         this.method = method;
     }
 
+    public void setQueryString(String queryString) {
+        this.queryString = queryString;
+    }
+
     public void setRequestURL(String requestURL) {
         this.requestURL = requestURL;
     }
@@ -383,6 +387,7 @@ public class HttpServletRequestImpl implements HttpServletRequest {
     private String characterEncoding;
     private final Map<String, List<String>> headers = new HashMap<>();
     private String method;
+    private String queryString;
     private String requestURL;
     private final ServletInputStream stream;
 

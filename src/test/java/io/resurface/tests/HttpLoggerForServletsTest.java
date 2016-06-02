@@ -84,7 +84,7 @@ public class HttpLoggerForServletsTest {
             assertTrue("has category", json.contains("\"category\":\"http_request\""));
             assertTrue("has headers", json.contains("\"headers\":[{\"content-type\":\"application/json\"}]"));
             assertTrue("has method", json.contains("\"method\":\"POST\""));
-            assertTrue("has url", json.contains("\"url\":\"" + MOCK_URL + "\""));
+            assertTrue("has url", json.contains("\"url\":\"" + MOCK_URL + '?' + MOCK_QUERY_STRING + "\""));
             json = logger.tracingHistory().get(1);
             assertTrue("json is valid", parseable(json));
             assertTrue("has body", json.contains("\"body\":\"" + MOCK_JSON_ESCAPED + "\""));
@@ -110,7 +110,7 @@ public class HttpLoggerForServletsTest {
             assertTrue("has category", json.contains("\"category\":\"http_request\""));
             assertTrue("has headers", json.contains("\"headers\":[{\"abc\":\"123\"},{\"content-type\":\"application/json\"}]"));
             assertTrue("has method", json.contains("\"method\":\"POST\""));
-            assertTrue("has url", json.contains("\"url\":\"" + MOCK_URL + "\""));
+            assertTrue("has url", json.contains("\"url\":\"" + MOCK_URL + '?' + MOCK_QUERY_STRING + "\""));
             json = logger.tracingHistory().get(1);
             assertTrue("json is valid", parseable(json));
             assertTrue("has body", json.contains("\"body\":\"" + MOCK_HTML_ESCAPED + "\""));

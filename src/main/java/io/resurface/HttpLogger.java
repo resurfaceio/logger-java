@@ -61,8 +61,14 @@ public class HttpLogger extends UsageLogger<HttpLogger> {
     public StringBuilder formatRequest(StringBuilder json, long now, HttpServletRequest request, String body) {
         start(json, "http_request", agent(), version(), now).append(',');
         append(json, "method", request.getMethod()).append(',');
-        append(json, "url", request.getRequestURL()).append(',');
 
+        // Add url to json
+        String queryString = request.getQueryString();
+        StringBuffer url = request.getRequestURL();
+        if (queryString != null) url.append('?').append(queryString);
+        append(json, "url", url.toString()).append(',');
+
+        // Add headers to json
         append(json, "headers").append(":[");
         Enumeration<String> headers = request.getHeaderNames();
         for (boolean first = true; headers.hasMoreElements(); first = false) {
@@ -72,6 +78,7 @@ public class HttpLogger extends UsageLogger<HttpLogger> {
         }
         json.append("]");
 
+        // Add body to json
         if (body != null) {
             json.append(',');
             append(json, "body", body);
