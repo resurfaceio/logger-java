@@ -70,11 +70,12 @@ public class HttpLogger extends UsageLogger<HttpLogger> {
 
         // Add headers to json
         append(json, "headers").append(":[");
-        Enumeration<String> headers = request.getHeaderNames();
-        for (boolean first = true; headers.hasMoreElements(); first = false) {
-            String name = headers.nextElement();
+        Enumeration<String> header_names = request.getHeaderNames();
+        for (int headers = 0; header_names.hasMoreElements(); ) {
+            String name = header_names.nextElement();
             Enumeration<String> e = request.getHeaders(name);
-            while (e.hasMoreElements()) append(json.append(first ? '{' : ",{"), name.toLowerCase(), e.nextElement()).append('}');
+            name = name.toLowerCase();
+            while (e.hasMoreElements()) append(json.append(headers++ == 0 ? '{' : ",{"), name, e.nextElement()).append('}');
         }
         json.append("]");
 
