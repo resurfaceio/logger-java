@@ -75,6 +75,7 @@ public class Helper {
             HttpServletResponse response = (HttpServletResponse) res;
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html");
+            response.setHeader("A", "Z");
             response.getOutputStream().write(MOCK_HTML.getBytes());
             response.setStatus(404);
         };

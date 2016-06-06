@@ -33,27 +33,27 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public boolean authenticate(HttpServletResponse response) throws IOException, ServletException {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public AsyncContext getAsyncContext() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Object getAttribute(String name) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Enumeration<String> getAttributeNames() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String getAuthType() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -63,7 +63,7 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public int getContentLength() {
-        return 0;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -73,22 +73,22 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public String getContextPath() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Cookie[] getCookies() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public long getDateHeader(String name) {
-        return 0;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public DispatcherType getDispatcherType() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -97,13 +97,13 @@ public class HttpServletRequestImpl implements HttpServletRequest {
     }
 
     @Override
-    public Enumeration<String> getHeaderNames() {
-        return Collections.enumeration(headers.keySet());
+    public Enumeration<String> getHeaders(String name) {
+        return headers.containsKey(name) ? Collections.enumeration(headers.get(name)) : null;
     }
 
     @Override
-    public Enumeration<String> getHeaders(String name) {
-        return headers.containsKey(name) ? Collections.enumeration(headers.get(name)) : null;
+    public Enumeration<String> getHeaderNames() {
+        return Collections.enumeration(headers.keySet());
     }
 
     @Override
@@ -113,32 +113,32 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public int getIntHeader(String name) {
-        return 0;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Locale getLocale() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Enumeration<Locale> getLocales() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String getLocalAddr() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String getLocalName() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public int getLocalPort() {
-        return 0;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -148,47 +148,47 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public String getParameter(String name) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Map<String, String[]> getParameterMap() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Enumeration<String> getParameterNames() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String[] getParameterValues(String name) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Part getPart(String name) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Collection<Part> getParts() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String getPathInfo() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String getPathTranslated() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String getProtocol() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -198,47 +198,47 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public BufferedReader getReader() throws IOException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String getRealPath(String path) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String getRemoteAddr() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String getRemoteHost() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public int getRemotePort() {
-        return 0;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String getRemoteUser() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public RequestDispatcher getRequestDispatcher(String path) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String getRequestedSessionId() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String getRequestURI() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -248,102 +248,102 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public String getScheme() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String getServletPath() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String getServerName() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public int getServerPort() {
-        return 0;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public ServletContext getServletContext() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public HttpSession getSession() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public HttpSession getSession(boolean create) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Principal getUserPrincipal() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean isRequestedSessionIdFromCookie() {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean isRequestedSessionIdFromUrl() {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean isRequestedSessionIdFromURL() {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean isRequestedSessionIdValid() {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean isAsyncStarted() {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean isAsyncSupported() {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean isSecure() {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean isUserInRole(String role) {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void login(String username, String password) throws ServletException {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void logout() throws ServletException {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void removeAttribute(String name) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setAttribute(String name, Object o) {
-
+        throw new UnsupportedOperationException();
     }
 
     public void setCharacterEncoding(String characterEncoding) throws UnsupportedEncodingException {
@@ -374,14 +374,14 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public AsyncContext startAsync() throws IllegalStateException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse)
             throws IllegalStateException
     {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     private String characterEncoding;

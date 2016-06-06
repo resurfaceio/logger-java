@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import javax.servlet.ServletOutputStream;
 import java.io.IOException;
+import java.util.Iterator;
 
 import static org.junit.Assert.assertTrue;
 
@@ -31,6 +32,39 @@ public class HttpServletResponseImplTest {
         assertTrue("null by default", impl.getContentType() == null);
         impl.setContentType(val);
         assertTrue("value set ok", impl.getContentType().equals(val));
+    }
+
+    @Test
+    public void useHeaders() {
+        String key = "kenny";
+        String key2 = "kyle";
+        String val = "stan";
+        String val2 = "cartman";
+
+        HttpServletResponseImpl impl = new HttpServletResponseImpl();
+        assertTrue("null by default", impl.getHeader(key) == null);
+
+        impl.setHeader(key, val);
+        assertTrue("key set ok", impl.getHeaderNames().iterator().next().equals(key));
+        assertTrue("direct value read ok", impl.getHeader(key).equals(val));
+        assertTrue("iterator value read ok", impl.getHeaders(key).iterator().next().equals(val));
+
+        impl.setHeader(key, val2);
+        assertTrue("key set ok", impl.getHeaderNames().iterator().next().equals(key));
+        assertTrue("direct value2 read ok", impl.getHeader(key).equals(val2));
+        assertTrue("iterator value2 read ok", impl.getHeaders(key).iterator().next().equals(val2));
+
+        impl.addHeader(key, val);
+        assertTrue("key set ok", impl.getHeaderNames().iterator().next().equals(key));
+        assertTrue("direct value read ok", impl.getHeader(key).equals(val2));
+        Iterator<String> i = impl.getHeaders(key).iterator();
+        assertTrue("iterator value read ok", i.next().equals(val2));
+        assertTrue("iterator value2 read ok", i.next().equals(val));
+
+        impl.setHeader(key2, val2);
+        i = impl.getHeaderNames().iterator();
+        assertTrue("header name 2 read ok", i.next().equals(key2));
+        assertTrue("header name 1 read ok", i.next().equals(key));
     }
 
     @Test

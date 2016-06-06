@@ -5,6 +5,7 @@ package io.resurface;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Enumeration;
+import java.util.Iterator;
 
 import static io.resurface.JsonMessage.*;
 
@@ -61,29 +62,9 @@ public class HttpLogger extends UsageLogger<HttpLogger> {
     public StringBuilder formatRequest(StringBuilder json, long now, HttpServletRequest request, String body) {
         start(json, "http_request", agent(), version(), now).append(',');
         append(json, "method", request.getMethod()).append(',');
-
-        // Add url to json
-        String queryString = request.getQueryString();
-        StringBuffer url = request.getRequestURL();
-        if (queryString != null) url.append('?').append(queryString);
-        append(json, "url", url.toString()).append(',');
-
-        // Add headers to json
-        append(json, "headers").append(":[");
-        Enumeration<String> header_names = request.getHeaderNames();
-        for (int headers = 0; header_names.hasMoreElements(); ) {
-            String name = header_names.nextElement();
-            Enumeration<String> e = request.getHeaders(name);
-            name = name.toLowerCase();
-            while (e.hasMoreElements()) append(json.append(headers++ == 0 ? '{' : ",{"), name, e.nextElement()).append('}');
-        }
-        json.append("]");
-
-        // Add body to json
-        if (body != null) {
-            json.append(',');
-            append(json, "body", body);
-        }
+        appendRequestURL(json, request);
+        appendRequestHeaders(json, request);
+        appendBody(json, body);
         return stop(json);
     }
 
@@ -93,15 +74,8 @@ public class HttpLogger extends UsageLogger<HttpLogger> {
     public StringBuilder formatResponse(StringBuilder json, long now, HttpServletResponse response, String body) {
         start(json, "http_response", agent(), version(), now).append(',');
         append(json, "code", response.getStatus()).append(',');
-
-        append(json, "headers").append(":[");
-        // add the headers here
-        json.append("]");
-
-        if (body != null) {
-            json.append(',');
-            append(json, "body", body);
-        }
+        appendResponseHeaders(json, response);
+        appendBody(json, body);
         return stop(json);
     }
 
@@ -156,6 +130,57 @@ public class HttpLogger extends UsageLogger<HttpLogger> {
         } else {
             return true;
         }
+    }
+
+    /**
+     * Adds body to message.
+     */
+    protected StringBuilder appendBody(StringBuilder json, String body) {
+        if (body != null) {
+            json.append(',');
+            append(json, "body", body);
+        }
+        return json;
+    }
+
+    /**
+     * Adds request headers to message.
+     */
+    protected StringBuilder appendRequestHeaders(StringBuilder json, HttpServletRequest request) {
+        append(json, "headers").append(":[");
+        Enumeration<String> header_names = request.getHeaderNames();
+        for (int headers = 0; header_names.hasMoreElements(); ) {
+            String name = header_names.nextElement();
+            Enumeration<String> e = request.getHeaders(name);
+            name = name.toLowerCase();
+            while (e.hasMoreElements()) append(json.append(headers++ == 0 ? '{' : ",{"), name, e.nextElement()).append('}');
+        }
+        return json.append("]");
+    }
+
+    /**
+     * Adds request URL to message.
+     */
+    protected StringBuilder appendRequestURL(StringBuilder json, HttpServletRequest request) {
+        String queryString = request.getQueryString();
+        StringBuffer url = request.getRequestURL();
+        if (queryString != null) url.append('?').append(queryString);
+        return append(json, "url", url.toString()).append(',');
+    }
+
+    /**
+     * Adds response headers to message.
+     */
+    protected StringBuilder appendResponseHeaders(StringBuilder json, HttpServletResponse response) {
+        append(json, "headers").append(":[");
+        Iterator<String> header_names = response.getHeaderNames().iterator();
+        for (int headers = 0; header_names.hasNext(); ) {
+            String name = header_names.next();
+            Iterator<String> i = response.getHeaders(name).iterator();
+            name = name.toLowerCase();
+            while (i.hasNext()) append(json.append(headers++ == 0 ? '{' : ",{"), name, i.next()).append('}');
+        }
+        return json.append("]");
     }
 
 }

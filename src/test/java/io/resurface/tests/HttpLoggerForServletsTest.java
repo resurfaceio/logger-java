@@ -38,7 +38,7 @@ public class HttpLoggerForServletsTest {
             assertTrue("has body", json.contains("\"body\":\"" + MOCK_HTML_ESCAPED + "\""));
             assertTrue("has category", json.contains("\"category\":\"http_response\""));
             assertTrue("has code", json.contains("\"code\":404"));
-            assertTrue("has headers", json.contains("\"headers\":[]"));
+            assertTrue("has headers", json.contains("\"headers\":[{\"a\":\"Z\"},{\"content-type\":\"text/html\"}]"));
         } finally {
             logger.tracingStop().enable();
         }
@@ -64,7 +64,7 @@ public class HttpLoggerForServletsTest {
             assertTrue("has body", json.contains("\"body\":\"" + MOCK_JSON_ESCAPED + "\""));
             assertTrue("has category", json.contains("\"category\":\"http_response\""));
             assertTrue("has code", json.contains("\"code\":500"));
-            assertTrue("has headers", json.contains("\"headers\":[]"));
+            assertTrue("has headers", json.contains("\"headers\":[{\"content-type\":\"application/json; charset=utf-8\"}]"));
         } finally {
             logger.tracingStop().enable();
         }
@@ -90,7 +90,7 @@ public class HttpLoggerForServletsTest {
             assertTrue("has body", json.contains("\"body\":\"" + MOCK_JSON_ESCAPED + "\""));
             assertTrue("has category", json.contains("\"category\":\"http_response\""));
             assertTrue("has code", json.contains("\"code\":500"));
-            assertTrue("has headers", json.contains("\"headers\":[]"));
+            assertTrue("has headers", json.contains("\"headers\":[{\"content-type\":\"application/json; charset=utf-8\"}]"));
         } finally {
             logger.tracingStop().enable();
         }
@@ -116,7 +116,7 @@ public class HttpLoggerForServletsTest {
             assertTrue("has body", json.contains("\"body\":\"" + MOCK_HTML_ESCAPED + "\""));
             assertTrue("has category", json.contains("\"category\":\"http_response\""));
             assertTrue("has code", json.contains("\"code\":404"));
-            assertTrue("has headers", json.contains("\"headers\":[]"));
+            assertTrue("has headers", json.contains("\"headers\":[{\"a\":\"Z\"},{\"content-type\":\"text/html\"}]"));
         } finally {
             logger.tracingStop().enable();
         }

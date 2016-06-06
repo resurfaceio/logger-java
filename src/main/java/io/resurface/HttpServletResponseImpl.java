@@ -7,8 +7,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * HttpServletResponse implementation for custom usage logging.
@@ -26,58 +25,61 @@ public class HttpServletResponseImpl implements HttpServletResponse {
 
     @Override
     public void addCookie(Cookie cookie) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void addDateHeader(String name, long date) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void addHeader(String name, String value) {
-
+        if (headers.containsKey(name)) {
+            headers.get(name).add(value);
+        } else {
+            setHeader(name, value);
+        }
     }
 
     @Override
     public void addIntHeader(String name, int value) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean containsHeader(String name) {
-        return false;
+        return headers.containsKey(name);
     }
 
     @Override
     public String encodeRedirectUrl(String url) {
-        return null;  // deprecated
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String encodeRedirectURL(String url) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String encodeUrl(String url) {
-        // deprecated
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String encodeURL(String url) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void flushBuffer() throws IOException {
-
+        // ignore, nothing to do
     }
 
     @Override
     public int getBufferSize() {
-        return 0;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -87,27 +89,27 @@ public class HttpServletResponseImpl implements HttpServletResponse {
 
     @Override
     public String getContentType() {
-        return contentType;
+        return getHeader("Content-Type");
     }
 
     @Override
     public String getHeader(String name) {
-        return null;
+        return headers.containsKey(name) ? headers.get(name).get(0) : null;
     }
 
     @Override
     public Collection<String> getHeaders(String name) {
-        return null;
+        return headers.containsKey(name) ? headers.get(name) : null;
     }
 
     @Override
     public Collection<String> getHeaderNames() {
-        return null;
+        return headers.keySet();
     }
 
     @Override
     public Locale getLocale() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -127,37 +129,37 @@ public class HttpServletResponseImpl implements HttpServletResponse {
 
     @Override
     public boolean isCommitted() {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void reset() {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void resetBuffer() {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void sendError(int sc) throws IOException {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void sendError(int sc, String msg) throws IOException {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void sendRedirect(String location) throws IOException {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setBufferSize(int size) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -167,32 +169,34 @@ public class HttpServletResponseImpl implements HttpServletResponse {
 
     @Override
     public void setContentLength(int len) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setContentType(String contentType) {
-        this.contentType = contentType;
+        setHeader("Content-Type", contentType);
     }
 
     @Override
     public void setDateHeader(String name, long date) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setHeader(String name, String value) {
-
+        List<String> values = new ArrayList<>();
+        values.add(value);
+        headers.put(name, values);
     }
 
     @Override
     public void setIntHeader(String name, int value) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setLocale(Locale loc) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -206,7 +210,7 @@ public class HttpServletResponseImpl implements HttpServletResponse {
     }
 
     private String characterEncoding;
-    private String contentType;
+    private final Map<String, List<String>> headers = new HashMap<>();
     private int status;
     private final ServletOutputStream stream;
 
