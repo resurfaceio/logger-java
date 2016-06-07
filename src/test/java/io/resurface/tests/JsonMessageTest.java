@@ -15,9 +15,9 @@ public class JsonMessageTest {
 
     @Test
     public void appendNumbersTest() {
-        assertEquals("\"name\":-1", append(new StringBuilder(), "name", -1).toString());
-        assertEquals("\"name1\":123", append(new StringBuilder(), "name1", 123).toString());
-        assertEquals("{\"1_name1\":1455908665227", append(new StringBuilder("{"), "1_name1", 1455908665227L).toString());
+        assertEquals("\"name\":\"-1\"", append(new StringBuilder(), "name", -1).toString());
+        assertEquals("\"name1\":\"123\"", append(new StringBuilder(), "name1", 123).toString());
+        assertEquals("{\"1_name1\":\"1455908665227\"", append(new StringBuilder("{"), "1_name1", 1455908665227L).toString());
     }
 
     @Test
@@ -87,7 +87,7 @@ public class JsonMessageTest {
         assertTrue("has category", json.toString().contains("{\"category\":\"category1\","));
         assertTrue("has agent", json.toString().contains("\"agent\":\"agent1\","));
         assertTrue("has version", json.toString().contains("\"version\":\"version1\","));
-        assertTrue("has now", json.toString().contains("\"now\":1455908589662"));
+        assertTrue("has now", json.toString().contains("\"now\":\"1455908589662\""));
     }
 
     @Test

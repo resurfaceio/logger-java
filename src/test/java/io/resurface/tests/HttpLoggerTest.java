@@ -30,7 +30,7 @@ public class HttpLoggerTest {
         assertTrue("json is valid", parseable(json));
         assertTrue("has agent", json.contains("\"agent\":\"" + HttpLogger.AGENT + "\""));
         assertTrue("has category", json.contains("\"category\":\"echo\""));
-        assertTrue("has now", json.contains("\"now\":12345"));
+        assertTrue("has now", json.contains("\"now\":\"12345\""));
         assertTrue("has version", json.contains("\"version\":\"" + HttpLogger.version_lookup() + "\""));
     }
 
@@ -43,7 +43,7 @@ public class HttpLoggerTest {
         assertTrue("has category", json.contains("\"category\":\"http_request\""));
         assertTrue("has headers", json.contains("\"headers\":[]"));
         assertTrue("has method", json.contains("\"method\":\"GET\""));
-        assertTrue("has now", json.contains("\"now\":" + MOCK_NOW));
+        assertTrue("has now", json.contains("\"now\":\"" + MOCK_NOW + "\""));
         assertTrue("has url", json.contains("\"url\":\"" + MOCK_URL + "\""));
         assertTrue("has version", json.contains("\"version\":\"" + HttpLogger.version_lookup() + "\""));
     }
@@ -57,7 +57,7 @@ public class HttpLoggerTest {
         assertTrue("has category", json.contains("\"category\":\"http_request\""));
         assertTrue("has headers", json.contains("\"headers\":[]"));
         assertTrue("has method", json.contains("\"method\":\"GET\""));
-        assertTrue("has now", json.contains("\"now\":" + MOCK_NOW));
+        assertTrue("has now", json.contains("\"now\":\"" + MOCK_NOW + "\""));
         assertTrue("has url", json.contains("\"url\":\"" + MOCK_URL + "\""));
         assertTrue("has version", json.contains("\"version\":\"" + HttpLogger.version_lookup() + "\""));
     }
@@ -71,7 +71,7 @@ public class HttpLoggerTest {
         assertTrue("has category", json.contains("\"category\":\"http_request\""));
         assertTrue("has headers", json.contains("\"headers\":[]"));
         assertTrue("has method", json.contains("\"method\":\"GET\""));
-        assertTrue("has now", json.contains("\"now\":" + MOCK_NOW));
+        assertTrue("has now", json.contains("\"now\":\"" + MOCK_NOW + "\""));
         assertTrue("has url", json.contains("\"url\":\"" + MOCK_URL + "\""));
         assertTrue("has version", json.contains("\"version\":\"" + HttpLogger.version_lookup() + "\""));
     }
@@ -83,9 +83,9 @@ public class HttpLoggerTest {
         assertTrue("has agent", json.contains("\"agent\":\"" + HttpLogger.AGENT + "\""));
         assertTrue("has body", !json.contains("\"body\""));
         assertTrue("has category", json.contains("\"category\":\"http_response\""));
-        assertTrue("has code", json.contains("\"code\":200"));
+        assertTrue("has code", json.contains("\"code\":\"200\""));
         assertTrue("has headers", json.contains("\"headers\":[]"));
-        assertTrue("has now", json.contains("\"now\":" + MOCK_NOW));
+        assertTrue("has now", json.contains("\"now\":\"" + MOCK_NOW + "\""));
         assertTrue("has version", json.contains("\"version\":\"" + HttpLogger.version_lookup() + "\""));
     }
 
@@ -96,9 +96,9 @@ public class HttpLoggerTest {
         assertTrue("has agent", json.contains("\"agent\":\"" + HttpLogger.AGENT + "\""));
         assertTrue("has body", json.contains("\"body\":\"" + MOCK_HTML_ESCAPED + "\""));
         assertTrue("has category", json.contains("\"category\":\"http_response\""));
-        assertTrue("has code", json.contains("\"code\":200"));
+        assertTrue("has code", json.contains("\"code\":\"200\""));
         assertTrue("has headers", json.contains("\"headers\":[]"));
-        assertTrue("has now", json.contains("\"now\":" + MOCK_NOW));
+        assertTrue("has now", json.contains("\"now\":\"" + MOCK_NOW + "\""));
         assertTrue("has version", json.contains("\"version\":\"" + HttpLogger.version_lookup() + "\""));
     }
 
@@ -109,9 +109,9 @@ public class HttpLoggerTest {
         assertTrue("has agent", json.contains("\"agent\":\"" + HttpLogger.AGENT + "\""));
         assertTrue("has body", json.contains("\"body\":\"\""));
         assertTrue("has category", json.contains("\"category\":\"http_response\""));
-        assertTrue("has code", json.contains("\"code\":200"));
+        assertTrue("has code", json.contains("\"code\":\"200\""));
         assertTrue("has headers", json.contains("\"headers\":[]"));
-        assertTrue("has now", json.contains("\"now\":" + MOCK_NOW));
+        assertTrue("has now", json.contains("\"now\":\"" + MOCK_NOW + "\""));
         assertTrue("has version", json.contains("\"version\":\"" + HttpLogger.version_lookup() + "\""));
     }
 

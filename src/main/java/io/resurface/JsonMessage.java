@@ -26,7 +26,7 @@ public class JsonMessage {
      * Adds key/value pair to message.
      */
     public static StringBuilder append(StringBuilder json, CharSequence key, long value) {
-        return append(json, key).append(':').append(value);
+        return append(json, key).append(":\"").append(value).append("\"");
     }
 
     /**
@@ -86,14 +86,10 @@ public class JsonMessage {
     public static StringBuilder start(StringBuilder json, CharSequence category, CharSequence agent,
                                       CharSequence version, long now)
     {
-        return json.append("{\"category\":\"")
-                .append(category)
-                .append("\",\"agent\":\"")
-                .append(agent)
-                .append("\",\"version\":\"")
-                .append(version)
-                .append("\",\"now\":")
-                .append(now);
+        return json.append("{\"category\":\"").append(category)
+                .append("\",\"agent\":\"").append(agent)
+                .append("\",\"version\":\"").append(version)
+                .append("\",\"now\":\"").append(now).append("\"");
     }
 
     /**
