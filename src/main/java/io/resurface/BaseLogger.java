@@ -15,7 +15,7 @@ import java.util.Properties;
 /**
  * Abstract base class for all usage loggers, with type-safe chaining methods.
  */
-public abstract class UsageLogger<T extends UsageLogger> {
+public abstract class BaseLogger<T extends BaseLogger> {
 
     /**
      * URL destination for log messages unless overridden.
@@ -25,7 +25,7 @@ public abstract class UsageLogger<T extends UsageLogger> {
     /**
      * Initialize enabled logger using default url.
      */
-    public UsageLogger() {
+    public BaseLogger() {
         this.enabled = true;
         this.url = DEFAULT_URL;
         this.version = version_lookup();
@@ -34,7 +34,7 @@ public abstract class UsageLogger<T extends UsageLogger> {
     /**
      * Initialize enabled logger using custom url.
      */
-    public UsageLogger(String url) {
+    public BaseLogger(String url) {
         this.enabled = true;
         this.url = url;
         this.version = version_lookup();
@@ -43,7 +43,7 @@ public abstract class UsageLogger<T extends UsageLogger> {
     /**
      * Initialize enabled or disabled logger using custom url.
      */
-    public UsageLogger(String url, boolean enabled) {
+    public BaseLogger(String url, boolean enabled) {
         this.enabled = enabled;
         this.url = url;
         this.version = version_lookup();

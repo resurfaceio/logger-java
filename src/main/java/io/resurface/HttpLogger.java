@@ -12,7 +12,7 @@ import static io.resurface.JsonMessage.*;
 /**
  * Logger for HTTP usage.
  */
-public class HttpLogger extends UsageLogger<HttpLogger> {
+public class HttpLogger extends BaseLogger<HttpLogger> {
 
     /**
      * Agent string identifying this logger.
