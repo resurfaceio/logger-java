@@ -83,7 +83,7 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
      * Logs echo (in JSON format) to remote url.
      */
     public boolean logEcho() {
-        if (enabled || tracing) {
+        if (isActive()) {
             StringBuilder json = new StringBuilder(64);
             formatEcho(json, System.currentTimeMillis());
             return post(json.toString());
@@ -103,7 +103,7 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
      * Logs HTTP request with body (in JSON format) to remote url.
      */
     public boolean logRequest(HttpServletRequest request, String body) {
-        if (enabled || tracing) {
+        if (isActive()) {
             StringBuilder json = new StringBuilder(1024);
             formatRequest(json, System.currentTimeMillis(), request, body);
             return post(json.toString());
@@ -123,7 +123,7 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
      * Logs HTTP response with body (in JSON format) to remote url.
      */
     public boolean logResponse(HttpServletResponse response, String body) {
-        if (enabled || tracing) {
+        if (isActive()) {
             StringBuilder json = new StringBuilder(1024);
             formatResponse(json, System.currentTimeMillis(), response, body);
             return post(json.toString());
