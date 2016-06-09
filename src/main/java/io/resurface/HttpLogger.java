@@ -64,7 +64,7 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
         append(json, "method", request.getMethod()).append(',');
         appendRequestURL(json, request);
         appendRequestHeaders(json, request);
-        appendBody(json, body);
+        if (body != null) append(json.append(','), "body", body);
         return stop(json);
     }
 
@@ -75,7 +75,7 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
         start(json, "http_response", agent(), version(), now).append(',');
         append(json, "code", response.getStatus()).append(',');
         appendResponseHeaders(json, response);
-        appendBody(json, body);
+        if (body != null) append(json.append(','), "body", body);
         return stop(json);
     }
 
@@ -116,17 +116,6 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
         } else {
             return true;
         }
-    }
-
-    /**
-     * Adds body to message.
-     */
-    protected StringBuilder appendBody(StringBuilder json, String body) {
-        if (body != null) {
-            json.append(',');
-            append(json, "body", body);
-        }
-        return json;
     }
 
     /**
