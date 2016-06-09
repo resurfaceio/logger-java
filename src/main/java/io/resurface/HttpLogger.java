@@ -93,13 +93,6 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
     }
 
     /**
-     * Logs HTTP request (in JSON format) to remote url.
-     */
-    public boolean logRequest(HttpServletRequest request) {
-        return logRequest(request, null);
-    }
-
-    /**
      * Logs HTTP request with body (in JSON format) to remote url.
      */
     public boolean logRequest(HttpServletRequest request, String body) {
@@ -110,13 +103,6 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
         } else {
             return true;
         }
-    }
-
-    /**
-     * Logs HTTP response (in JSON format) to remote url.
-     */
-    public boolean logResponse(HttpServletResponse response) {
-        return logResponse(response, null);
     }
 
     /**

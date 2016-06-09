@@ -62,7 +62,7 @@ public class HttpLoggerForServlets implements Filter {
             String response_encoding = response.getCharacterEncoding();
             if ((response_encoding != null) && isStringContentType(response.getContentType())) {
                 if (request_wrapper == null) {
-                    logger.logRequest(request);
+                    logger.logRequest(request, null);
                 } else {
                     logger.logRequest(request, new String(request_wrapper.logged(), request_encoding));
                 }
