@@ -55,7 +55,7 @@ public class Helper {
         return (req, res) -> {
             HttpServletResponse response = (HttpServletResponse) res;
             response.setCharacterEncoding("UTF-8");
-            response.setContentType("application/json; charset=utf-8");
+            response.setContentType("application/json");
             response.getOutputStream().write(MOCK_JSON.getBytes());
             response.setStatus(500);
         };

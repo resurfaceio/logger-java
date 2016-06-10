@@ -61,10 +61,10 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
      */
     public StringBuilder formatRequest(StringBuilder json, long now, HttpServletRequest request, String body) {
         start(json, "http_request", agent(), version(), now).append(',');
-        append(json, "method", request.getMethod()).append(',');
+        append(json, "request_method", request.getMethod()).append(',');
         appendRequestURL(json, request);
         appendRequestHeaders(json, request);
-        if (body != null) append(json.append(','), "body", body);
+        if (body != null) append(json.append(','), "request_body", body);
         return stop(json);
     }
 
@@ -73,9 +73,9 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
      */
     public StringBuilder formatResponse(StringBuilder json, long now, HttpServletResponse response, String body) {
         start(json, "http_response", agent(), version(), now).append(',');
-        append(json, "code", response.getStatus()).append(',');
+        append(json, "response_code", response.getStatus()).append(',');
         appendResponseHeaders(json, response);
-        if (body != null) append(json.append(','), "body", body);
+        if (body != null) append(json.append(','), "response_body", body);
         return stop(json);
     }
 
@@ -122,7 +122,7 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
      * Adds request headers to message.
      */
     protected StringBuilder appendRequestHeaders(StringBuilder json, HttpServletRequest request) {
-        append(json, "headers").append(":[");
+        append(json, "request_headers").append(":[");
         Enumeration<String> header_names = request.getHeaderNames();
         for (int headers = 0; header_names.hasMoreElements(); ) {
             String name = header_names.nextElement();
@@ -140,14 +140,14 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
         String queryString = request.getQueryString();
         StringBuffer url = request.getRequestURL();
         if (queryString != null) url.append('?').append(queryString);
-        return append(json, "url", url.toString()).append(',');
+        return append(json, "request_url", url.toString()).append(',');
     }
 
     /**
      * Adds response headers to message.
      */
     protected StringBuilder appendResponseHeaders(StringBuilder json, HttpServletResponse response) {
-        append(json, "headers").append(":[");
+        append(json, "response_headers").append(":[");
         Iterator<String> header_names = response.getHeaderNames().iterator();
         for (int headers = 0; header_names.hasNext(); ) {
             String name = header_names.next();
