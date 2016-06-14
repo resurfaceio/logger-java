@@ -9,7 +9,7 @@ Requires Java 8. No other dependencies to conflict with your app.
 
 ## Installing with Maven
 
-Add these sections to your pom.xml:
+Use these sections in your pom.xml:
 
     <dependencies>
         <dependency>
@@ -23,12 +23,8 @@ Add these sections to your pom.xml:
         <repository>
             <id>resurfaceio-mavenrepo</id>
             <url>https://github.com/resurfaceio/resurfaceio-mavenrepo/raw/master</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>true</enabled></snapshots>
         </repository>
     </repositories>
 
