@@ -32,7 +32,7 @@ public class HttpLoggerForServlets implements Filter {
      * Called when request/response passes through the filter chain.
      */
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException
+        throws IOException, ServletException
     {
         if (logger.isActive()) {
             process((HttpServletRequest) request, (HttpServletResponse) response, chain);
@@ -45,7 +45,7 @@ public class HttpLoggerForServlets implements Filter {
      * Called when an active logger passes a request/response through the filter chain.
      */
     protected void process(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws IOException, ServletException
+        throws IOException, ServletException
     {
         // Construct request wrapper for string content types
         LoggedRequestWrapper request_wrapper = null;
@@ -61,12 +61,9 @@ public class HttpLoggerForServlets implements Filter {
         if (response.getStatus() != 304) {
             String response_encoding = response.getCharacterEncoding();
             if ((response_encoding != null) && isStringContentType(response.getContentType())) {
-                if (request_wrapper == null) {
-                    logger.logRequest(request, null);
-                } else {
-                    logger.logRequest(request, new String(request_wrapper.logged(), request_encoding));
-                }
-                logger.logResponse(response, new String(response_wrapper.logged(), response_encoding));
+                String request_body = request_wrapper == null ? null : new String(request_wrapper.logged(), request_encoding);
+                String response_body = new String(response_wrapper.logged(), response_encoding);
+                logger.log(request, request_body, response, response_body);
             }
         }
     }
@@ -76,8 +73,8 @@ public class HttpLoggerForServlets implements Filter {
      */
     protected boolean isStringContentType(String s) {
         return s != null && (s.startsWith("text/html") || s.startsWith("text/plain") || s.startsWith("text/xml")
-                || s.startsWith("application/json") || s.startsWith("application/soap+xml")
-                || s.startsWith("application/xml") || s.startsWith("application/x-www-form-urlencoded"));
+            || s.startsWith("application/json") || s.startsWith("application/soap+xml")
+            || s.startsWith("application/xml") || s.startsWith("application/x-www-form-urlencoded"));
     }
 
     protected FilterConfig config;

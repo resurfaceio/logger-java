@@ -25,34 +25,26 @@ public abstract class BaseLogger<T extends BaseLogger> {
     /**
      * Initialize enabled logger using default url.
      */
-    public BaseLogger() {
-        this.enabled = true;
-        this.url = DEFAULT_URL;
-        this.version = version_lookup();
+    protected BaseLogger(String agent) {
+        this(agent, DEFAULT_URL, true);
     }
 
     /**
      * Initialize enabled logger using custom url.
      */
-    public BaseLogger(String url) {
-        this.enabled = true;
-        this.url = url;
-        this.version = version_lookup();
+    protected BaseLogger(String agent, String url) {
+        this(agent, url, true);
     }
 
     /**
      * Initialize enabled or disabled logger using custom url.
      */
-    public BaseLogger(String url, boolean enabled) {
+    protected BaseLogger(String agent, String url, boolean enabled) {
+        this.agent = agent;
         this.enabled = enabled;
         this.url = url;
         this.version = version_lookup();
     }
-
-    /**
-     * Returns agent string identifying this logger.
-     */
-    public abstract String agent();
 
     /**
      * Disable this logger.
@@ -68,6 +60,27 @@ public abstract class BaseLogger<T extends BaseLogger> {
     public T enable() {
         enabled = true;
         return (T) this;
+    }
+
+    /**
+     * Returns agent string identifying this logger.
+     */
+    public String getAgent() {
+        return agent;
+    }
+
+    /**
+     * Returns url destination where messages are sent.
+     */
+    public String getUrl() {
+        return url;
+    }
+
+    /**
+     * Returns cached version number.
+     */
+    public String getVersion() {
+        return version;
     }
 
     /**
@@ -89,6 +102,33 @@ public abstract class BaseLogger<T extends BaseLogger> {
      */
     public boolean isTracing() {
         return tracing;
+    }
+
+    /**
+     * Submits JSON message to intended destination.
+     */
+    public boolean submit(String json) {
+        if (tracing) {
+            tracing_history.add(json);
+            return true;
+        } else if (enabled) {
+            try {
+                URL url = new URL(this.url);
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setConnectTimeout(5000);
+                con.setReadTimeout(1000);
+                con.setRequestMethod("POST");
+                con.setDoOutput(true);
+                try (OutputStream os = con.getOutputStream()) {
+                    os.write(json.getBytes());
+                    os.flush();
+                }
+                return con.getResponseCode() == 200;
+            } catch (IOException ioe) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -117,20 +157,6 @@ public abstract class BaseLogger<T extends BaseLogger> {
     }
 
     /**
-     * Returns url destination where messages are sent.
-     */
-    public String url() {
-        return url;
-    }
-
-    /**
-     * Returns cached version number.
-     */
-    public String version() {
-        return version;
-    }
-
-    /**
      * Retrieves version number from runtime properties file.
      */
     public static String version_lookup() {
@@ -143,32 +169,7 @@ public abstract class BaseLogger<T extends BaseLogger> {
         }
     }
 
-    /**
-     * Logs message (via HTTP post) to remote url.
-     */
-    protected boolean post(String json) {
-        if (tracing) {
-            tracing_history.add(json);
-            return true;
-        } else {
-            try {
-                URL url = new URL(this.url);
-                HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                con.setConnectTimeout(5000);
-                con.setReadTimeout(1000);
-                con.setRequestMethod("POST");
-                con.setDoOutput(true);
-                try (OutputStream os = con.getOutputStream()) {
-                    os.write(json.getBytes());
-                    os.flush();
-                }
-                return con.getResponseCode() == 200;
-            } catch (IOException ioe) {
-                return false;
-            }
-        }
-    }
-
+    protected final String agent;
     protected boolean enabled;
     protected boolean tracing = false;
     protected final List<String> tracing_history = new ArrayList<>();

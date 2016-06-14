@@ -86,19 +86,31 @@ responses for content types matching a predefined list (including 'text/html' an
     import io.resurface.*;
 
     // manage default logger
-    HttpLogger logger = HttpLoggerFactory.get();               // returns cached HTTP logger
-    logger.disable();                                          // disable logging for automated tests
-    logger.enable();                                           // re-enable logging after being disabled
-    if (logger.isEnabled()) ...                                // branch on logging being enabled
+    HttpLogger logger = HttpLoggerFactory.get();                 // returns cached HTTP logger
+    logger.disable();                                            // disable logging for tests
+    logger.enable();                                             // enable logging again
+    if (logger.isEnabled()) ...                                  // test if logging is enabled
 
-    // log a HTTP exchange
-    HttpServletRequest req = new HttpServletRequestImpl();     // define request to log
-    req.setRequestURL("http://google.com");
-    HttpServletResponse res = new HttpServletResponseImpl();   // define response to log
-    res.setCharacterEncoding("UTF-8");
-    res.setContentType("text/html");
-    res.setStatus(200);
-    logger.logRequest(req);                                    // log the request  (without body)
-    logger.logRequest(req, body);                              // log the request  (with specified body)
-    logger.logResponse(res);                                   // log the response (without body)
-    logger.logResponse(res, body);                             // log the response (with specified body)
+    // define request to log
+    HttpServletRequest request = new HttpServletRequestImpl();
+    request.setCharacterEncoding("UTF-8");
+    request.setContentType("application/json");
+    request.setHeader("A", "123");
+    request.setMethod("GET");
+    request.setRequestURL("http://google.com");
+
+    // define response to log
+    HttpServletResponse response = new HttpServletResponseImpl();
+    response.setCharacterEncoding("UTF-8");
+    response.setContentType("text/html");
+    response.setHeader("B", "234");
+    response.setStatus(200);
+
+    // log objects defined above
+    logger.log(request, null, response, null);
+
+    // log with specified request/response bodies
+    logger.log(request, "my-request, response, "my-response");
+
+    // submit a custom message (destination may accept or not)
+    logger.submit("...");

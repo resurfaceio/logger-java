@@ -23,99 +23,54 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
      * Initialize enabled logger using default url.
      */
     public HttpLogger() {
-        super();
+        super(AGENT);
     }
 
     /**
      * Initialize enabled logger using custom url.
      */
     public HttpLogger(String url) {
-        super(url);
+        super(AGENT, url);
     }
 
     /**
      * Initialize enabled or disabled logger using custom url.
      */
     public HttpLogger(String url, boolean enabled) {
-        super(url, enabled);
+        super(AGENT, url, enabled);
     }
 
     /**
-     * Returns agent string identifying this logger.
+     * Appends HTTP request and response at the end of the supplied JSON message.
      */
-    @Override
-    public String agent() {
-        return AGENT;
-    }
-
-    /**
-     * Formats JSON message for simple echo.
-     */
-    public StringBuilder formatEcho(StringBuilder json, long now) {
-        start(json, "echo", agent(), version(), now);
+    public StringBuilder appendToBuffer(StringBuilder json, long now, HttpServletRequest request, String request_body,
+                                        HttpServletResponse response, String response_body)
+    {
+        start(json, "http", getAgent(), getVersion(), now);
+        append(json.append(','), "request_method", request.getMethod());
+        appendRequestURL(json.append(','), request);
+        appendRequestHeaders(json.append(','), request);
+        if (request_body != null) append(json.append(','), "request_body", request_body);
+        append(json.append(','), "response_code", response.getStatus());
+        appendResponseHeaders(json.append(','), response);
+        if (response_body != null) append(json.append(','), "response_body", response_body);
         return stop(json);
     }
 
     /**
-     * Formats JSON message for HTTP request.
+     * Formats HTTP request and response as JSON message.
      */
-    public StringBuilder formatRequest(StringBuilder json, long now, HttpServletRequest request, String body) {
-        start(json, "http_request", agent(), version(), now).append(',');
-        append(json, "request_method", request.getMethod()).append(',');
-        appendRequestURL(json, request);
-        appendRequestHeaders(json, request);
-        if (body != null) append(json.append(','), "request_body", body);
-        return stop(json);
+    public String format(HttpServletRequest request, String request_body, HttpServletResponse response, String response_body)
+    {
+        StringBuilder sb = new StringBuilder(1024);  // todo recycle these?
+        return appendToBuffer(sb, System.currentTimeMillis(), request, request_body, response, response_body).toString();
     }
 
     /**
-     * Formats JSON message for HTTP response.
+     * Logs HTTP request and response to intended destination.
      */
-    public StringBuilder formatResponse(StringBuilder json, long now, HttpServletResponse response, String body) {
-        start(json, "http_response", agent(), version(), now).append(',');
-        append(json, "response_code", response.getStatus()).append(',');
-        appendResponseHeaders(json, response);
-        if (body != null) append(json.append(','), "response_body", body);
-        return stop(json);
-    }
-
-    /**
-     * Logs echo (in JSON format) to remote url.
-     */
-    public boolean logEcho() {
-        if (isActive()) {
-            StringBuilder json = new StringBuilder(64);
-            formatEcho(json, System.currentTimeMillis());
-            return post(json.toString());
-        } else {
-            return true;
-        }
-    }
-
-    /**
-     * Logs HTTP request with body (in JSON format) to remote url.
-     */
-    public boolean logRequest(HttpServletRequest request, String body) {
-        if (isActive()) {
-            StringBuilder json = new StringBuilder(1024);
-            formatRequest(json, System.currentTimeMillis(), request, body);
-            return post(json.toString());
-        } else {
-            return true;
-        }
-    }
-
-    /**
-     * Logs HTTP response with body (in JSON format) to remote url.
-     */
-    public boolean logResponse(HttpServletResponse response, String body) {
-        if (isActive()) {
-            StringBuilder json = new StringBuilder(1024);
-            formatResponse(json, System.currentTimeMillis(), response, body);
-            return post(json.toString());
-        } else {
-            return true;
-        }
+    public boolean log(HttpServletRequest request, String request_body, HttpServletResponse response, String response_body) {
+        return !isActive() || submit(format(request, request_body, response, response_body));
     }
 
     /**
@@ -140,7 +95,7 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
         String queryString = request.getQueryString();
         StringBuffer url = request.getRequestURL();
         if (queryString != null) url.append('?').append(queryString);
-        return append(json, "request_url", url.toString()).append(',');
+        return append(json, "request_url", url.toString());
     }
 
     /**
