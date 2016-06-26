@@ -64,7 +64,11 @@ to specific areas of your application.
     <filter>
         <filter-name>HttpLoggerForServlets</filter-name>
         <filter-class>io.resurface.HttpLoggerForServlets</filter-class>
-    </filter>
+        <init-param>
+            <param-name>url</param-name>
+            <param-value>DEMO</param-value>
+        </init-param>
+       </filter>
     <filter-mapping>
         <filter-name>HttpLoggerForServlets</filter-name>
         <url-pattern>/*</url-pattern>

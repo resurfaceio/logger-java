@@ -17,6 +17,10 @@ public class HttpLoggerForServlets implements Filter {
      */
     public void init(FilterConfig config) {
         this.config = config;
+        if (config != null) {
+            String url = config.getInitParameter("url");
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! url=" + (url == null ? "" : url));
+        }
         this.logger = HttpLoggerFactory.get();
     }
 
