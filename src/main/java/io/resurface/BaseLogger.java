@@ -20,7 +20,7 @@ public abstract class BaseLogger<T extends BaseLogger> {
     /**
      * URL destination for log messages unless overridden.
      */
-    public static final String DEFAULT_URL = "https://resurfaceio.herokuapp.com/messages";
+    public static final String DEFAULT_URL = "https://demo-resurfaceio.herokuapp.com/messages";
 
     /**
      * Initialize enabled logger using default url.
