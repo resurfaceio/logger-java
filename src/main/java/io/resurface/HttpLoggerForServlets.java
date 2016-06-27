@@ -19,7 +19,9 @@ public class HttpLoggerForServlets implements Filter {
         this.config = config;
         if (config != null) {
             String url = config.getInitParameter("url");
-            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! url=" + (url == null ? "" : url));
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! url=" + (url == null ? "" : url)
+                + ", System.getenv(USAGE_LOGGERS_URL)="
+                + (System.getenv("USAGE_LOGGERS_URL") == null ? "" : System.getenv("USAGE_LOGGERS_URL")));
         }
         this.logger = HttpLoggerFactory.get();
     }
