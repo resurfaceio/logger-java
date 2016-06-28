@@ -87,7 +87,7 @@ public abstract class BaseLogger<T extends BaseLogger> {
      * Returns true if this logger is enabled or tracing.
      */
     public boolean isActive() {
-        return enabled || tracing;
+        return (enabled && UsageLoggers.isEnabled()) || tracing;
     }
 
     /**
@@ -111,7 +111,7 @@ public abstract class BaseLogger<T extends BaseLogger> {
         if (tracing) {
             tracing_history.add(json);
             return true;
-        } else if (enabled) {
+        } else if (enabled && UsageLoggers.isEnabled()) {
             try {
                 URL url = new URL(this.url);
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
