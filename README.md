@@ -72,7 +72,7 @@ After <a href="#installing_with_maven">installing the library</a>, use a logger 
         return "";
     });
 
-Usage data will now be logged here:
+Usage data will be logged here:
 [https://demo-resurfaceio.herokuapp.com/messages](https://demo-resurfaceio.herokuapp.com/messages)
 
 *Resurface Labs provides this free demo environment just to make our stuff easy to try. Data sent to this demo
@@ -87,9 +87,6 @@ NOTE: When integrating with Spark, logging from before/after filters is discoura
 
 This works for Tomcat, Jetty and other application servers that support standard servlet filters. Unlike the example for
 Spark above, this requires no changes to your app, and logs response headers that are not seen by the app.
-
-This logger performs some basic filtering: it ignores redirects (304 response codes), and only logs responses for content
-types matching a predefined list (including 'text/html' and 'application/json').
 
 Start by <a href="#installing_with_maven">installing the library</a> or by simply copying resurfaceio-logger-X.X.X.jar
 into the appropriate /lib directory. (no other dependencies required)
