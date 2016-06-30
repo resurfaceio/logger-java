@@ -4,7 +4,11 @@ package io.resurface.tests;
 
 import io.resurface.HttpLogger;
 import io.resurface.JsonMessage;
+import io.resurface.UsageLoggers;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static io.resurface.tests.Helper.*;
 import static org.junit.Assert.assertEquals;
@@ -104,70 +108,90 @@ public class HttpLoggerTest {
     }
 
     @Test
-    public void skipsLoggingWhenDisabledTest() {
-        for (String url : MOCK_INVALID_URLS) {
-            HttpLogger logger = new HttpLogger(url, false);
-            assertTrue("log succeeds", logger.log(null, null, null, null));
-            assertTrue("submit succeeds", logger.submit(null));
-            assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
+    public void performsEnablingWhenExpectedTest() {
+        HttpLogger logger = new HttpLogger("DEMO", false);
+        assertTrue("logger disabled", !logger.isEnabled());
+        assertTrue("url matches", UsageLoggers.urlForDemo().equals(logger.getUrl()));
+        logger.enable();
+        assertTrue("logger enabled", logger.isEnabled());
+
+        List<String> queue = new ArrayList<>();
+        logger = new HttpLogger(queue, false);
+        assertTrue("logger disabled", !logger.isEnabled());
+        assertTrue("url is null", logger.getUrl() == null);
+        logger.enable().disable().enable();
+        assertTrue("logger enabled", logger.isEnabled());
+
+        logger = new HttpLogger(UsageLoggers.urlForDemo(), false);
+        assertTrue("logger disabled", !logger.isEnabled());
+        assertTrue("url matches", UsageLoggers.urlForDemo().equals(logger.getUrl()));
+        logger.enable().disable().enable().disable().disable().disable().enable();
+        assertTrue("logger enabled", logger.isEnabled());
+    }
+
+    @Test
+    public void skipsEnablingForInvalidUrlsTest() {
+        for (String url : URLS_INVALID) {
+            HttpLogger logger = new HttpLogger(url);
+            assertTrue("logger disabled at first", !logger.isEnabled());
+            assertTrue("url is null", logger.getUrl() == null);
+            logger.enable();
+            assertTrue("logger still disabled", !logger.isEnabled());
         }
     }
 
     @Test
-    public void submitToGoodUrlTest() {
-        HttpLogger logger = new HttpLogger();
+    public void skipsEnablingForNullUrlTest() {
+        String url = null;
+        HttpLogger logger = new HttpLogger(url);
+        assertTrue("logger disabled at first", !logger.isEnabled());
+        assertTrue("url is null", logger.getUrl() == null);
+        logger.enable();
+        assertTrue("logger still disabled", !logger.isEnabled());
+    }
+
+    @Test
+    public void skipsLoggingWhenDisabledTest() {
+        for (String url : URLS_DENIED) {
+            HttpLogger logger = new HttpLogger(url).disable();
+            assertTrue("logger disabled", !logger.isEnabled());
+            assertTrue("url matches", url.equals(logger.getUrl()));
+            assertTrue("log succeeds", logger.log(null, null, null, null));    // would fail if enabled
+            assertTrue("submit succeeds", logger.submit(null));                // would fail if enabled
+        }
+    }
+
+    @Test
+    public void submitToDemoUrlTest() {
+        HttpLogger logger = new HttpLogger(UsageLoggers.urlForDemo());
+        assertTrue("url matches", UsageLoggers.urlForDemo().equals(logger.getUrl()));
         StringBuilder json = new StringBuilder(64);
         JsonMessage.start(json, "echo", logger.getAgent(), logger.getVersion(), System.currentTimeMillis());
         JsonMessage.stop(json);
         assertTrue("submit succeeds", logger.submit(json.toString()));
-        assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
     }
 
     @Test
-    public void submitToInvalidUrlTest() {
-        for (String url : MOCK_INVALID_URLS) {
+    public void submitToDeniedUrlAndFailsTest() {
+        for (String url : URLS_DENIED) {
             HttpLogger logger = new HttpLogger(url);
+            assertTrue("url matches", url.equals(logger.getUrl()));
+            assertTrue("logger enabled", logger.isEnabled());
             assertTrue("submit fails", !logger.submit("TEST-ABC"));
-            assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
         }
     }
 
     @Test
-    public void tracingTest() {
-        HttpLogger logger = new HttpLogger().disable();
-        assertTrue("logger not active at first", !logger.isActive());
-        assertTrue("logger disabled at first", !logger.isEnabled());
-        assertTrue("logger not tracing at first", !logger.isTracing());
-        assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
-        logger.tracingStart();
-        try {
-            assertTrue("logger now active", logger.isActive());
-            assertTrue("logger now tracing", logger.isTracing());
-            assertTrue("submit succeeds (1)", logger.submit("TEST-123"));
-            assertTrue("tracing history is 1", logger.tracingHistory().size() == 1);
-            assertTrue("submit succeeds (2)", logger.submit("TEST-234"));
-            assertTrue("tracing history is 2", logger.tracingHistory().size() == 2);
-            assertTrue("submit succeeds (3)", logger.submit("TEST-345"));
-            assertTrue("tracing history is 3", logger.tracingHistory().size() == 3);
-        } finally {
-            logger.tracingStop().enable();
-            assertTrue("logger active at end", logger.isActive());
-            assertTrue("logger enabled at end", logger.isEnabled());
-            assertTrue("logger not tracing at end", !logger.isTracing());
-            assertTrue("tracing history empty", logger.tracingHistory().size() == 0);
-        }
-    }
-
-    @Test
-    public void urlTest() {
-        String url = HttpLogger.DEFAULT_URL;
-        assertTrue("length check", url.length() > 0);
-        assertTrue("startsWith check", url.startsWith("https://"));
-        assertTrue("backslash check", !url.contains("\\"));
-        assertTrue("double quote check", !url.contains("\""));
-        assertTrue("single quote check", !url.contains("'"));
-        assertEquals(url, new HttpLogger().getUrl());
-        assertEquals("https://foobar.com", new HttpLogger("https://foobar.com").getUrl());
+    public void submitToQueueTest() {
+        List<String> queue = new ArrayList<>();
+        HttpLogger logger = new HttpLogger(queue);
+        assertTrue("url is null", logger.getUrl() == null);
+        assertTrue("logger enabled", logger.isEnabled());
+        assertTrue("queue size is 0", queue.size() == 0);
+        assertTrue("submit succeeds", logger.submit("TEST-123"));
+        assertTrue("queue size is 1", queue.size() == 1);
+        assertTrue("submit succeeds", logger.submit("TEST-234"));
+        assertTrue("queue size is 2", queue.size() == 2);
     }
 
     @Test

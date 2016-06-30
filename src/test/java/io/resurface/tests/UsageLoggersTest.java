@@ -16,15 +16,12 @@ public class UsageLoggersTest {
     @Test
     public void enableAndDisableAllLoggersTest() {
         HttpLogger logger = new HttpLogger(UsageLoggers.urlForDemo());
-        assertTrue("logger active at start", logger.isActive());
         assertTrue("logger enabled at start", logger.isEnabled());
         UsageLoggers.disable();
         assertTrue("all usage loggers disabled", !UsageLoggers.isEnabled());
-        assertTrue("logger inactive", !logger.isActive());
-        assertTrue("logger enabled", logger.isEnabled());
+        assertTrue("logger disabled", !logger.isEnabled());
         UsageLoggers.enable();
         assertTrue("all usage loggers enabled", UsageLoggers.isEnabled());
-        assertTrue("logger active", logger.isActive());
         assertTrue("logger enabled", logger.isEnabled());
     }
 

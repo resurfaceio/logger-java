@@ -31,6 +31,13 @@ public final class UsageLoggers {
     }
 
     /**
+     * Returns url to use by default.
+     */
+    public static String urlByDefault() {
+        return System.getenv("USAGE_LOGGERS_URL");
+    }
+
+    /**
      * Returns url for official demo.
      */
     public static String urlForDemo() {

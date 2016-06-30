@@ -7,8 +7,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -18,32 +16,72 @@ import java.util.Properties;
 public abstract class BaseLogger<T extends BaseLogger> {
 
     /**
-     * URL destination for log messages unless overridden.
-     */
-    public static final String DEFAULT_URL = "https://demo-resurfaceio.herokuapp.com/messages";
-
-    /**
      * Initialize enabled logger using default url.
      */
     protected BaseLogger(String agent) {
-        this(agent, DEFAULT_URL, true);
+        this(agent, true);
     }
 
     /**
-     * Initialize enabled logger using custom url.
+     * Initialize enabled/disabled logger using default url.
+     */
+    protected BaseLogger(String agent, boolean enabled) {
+        this(agent, UsageLoggers.urlByDefault(), enabled);
+    }
+
+    /**
+     * Initialize enabled logger using url.
      */
     protected BaseLogger(String agent, String url) {
         this(agent, url, true);
     }
 
     /**
-     * Initialize enabled or disabled logger using custom url.
+     * Initialize enabled/disabled logger using url.
      */
     protected BaseLogger(String agent, String url, boolean enabled) {
         this.agent = agent;
-        this.enabled = enabled;
-        this.url = url;
         this.version = version_lookup();
+        this.queue = null;
+
+        // set options in priority order
+        this.enabled = enabled;
+        if (url == null) {
+            this.url = UsageLoggers.urlByDefault();
+            if (this.url == null) this.enabled = false;
+        } else if (url.equals("DEMO")) {
+            this.url = UsageLoggers.urlForDemo();
+        } else {
+            this.url = url;
+        }
+
+        // validate url when present
+        if (this.url != null) {
+            try {
+                if (!new URL(this.url).getProtocol().equals("https")) throw new RuntimeException();
+            } catch (Exception e) {
+                this.url = null;
+                this.enabled = false;
+            }
+        }
+    }
+
+    /**
+     * Initialize enabled logger using queue.
+     */
+    protected BaseLogger(String agent, List<String> queue) {
+        this(agent, queue, true);
+    }
+
+    /**
+     * Initialize enabled/disabled logger using queue.
+     */
+    protected BaseLogger(String agent, List<String> queue, boolean enabled) {
+        this.agent = agent;
+        this.version = version_lookup();
+        this.enabled = enabled;
+        this.queue = queue;
+        this.url = null;
     }
 
     /**
@@ -58,7 +96,7 @@ public abstract class BaseLogger<T extends BaseLogger> {
      * Enable this logger.
      */
     public T enable() {
-        enabled = true;
+        if ((queue != null) || (url != null)) enabled = true;
         return (T) this;
     }
 
@@ -84,76 +122,39 @@ public abstract class BaseLogger<T extends BaseLogger> {
     }
 
     /**
-     * Returns true if this logger is enabled or tracing.
-     */
-    public boolean isActive() {
-        return (enabled && UsageLoggers.isEnabled()) || tracing;
-    }
-
-    /**
      * Returns true if this logger is enabled.
      */
     public boolean isEnabled() {
-        return enabled;
-    }
-
-    /**
-     * Returns true if keeping a copy of all posted messages.
-     */
-    public boolean isTracing() {
-        return tracing;
+        return enabled && UsageLoggers.isEnabled();
     }
 
     /**
      * Submits JSON message to intended destination.
      */
     public boolean submit(String json) {
-        if (tracing) {
-            tracing_history.add(json);
+        if (!isEnabled()) {
             return true;
-        } else if (enabled && UsageLoggers.isEnabled()) {
+        } else if (queue != null) {
+            queue.add(json);
+            return true;
+        } else {
             try {
-                URL url = new URL(this.url);
-                HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                con.setConnectTimeout(5000);
-                con.setReadTimeout(1000);
-                con.setRequestMethod("POST");
-                con.setDoOutput(true);
-                try (OutputStream os = con.getOutputStream()) {
+                URL url_parsed = new URL(this.url);
+                HttpURLConnection url_connection = (HttpURLConnection) url_parsed.openConnection();
+                url_connection.setConnectTimeout(5000);
+                url_connection.setReadTimeout(1000);
+                url_connection.setRequestMethod("POST");
+                url_connection.setDoOutput(true);
+                try (OutputStream os = url_connection.getOutputStream()) {
                     os.write(json.getBytes());
                     os.flush();
                 }
-                return con.getResponseCode() == 200;
+                return url_connection.getResponseCode() == 200;
             } catch (IOException ioe) {
+                // todo retry?
                 return false;
             }
         }
-        return true;
-    }
-
-    /**
-     * Returns unmodifiable copy of recently posted messages.
-     */
-    public List<String> tracingHistory() {
-        return Collections.unmodifiableList(tracing_history);
-    }
-
-    /**
-     * Starts keeping copy of all posted messages.
-     */
-    public T tracingStart() {
-        tracing = true;
-        tracing_history.clear();
-        return (T) this;
-    }
-
-    /**
-     * Stops tracing and clears current tracing history.
-     */
-    public T tracingStop() {
-        tracing = false;
-        tracing_history.clear();
-        return (T) this;
     }
 
     /**
@@ -171,9 +172,8 @@ public abstract class BaseLogger<T extends BaseLogger> {
 
     protected final String agent;
     protected boolean enabled;
-    protected boolean tracing = false;
-    protected final List<String> tracing_history = new ArrayList<>();
-    protected final String url;
+    protected final List<String> queue;
+    protected String url;
     protected final String version;
 
 }

@@ -3,10 +3,7 @@
 package io.resurface.tests;
 
 import com.google.gson.Gson;
-import io.resurface.HttpLogger;
-import io.resurface.HttpServletRequestImpl;
-import io.resurface.HttpServletResponseImpl;
-import io.resurface.JsonMessage;
+import io.resurface.*;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletResponse;
@@ -25,14 +22,16 @@ public class Helper {
 
     static final String MOCK_HTML_ESCAPED = JsonMessage.escape(new StringBuilder(), MOCK_HTML).toString();
 
-    static final String[] MOCK_INVALID_URLS = {HttpLogger.DEFAULT_URL + "/noway3is5this1valid2",
-            "https://www.noway3is5this1valid2.com/", "http://www.noway3is5this1valid2.com/"};
-
     static final long MOCK_NOW = 1455908640173L;
 
     static final String MOCK_QUERY_STRING = "foo=bar";
 
     static final String MOCK_URL = "http://something.com/index.html";
+
+    static final String[] URLS_DENIED = {UsageLoggers.urlForDemo() + "/noway3is5this1valid2",
+        "https://www.noway3is5this1valid2.com/"};
+
+    static final String[] URLS_INVALID = {"", "noway3is5this1valid2", "http://www.noway3is5this1valid2.com/"};
 
     static FilterChain mockCustomApp() {
         return (req, res) -> {

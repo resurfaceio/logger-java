@@ -6,6 +6,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Servlet filter for HTTP usage logging.
@@ -13,17 +14,31 @@ import java.io.IOException;
 public class HttpLoggerForServlets implements Filter {
 
     /**
+     * Initialize with default parameters.
+     */
+    public HttpLoggerForServlets() {
+        this.queue = null;
+    }
+
+    /**
+     * Initialize filter using supplied queue.
+     */
+    public HttpLoggerForServlets(List<String> queue) {
+        this.queue = queue;
+    }
+
+    /**
      * Called when filter is placed into service.
      */
     public void init(FilterConfig config) {
         this.config = config;
-        if (config != null) {
-            String url = config.getInitParameter("url");
-            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! url=" + (url == null ? "" : url)
-                + ", System.getenv(USAGE_LOGGERS_URL)="
-                + (System.getenv("USAGE_LOGGERS_URL") == null ? "" : System.getenv("USAGE_LOGGERS_URL")));
+        if (this.queue != null) {
+            this.logger = new HttpLogger(queue);
+        } else if (config != null) {
+            this.logger = new HttpLogger(config.getInitParameter("url"));
+        } else {
+            this.logger = new HttpLogger();
         }
-        this.logger = HttpLoggerFactory.get();
     }
 
     /**
@@ -40,7 +55,7 @@ public class HttpLoggerForServlets implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException, ServletException
     {
-        if (logger.isActive()) {
+        if (logger.isEnabled()) {
             process((HttpServletRequest) request, (HttpServletResponse) response, chain);
         } else {
             chain.doFilter(request, response);
@@ -85,5 +100,6 @@ public class HttpLoggerForServlets implements Filter {
 
     protected FilterConfig config;
     protected HttpLogger logger;
+    protected final List<String> queue;
 
 }

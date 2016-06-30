@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 
 import static io.resurface.JsonMessage.*;
 
@@ -27,17 +28,38 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
     }
 
     /**
-     * Initialize enabled logger using custom url.
+     * Initialize enabled/disabled logger using default url.
+     */
+    public HttpLogger(boolean enabled) {
+        super(AGENT, enabled);
+    }
+
+    /**
+     * Initialize enabled logger using url.
      */
     public HttpLogger(String url) {
         super(AGENT, url);
     }
 
     /**
-     * Initialize enabled or disabled logger using custom url.
+     * Initialize enabled/disabled logger using url.
      */
     public HttpLogger(String url, boolean enabled) {
         super(AGENT, url, enabled);
+    }
+
+    /**
+     * Initialize enabled logger using queue.
+     */
+    public HttpLogger(List<String> queue) {
+        super(AGENT, queue);
+    }
+
+    /**
+     * Initialize enabled/disabled logger using queue.
+     */
+    public HttpLogger(List<String> queue, boolean enabled) {
+        super(AGENT, queue, enabled);
     }
 
     /**
@@ -70,7 +92,7 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
      * Logs HTTP request and response to intended destination.
      */
     public boolean log(HttpServletRequest request, String request_body, HttpServletResponse response, String response_body) {
-        return !isActive() || submit(format(request, request_body, response, response_body));
+        return !isEnabled() || submit(format(request, request_body, response, response_body));
     }
 
     /**
