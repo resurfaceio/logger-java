@@ -88,11 +88,8 @@ NOTE: When integrating with Spark, logging from before/after filters is discoura
 This works for Tomcat, Jetty and other application servers that support standard servlet filters. Unlike the example for
 Spark above, this requires no changes to your app, and logs response headers that are not seen by the app.
 
-Start by <a href="#installing_with_maven">installing the library</a> or by simply copying resurfaceio-logger-X.X.X.jar
-into the appropriate /lib directory. (no other dependencies required)
-
-Now configure the filter in web.xml as shown below. You can optionally use a specific url-pattern to limit logging
-to specific areas of your application.
+After <a href="#installing_with_maven">installing the library</a> or simply copying resurfaceio-logger-X.X.X.jar
+into the appropriate /lib directory, configure a logging filter in web.xml like this:
 
     <filter>
         <filter-name>HttpLoggerForServlets</filter-name>
