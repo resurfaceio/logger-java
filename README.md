@@ -141,8 +141,7 @@ As implied in the fake example above, a single app can have several loggers that
 
 ### Setting Default URL
 
-Set the USAGE_LOGGERS_URL variable to provide a default value whenever the URL is not specified. This is most useful when you
-intend to have multiple loggers using a single backend service.
+Set the USAGE_LOGGERS_URL variable to provide a default value whenever the URL is not specified.
 
     // using Heroku cli
     heroku config:set USAGE_LOGGERS_URL=https://my-https-url
@@ -159,6 +158,7 @@ Loggers look for this environment variable when no other options are set, as in 
     <filter>
         <filter-name>HttpLoggerForServlets</filter-name>
         <filter-class>io.resurface.HttpLoggerForServlets</filter-class>
+        <!-- intentionally leaving url param unspecified -->
     </filter>
 
 <a name="disabling_all_logging"/>
@@ -169,13 +169,13 @@ It's important to have a "kill switch" to universally disable all logging. For e
 running automated tests. All loggers can also be disabled at runtime, either by setting an environment variable or
 programmatically.
 
-    # for Heroku app
+    // for Heroku app
     heroku config:set USAGE_LOGGERS_DISABLE=true
 
-    # when starting Java container
+    // when starting Java container
     java -DUSAGE_LOGGERS_DISABLE="true"
 
-    # at runtime
+    // at runtime
     UsageLoggers.disable();
 
 <a name="using_api_directly"/>
@@ -188,18 +188,18 @@ yields complete control over what details are logged, and where logged data is s
     import io.resurface.*;
 
     // manage all loggers (even those not created yet)
-    UsageLoggers.disable();                                      // disable all loggers
-    UsageLoggers.enable();                                       // enable all loggers
+    UsageLoggers.disable();                                          // disable all loggers
+    UsageLoggers.enable();                                           // enable all loggers
 
     // create and configure logger
     HttpLogger logger;
-    logger = new HttpLogger(queue);                              // log to appendable queue
-    logger = new HttpLogger(queue, false);                       // (initially disabled)
-    logger = new HttpLogger(my_https_url);                       // log to https url
-    logger = new HttpLogger(my_https_url, false);                // (initially disabled)
-    logger.disable();                                            // disable logging for tests
-    logger.enable();                                             // enable logging again
-    if (logger.isEnabled()) ...                                  // test if logging is enabled
+    logger = new HttpLogger(queue);                                  // log to appendable queue
+    logger = new HttpLogger(queue, false);                           // (initially disabled)
+    logger = new HttpLogger(my_https_url);                           // log to https url
+    logger = new HttpLogger(my_https_url, false);                    // (initially disabled)
+    logger.disable();                                                // disable logging for tests
+    logger.enable();                                                 // enable logging again
+    if (logger.isEnabled()) ...                                      // test if logging is enabled
 
     // define request to log
     HttpServletRequest request = new HttpServletRequestImpl();
