@@ -53,8 +53,7 @@ public class HttpLoggerForServlets implements Filter {
      * Called when request/response passes through the filter chain.
      */
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-        throws IOException, ServletException
-    {
+            throws IOException, ServletException {
         if (logger.isEnabled()) {
             process((HttpServletRequest) request, (HttpServletResponse) response, chain);
         } else {
@@ -66,8 +65,7 @@ public class HttpLoggerForServlets implements Filter {
      * Called when an active logger passes a request/response through the filter chain.
      */
     protected void process(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-        throws IOException, ServletException
-    {
+            throws IOException, ServletException {
         // Construct request wrapper for string content types
         LoggedRequestWrapper request_wrapper = null;
         String request_encoding = request.getCharacterEncoding();
@@ -94,8 +92,8 @@ public class HttpLoggerForServlets implements Filter {
      */
     protected boolean isStringContentType(String s) {
         return s != null && (s.startsWith("text/html") || s.startsWith("text/plain") || s.startsWith("text/xml")
-            || s.startsWith("application/json") || s.startsWith("application/soap+xml")
-            || s.startsWith("application/xml") || s.startsWith("application/x-www-form-urlencoded"));
+                || s.startsWith("application/json") || s.startsWith("application/soap+xml")
+                || s.startsWith("application/xml") || s.startsWith("application/x-www-form-urlencoded"));
     }
 
     protected FilterConfig config;

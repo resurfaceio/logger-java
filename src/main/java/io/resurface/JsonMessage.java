@@ -84,8 +84,7 @@ public class JsonMessage {
      * Starts message payload including the beginning brace.
      */
     public static StringBuilder start(StringBuilder json, CharSequence category, CharSequence agent,
-                                      CharSequence version, long now)
-    {
+                                      CharSequence version, long now) {
         return json.append("{\"category\":\"").append(category)
                 .append("\",\"agent\":\"").append(agent)
                 .append("\",\"version\":\"").append(version)

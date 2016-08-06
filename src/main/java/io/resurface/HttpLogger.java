@@ -66,8 +66,7 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
      * Appends HTTP request and response at the end of the supplied JSON message.
      */
     public StringBuilder appendToBuffer(StringBuilder json, long now, HttpServletRequest request, String request_body,
-                                        HttpServletResponse response, String response_body)
-    {
+                                        HttpServletResponse response, String response_body) {
         start(json, "http", getAgent(), getVersion(), now);
         append(json.append(','), "request_method", request.getMethod());
         appendRequestURL(json.append(','), request);
@@ -82,8 +81,7 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
     /**
      * Formats HTTP request and response as JSON message.
      */
-    public String format(HttpServletRequest request, String request_body, HttpServletResponse response, String response_body)
-    {
+    public String format(HttpServletRequest request, String request_body, HttpServletResponse response, String response_body) {
         StringBuilder sb = new StringBuilder(1024);  // todo recycle these?
         return appendToBuffer(sb, System.currentTimeMillis(), request, request_body, response, response_body).toString();
     }

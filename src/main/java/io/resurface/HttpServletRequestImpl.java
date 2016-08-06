@@ -379,8 +379,7 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse)
-            throws IllegalStateException
-    {
+            throws IllegalStateException {
         throw new UnsupportedOperationException();
     }
 

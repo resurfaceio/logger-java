@@ -3,7 +3,10 @@
 package io.resurface.tests;
 
 import com.google.gson.Gson;
-import io.resurface.*;
+import io.resurface.HttpServletRequestImpl;
+import io.resurface.HttpServletResponseImpl;
+import io.resurface.JsonMessage;
+import io.resurface.UsageLoggers;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletResponse;
@@ -29,7 +32,7 @@ public class Helper {
     static final String MOCK_URL = "http://something.com/index.html";
 
     static final String[] URLS_DENIED = {UsageLoggers.urlForDemo() + "/noway3is5this1valid2",
-        "https://www.noway3is5this1valid2.com/"};
+            "https://www.noway3is5this1valid2.com/"};
 
     static final String[] URLS_INVALID = {"", "noway3is5this1valid2", "http://www.noway3is5this1valid2.com/"};
 
