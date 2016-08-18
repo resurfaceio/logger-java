@@ -199,7 +199,7 @@ public class HttpLoggerTest {
         String version = HttpLogger.version_lookup();
         assertTrue("null check", version != null);
         assertTrue("length check", version.length() > 0);
-        assertTrue("startsWith check", version.startsWith("1.5."));
+        assertTrue("startsWith check", version.startsWith("1.6."));
         assertTrue("backslash check", !version.contains("\\"));
         assertTrue("double quote check", !version.contains("\""));
         assertTrue("single quote check", !version.contains("'"));
