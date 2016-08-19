@@ -1,6 +1,11 @@
 # resurfaceio-logger-java
 &copy; 2016 Resurface Labs LLC, All Rights Reserved
 
+## Coding Conventions
+
+Our code style is whatever IntelliJ IDEA does by default, with the exception of allowing lines up to 130 characters.
+If you don't use IDEA, that's ok, but your code may get reformatted.
+
 ## Git Workflow 
 
     git clone git@github.com:resurfaceio/resurfaceio-logger-java.git ~/resurfaceio-logger-java
