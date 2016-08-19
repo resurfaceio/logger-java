@@ -8,8 +8,8 @@ grateful to these developers for all their efforts.
 
 ### Apache
 
-https://hc.apache.org/ (Apache HttpComponents)<br>
-https://maven.apache.org/ (Apache Maven)<br>
+https://hc.apache.org - Apache HttpComponents<br>
+https://maven.apache.org - Apache Maven<br>
 Used under Apache License, Version 2
 
 Copyright &copy; 2016 The Apache Software Foundation
