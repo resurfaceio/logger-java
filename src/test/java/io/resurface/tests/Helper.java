@@ -53,6 +53,12 @@ public class Helper {
         };
     }
 
+    static FilterChain mockExceptionApp() {
+        return (req, res) -> {
+            throw new UnsupportedEncodingException("simulated failure");
+        };
+    }
+
     static FilterChain mockJsonApp() {
         return (req, res) -> {
             HttpServletResponse response = (HttpServletResponse) res;

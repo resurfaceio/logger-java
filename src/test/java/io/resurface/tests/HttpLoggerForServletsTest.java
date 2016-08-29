@@ -7,11 +7,13 @@ import org.junit.Test;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static io.resurface.tests.Helper.*;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Tests against servlet filter for HTTP usage logging.
@@ -91,6 +93,20 @@ public class HttpLoggerForServletsTest {
         assertTrue("has response_body", json.contains("\"response_body\":\"" + MOCK_HTML_ESCAPED + "\""));
         assertTrue("has response_code", json.contains("\"response_code\":\"404\""));
         assertTrue("has response_headers", json.contains("\"response_headers\":[{\"a\":\"Z\"},{\"content-type\":\"text/html\"}]"));
+    }
+
+    @Test
+    public void skipsExceptionTest() throws IOException, ServletException {
+        List<String> queue = new ArrayList<>();
+        HttpLoggerForServlets filter = new HttpLoggerForServlets(queue);
+        filter.init(null);
+        try {
+            filter.doFilter(mockRequest(), mockResponse(), mockExceptionApp());
+        } catch (UnsupportedEncodingException uee) {
+            assertTrue("queue size is 0", queue.size() == 0);
+        } catch (Exception e) {
+            fail("Unexpected exception type");
+        }
     }
 
     @Test
