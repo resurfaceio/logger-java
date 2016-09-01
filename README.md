@@ -85,8 +85,9 @@ NOTE: When integrating with Spark, logging from before/after filters is discoura
 
 ## Logging From Servlet Filter
 
-This works for Tomcat, Jetty and other application servers that support standard servlet filters. Unlike the example for
-Spark above, this requires no changes to your app, and logs response headers that are not seen by the app.
+This works for Tomcat, Jetty and other application servers that support servlet filters. (We test against servlet spec version 
+3.1 and later) Unlike the example for Spark above, this requires no changes to your app, and logs response headers that are 
+not seen by the app.
 
 After <a href="#installing_with_maven">installing the library</a> or simply copying resurfaceio-logger-X.X.X.jar
 into the appropriate /lib directory, configure a logging filter in web.xml like this:
