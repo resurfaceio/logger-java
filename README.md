@@ -8,8 +8,8 @@ This library makes it easy to log actual usage of Java web/json apps.
 <ul>
 <li><a href="#dependencies">Dependencies</a></li>
 <li><a href="#installing_with_maven">Installing With Maven</a></li>
-<li><a href="#logging_from_spark_framework">Logging From Spark Framework</a></li>
 <li><a href="#logging_from_servlet_filter">Logging From Servlet Filter</a></li>
+<li><a href="#logging_from_spark_framework">Logging From Spark Framework</a></li>
 <li><a href="#logging_to_different_urls">Logging To Different URLs</a></li>
 <li><a href="#advanced_topics">Advanced Topics</a><ul>
 <li><a href="#setting_default_url">Setting Default URL</a></li>
@@ -47,47 +47,12 @@ Use these sections in your pom.xml:
         </repository>
     </repositories>
 
-<a name="logging_from_spark_framework"/>
-
-## Logging From Spark Framework
-
-Spark Framework is a popular microservice framework, and is featured by Heroku's
-[Getting Started with Java](https://devcenter.heroku.com/articles/getting-started-with-java) tutorial.
-
-After <a href="#installing_with_maven">installing the library</a>, use a logger within Spark handlers as shown below.
-
-    import io.resurface.HttpLogger;
-
-    HttpLogger logger = new HttpLogger("DEMO");
-
-    get("/hello", (request, response) -> {
-        String response_body = "Hello World";
-        logger.log(request.raw(), null, response.raw(), response_body);
-        return response_body;
-    });
-
-    post("/hello_post", (request, response) -> {
-        response.status(401);
-        logger.log(request.raw(), request.body(), response.raw(), null);
-        return "";
-    });
-
-Usage data will be logged here:
-[https://demo-resurfaceio.herokuapp.com/messages](https://demo-resurfaceio.herokuapp.com/messages)
-
-*Resurface Labs provides this free demo environment just to make our stuff easy to try. Data sent to this demo
-environment is held in volatile memory for less than 24 hours, and is never shared with third parties.
-(<a href="">Privacy and Terms of Service</a>)*
-
-NOTE: When integrating with Spark, logging from before/after filters is discouraged.
-
 <a name="logging_from_servlet_filter"/>
 
 ## Logging From Servlet Filter
 
 This works for Tomcat, Jetty and other application servers that support servlet filters. (We test against servlet spec version 
-3.1 and later) Unlike the example for Spark above, this requires no changes to your app, and logs response headers that are 
-not seen by the app.
+3.1 and later)
 
 After <a href="#installing_with_maven">installing the library</a> or simply copying resurfaceio-logger-X.X.X.jar
 into the appropriate /lib directory, configure a logging filter in web.xml like this:
@@ -105,19 +70,49 @@ into the appropriate /lib directory, configure a logging filter in web.xml like 
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     
-Usage data will now be logged here:
-[https://demo-resurfaceio.herokuapp.com/messages](https://demo-resurfaceio.herokuapp.com/messages)
+With this configuration, usage data will be logged to our 
+[free demo environment](https://demo-resurfaceio.herokuapp.com/messages), but you can alternatively
+<a href="#logging_to_different_urls">log to any URL</a>.
 
-*Resurface Labs provides this free demo environment just to make our stuff easy to try. Data sent to this demo
-environment is held in volatile memory for less than 24 hours, and is never shared with third parties.
-(<a href="">Privacy and Terms of Service</a>)*
+<a name="logging_from_spark_framework"/>
+
+## Logging From Spark Framework
+
+Spark Framework is a popular microservice framework, and is featured by Heroku's
+[Getting Started with Java](https://devcenter.heroku.com/articles/getting-started-with-java) tutorial. Spark does not support
+servlet filters that work across all routes, but a usage logger can be used for specific routes. (In Spark, a route is a 
+URL-matching pattern associated with a block of code)
+
+After <a href="#installing_with_maven">installing the library</a>, create a logger and use it from the routes of interest.
+
+    import io.resurface.HttpLogger;
+
+    HttpLogger logger = new HttpLogger("DEMO");
+
+    get("/hello", (request, response) -> {
+        String response_body = "Hello World";
+        logger.log(request.raw(), null, response.raw(), response_body);
+        return response_body;
+    });
+
+    post("/hello_post", (request, response) -> {
+        response.status(401);
+        logger.log(request.raw(), request.body(), response.raw(), null);
+        return "";
+    });
+
+With this configuration, usage data will be logged to our 
+[free demo environment](https://demo-resurfaceio.herokuapp.com/messages), but you can alternatively
+<a href="#logging_to_different_urls">log to any URL</a>.
+
+NOTE: When integrating with Spark, logging from before/after filters is discouraged.
 
 <a name="logging_to_different_urls"/>
 
 ## Logging To Different URLs
 
 Our loggers don't lock you into using any particular backend service. Loggers can send data to any URL that accepts JSON
-messages as a standard HTTPS POST.
+messages as a standard HTTPS POST. A single application can use multiple loggers configured with different URLs.
 
     // for basic logger
     HttpLogger logger = new HttpLogger("https://my-https-url");
@@ -131,8 +126,6 @@ messages as a standard HTTPS POST.
             <param-value>https://my-other-url</param-value>
         </init-param>
     </filter>
-
-As implied in the fake example above, a single app can have several loggers that send usage data to different URLs at once.
 
 <a name="advanced_topics"/>
 
@@ -184,7 +177,7 @@ programmatically.
 ### Using API Directly
 
 Loggers can be directly integrated into your application if other options don't fit. This requires the most effort, but
-yields complete control over what details are logged, and where logged data is sent.
+yields complete control over how usage logging is implemented.
 
     import io.resurface.*;
 
