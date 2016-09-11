@@ -11,13 +11,14 @@ public class JsonMessage {
      * Adds quote-delimited string to message.
      */
     public static StringBuilder append(StringBuilder json, CharSequence value) {
-        return json.append("\"").append(value.toString()).append("\"");
+        return (value == null) ? json : json.append("\"").append(value.toString()).append("\"");
     }
 
     /**
      * Adds key/value pair to message.
      */
     public static StringBuilder append(StringBuilder json, CharSequence key, CharSequence value) {
+        if ((key == null) || (value == null)) return json;
         append(json, key).append(":\"");
         return escape(json, value).append("\"");
     }
@@ -26,7 +27,7 @@ public class JsonMessage {
      * Adds key/value pair to message.
      */
     public static StringBuilder append(StringBuilder json, CharSequence key, long value) {
-        return append(json, key).append(":\"").append(value).append("\"");
+        return (key == null) ? json : append(json, key).append(":\"").append(value).append("\"");
     }
 
     /**
@@ -39,6 +40,7 @@ public class JsonMessage {
      * 4) Returns StringBuilder rather than void
      */
     public static StringBuilder escape(StringBuilder json, CharSequence value) {
+        if (value == null) return json;
         final int len = value.length();
         for (int i = 0; i < len; i++) {
             char ch = value.charAt(i);

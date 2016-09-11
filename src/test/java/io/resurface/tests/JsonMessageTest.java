@@ -14,6 +14,16 @@ import static org.junit.Assert.assertTrue;
 public class JsonMessageTest {
 
     @Test
+    public void appendNullsTest() {
+        assertEquals("", append(new StringBuilder(), null).toString());
+        assertEquals("ABC", append(new StringBuilder("ABC"), null).toString());
+        assertEquals("", append(new StringBuilder(), null, -1).toString());
+        assertEquals("123", append(new StringBuilder("123"), null, -1).toString());
+        assertEquals("", append(new StringBuilder(), null, null).toString());
+        assertEquals("XYZ", append(new StringBuilder("XYZ"), null, null).toString());
+    }
+
+    @Test
     public void appendNumbersTest() {
         assertEquals("\"name\":\"-1\"", append(new StringBuilder(), "name", -1).toString());
         assertEquals("\"name1\":\"123\"", append(new StringBuilder(), "name1", 123).toString());
@@ -58,6 +68,12 @@ public class JsonMessageTest {
         assertEquals("\\nthe cow says moo", escape(new StringBuilder(), "\nthe cow says moo").toString());
         assertEquals("the cow\\n says moo", escape(new StringBuilder(), "the cow\n says moo").toString());
         assertEquals("the cow says moo\\n", escape(new StringBuilder(), "the cow says moo\n").toString());
+    }
+
+    @Test
+    public void escapeNullsTest() {
+        assertEquals("", escape(new StringBuilder(), null).toString());
+        assertEquals("ABC", escape(new StringBuilder("ABC"), null).toString());
     }
 
     @Test
