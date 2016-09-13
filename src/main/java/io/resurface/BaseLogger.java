@@ -58,7 +58,7 @@ public abstract class BaseLogger<T extends BaseLogger> {
         // validate url when present
         if (this.url != null) {
             try {
-                if (!new URL(this.url).getProtocol().equals("https")) throw new RuntimeException();
+                if (!new URL(this.url).getProtocol().contains("http")) throw new RuntimeException();
             } catch (Exception e) {
                 this.url = null;
                 this.enabled = false;
