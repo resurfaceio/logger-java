@@ -19,6 +19,33 @@ import static org.junit.Assert.assertTrue;
 public class LoggedRequestWrapperTest {
 
     @Test
+    public void formParseFormCheckboxTest() throws IOException {
+        LoggedRequestWrapper w = new LoggedRequestWrapper(Helper.mockRequestWithFormCheckbox());
+        assertTrue("has parameter map", w.getParameterMap().size() == 1);
+        assertTrue("has no anykey parameter", w.getParameter("anykey") == null);
+        assertTrue("has checkbox parameter", w.getParameter("a").equals("A1"));
+        assertTrue("has checkbox parameters", w.getParameterValues("a").length == 3);
+    }
+
+    @Test
+    public void formParseFormRegisterTest() throws IOException {
+        LoggedRequestWrapper w = new LoggedRequestWrapper(Helper.mockRequestWithFormRegister());
+        assertTrue("has parameter map", w.getParameterMap().size() == 2);
+        assertTrue("has no anykey parameter", w.getParameter("anykey") == null);
+        assertTrue("has firstname parameter", w.getParameter("firstname").equals("wreck it"));
+        assertTrue("has lastname parameter", w.getParameter("lastname").equals("ralph"));
+    }
+
+    @Test
+    public void formParseNothingTest() throws IOException {
+        LoggedRequestWrapper w = new LoggedRequestWrapper(Helper.mockRequest());
+        assertTrue("has empty parameter map", w.getParameterMap().size() == 0);
+        assertTrue("has no anykey parameter", w.getParameter("anykey") == null);
+        assertTrue("has no firstname parameter", w.getParameter("firstname") == null);
+        assertTrue("has no lastname parameter", w.getParameter("lastname") == null);
+    }
+
+    @Test
     public void inputStreamClassTest() throws IOException {
         LoggedRequestWrapper w = new LoggedRequestWrapper(Helper.mockRequest());
         assertTrue("input stream is present", w.getInputStream() != null);

@@ -17,6 +17,10 @@ import java.io.UnsupportedEncodingException;
  */
 public class Helper {
 
+    static final String MOCK_FORM_CHECKBOX = "a=A1&a=A2&a=A3";
+
+    static final String MOCK_FORM_REGISTER = "firstname=wreck+it&lastname=ralph";
+
     static final String MOCK_JSON = "{ \"hello\" : \"world\" }";
 
     static final String MOCK_JSON_ESCAPED = JsonMessage.escape(new StringBuilder(), MOCK_JSON).toString();
@@ -121,6 +125,26 @@ public class Helper {
         impl.addHeader("A", "1");
         impl.addHeader("A", "2");
         return impl;
+    }
+
+    static HttpServletRequestImpl mockRequestWithFormCheckbox() throws UnsupportedEncodingException {
+        HttpServletRequestImpl r = new HttpServletRequestImpl(MOCK_FORM_CHECKBOX.getBytes());
+        r.setCharacterEncoding("UTF-8");
+        r.setContentType("application/x-www-form-urlencoded");
+        r.setMethod("POST");
+        r.setQueryString(MOCK_QUERY_STRING);
+        r.setRequestURL(MOCK_URL);
+        return r;
+    }
+
+    static HttpServletRequestImpl mockRequestWithFormRegister() throws UnsupportedEncodingException {
+        HttpServletRequestImpl r = new HttpServletRequestImpl(MOCK_FORM_REGISTER.getBytes());
+        r.setCharacterEncoding("UTF-8");
+        r.setContentType("application/x-www-form-urlencoded");
+        r.setMethod("POST");
+        r.setQueryString(MOCK_QUERY_STRING);
+        r.setRequestURL(MOCK_URL);
+        return r;
     }
 
     static HttpServletResponseImpl mockResponse() {
