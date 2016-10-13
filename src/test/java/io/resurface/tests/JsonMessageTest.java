@@ -98,6 +98,18 @@ public class JsonMessageTest {
     }
 
     @Test
+    public void escapeUnicodeTest() {
+        assertEquals("\\u001B", escape(new StringBuilder(), "\u001B").toString());
+        assertEquals("\\u007F", escape(new StringBuilder(), "\u007F").toString());
+        assertEquals("\\u204B", escape(new StringBuilder(), "\u204B").toString());
+        assertEquals("[", escape(new StringBuilder(), "\u005B").toString());
+        assertEquals(" ö", escape(new StringBuilder(), " ö").toString());
+        assertEquals("  ö has \\ndiaeresis", escape(new StringBuilder(), "  \u00F6 has \ndiaeresis").toString());
+        assertEquals("鯨", escape(new StringBuilder(), "\u9BE8").toString());
+        assertEquals("鯨 is a whale", escape(new StringBuilder(), "鯨 is a whale").toString());
+    }
+
+    @Test
     public void startTest() {
         StringBuilder json = start(new StringBuilder(), "category1", "agent1", "version1", 1455908589662L);
         assertTrue("has category", json.toString().contains("{\"category\":\"category1\","));
