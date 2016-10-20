@@ -68,11 +68,9 @@ public class JsonMessage {
                     break;
                 default:
                     if ((ch <= '\u001F') || (ch >= '\u007F' && ch <= '\u009F') || (ch >= '\u2000' && ch <= '\u20FF')) {
-                        String ss = Integer.toHexString(ch);
                         json.append("\\u");
-                        for (int k = 0; k < 4 - ss.length(); k++) {
-                            json.append('0');
-                        }
+                        String ss = Integer.toHexString(ch);
+                        for (int k = 0; k < 4 - ss.length(); k++) json.append('0');
                         json.append(ss.toUpperCase());
                     } else {
                         json.append(ch);

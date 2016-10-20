@@ -100,7 +100,7 @@ public class JsonMessageTest {
     @Test
     public void escapeUnicodeTest() {
         assertEquals("\\u001B", escape(new StringBuilder(), "\u001B").toString());
-        assertEquals("\\u007F", escape(new StringBuilder(), "\u007F").toString());
+        assertEquals(" \\u007F", escape(new StringBuilder(" "), "\u007F").toString());
         assertEquals("\\u204B", escape(new StringBuilder(), "\u204B").toString());
         assertEquals("[", escape(new StringBuilder(), "\u005B").toString());
         assertEquals(" ö", escape(new StringBuilder(), " ö").toString());
