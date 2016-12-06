@@ -68,7 +68,7 @@ public class Helper {
         return (req, res) -> {
             HttpServletResponse response = (HttpServletResponse) res;
             response.setCharacterEncoding("UTF-8");
-            response.setContentType("application/json");
+            response.setContentType("application/json; charset=utf-8");
             response.getOutputStream().write(MOCK_JSON.getBytes());
             response.setStatus(500);
         };
@@ -113,7 +113,7 @@ public class Helper {
     static HttpServletRequestImpl mockRequestWithBody() throws UnsupportedEncodingException {
         HttpServletRequestImpl r = new HttpServletRequestImpl(MOCK_JSON.getBytes());
         r.setCharacterEncoding("UTF-8");
-        r.setContentType("application/json");
+        r.setContentType("Application/JSON");
         r.setMethod("POST");
         r.setQueryString(MOCK_QUERY_STRING);
         r.setRequestURL(MOCK_URL);
@@ -140,7 +140,7 @@ public class Helper {
     static HttpServletRequestImpl mockRequestWithFormRegister() throws UnsupportedEncodingException {
         HttpServletRequestImpl r = new HttpServletRequestImpl(MOCK_FORM_REGISTER.getBytes());
         r.setCharacterEncoding("UTF-8");
-        r.setContentType("application/x-www-form-urlencoded");
+        r.setContentType("application/X-WWW-FORM-URLENCODED");
         r.setMethod("POST");
         r.setQueryString(MOCK_QUERY_STRING);
         r.setRequestURL(MOCK_URL);

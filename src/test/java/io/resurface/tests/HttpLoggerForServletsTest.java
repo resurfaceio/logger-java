@@ -54,7 +54,7 @@ public class HttpLoggerForServletsTest {
         assertTrue("has request_method", json.contains("\"request_method\":\"GET\""));
         assertTrue("has response_body", json.contains("\"response_body\":\"" + MOCK_JSON_ESCAPED + "\""));
         assertTrue("has response_code", json.contains("\"response_code\":\"500\""));
-        assertTrue("has response_headers", json.contains("\"response_headers\":[{\"content-type\":\"application/json\"}]"));
+        assertTrue("has response_headers", json.contains("\"response_headers\":[{\"content-type\":\"application/json; charset=utf-8\"}]"));
     }
 
     @Test
@@ -68,12 +68,12 @@ public class HttpLoggerForServletsTest {
         assertTrue("json is valid", parseable(json));
         assertTrue("has category", json.contains("\"category\":\"http\""));
         assertTrue("has request_body", json.contains("\"request_body\":\"" + MOCK_JSON_ESCAPED + "\""));
-        assertTrue("has request_headers", json.contains("\"request_headers\":[{\"content-type\":\"application/json\"}]"));
+        assertTrue("has request_headers", json.contains("\"request_headers\":[{\"content-type\":\"Application/JSON\"}]"));
         assertTrue("has request_method", json.contains("\"request_method\":\"POST\""));
         assertTrue("has request_url", json.contains("\"request_url\":\"" + MOCK_URL + '?' + MOCK_QUERY_STRING + "\""));
         assertTrue("has response_body", json.contains("\"response_body\":\"" + MOCK_JSON_ESCAPED + "\""));
         assertTrue("has response_code", json.contains("\"response_code\":\"500\""));
-        assertTrue("has response_headers", json.contains("\"response_headers\":[{\"content-type\":\"application/json\"}]"));
+        assertTrue("has response_headers", json.contains("\"response_headers\":[{\"content-type\":\"application/json; charset=utf-8\"}]"));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class HttpLoggerForServletsTest {
         assertTrue("json is valid", parseable(json));
         assertTrue("has category", json.contains("\"category\":\"http\""));
         assertTrue("has request_body", json.contains("\"request_body\":\"" + MOCK_JSON_ESCAPED + "\""));
-        assertTrue("has request_headers", json.contains("\"request_headers\":[{\"a\":\"1\"},{\"a\":\"2\"},{\"content-type\":\"application/json\"}]"));
+        assertTrue("has request_headers", json.contains("\"request_headers\":[{\"a\":\"1\"},{\"a\":\"2\"},{\"content-type\":\"Application/JSON\"}]"));
         assertTrue("has request_method", json.contains("\"request_method\":\"POST\""));
         assertTrue("has request_url", json.contains("\"request_url\":\"" + MOCK_URL + '?' + MOCK_QUERY_STRING + "\""));
         assertTrue("has response_body", json.contains("\"response_body\":\"" + MOCK_HTML_ESCAPED + "\""));
@@ -96,7 +96,7 @@ public class HttpLoggerForServletsTest {
     }
 
     @Test
-    public void skipsExceptionTest() throws IOException, ServletException {
+    public void skipsExceptionTest() {
         List<String> queue = new ArrayList<>();
         HttpLoggerForServlets filter = new HttpLoggerForServlets(queue);
         filter.init(null);

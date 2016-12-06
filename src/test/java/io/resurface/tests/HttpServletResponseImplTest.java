@@ -27,11 +27,19 @@ public class HttpServletResponseImplTest {
 
     @Test
     public void useContentType() {
-        String val = "text/html";
         HttpServletResponseImpl impl = new HttpServletResponseImpl();
         assertTrue("null by default", impl.getContentType() == null);
+        assertTrue("null header by default", impl.getHeader("CONTENT-TYPE") == null);
+
+        String val = "text/html";
         impl.setContentType(val);
         assertTrue("value set ok", impl.getContentType().equals(val));
+        assertTrue("header set ok", impl.getHeader("Content-Type").equals(val));
+        assertTrue("null header because of case", impl.getHeader("content-type") == null);
+
+        impl.setContentType(null);
+        assertTrue("null content type after update", impl.getContentType() == null);
+        assertTrue("null header after update", impl.getHeader("content-TYPE") == null);
     }
 
     @Test
@@ -63,6 +71,7 @@ public class HttpServletResponseImplTest {
 
         impl.setHeader(key2, val2);
         i = impl.getHeaderNames().iterator();
+        assertTrue("header name 2 upcased not read", impl.getHeader(key2.toUpperCase()) == null);
         assertTrue("header name 2 read ok", i.next().equals(key2));
         assertTrue("header name 1 read ok", i.next().equals(key));
     }
