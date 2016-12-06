@@ -34,7 +34,7 @@ Use these sections in your pom.xml:
         <dependency>
             <groupId>io.resurface</groupId>
             <artifactId>resurfaceio-logger</artifactId>
-            <version>1.6.9-SNAPSHOT</version>
+            <version>1.6.10-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
