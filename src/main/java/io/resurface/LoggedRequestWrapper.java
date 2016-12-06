@@ -48,6 +48,7 @@ public class LoggedRequestWrapper extends javax.servlet.http.HttpServletRequestW
     /**
      * Returns a java.util.Map of the parameters of this request.
      */
+    @Override
     public Map<String, String[]> getParameterMap() {
         parseParameters();
         return parameters;
@@ -56,6 +57,7 @@ public class LoggedRequestWrapper extends javax.servlet.http.HttpServletRequestW
     /**
      * Returns an Enumeration of String objects containing the names of the parameters contained in this request.
      */
+    @Override
     public Enumeration<String> getParameterNames() {
         parseParameters();
         return java.util.Collections.enumeration(parameters.keySet());
@@ -65,6 +67,7 @@ public class LoggedRequestWrapper extends javax.servlet.http.HttpServletRequestW
      * Returns an array of String objects containing all of the values the given request parameter has,
      * or null if the parameter does not exist.
      */
+    @Override
     public String[] getParameterValues(String name) {
         if (name == null) return null;
         parseParameters();
