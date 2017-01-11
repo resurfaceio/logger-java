@@ -24,7 +24,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 
 http://junit.org/<br>Used under Eclipse Public License
 
-Copyright &copy; 2002-2016 JUnit. All Rights Reserved.
+Copyright &copy; 2002-2016 JUnit
 
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution,
 and is available at http://www.eclipse.org/legal/epl-v10.html.

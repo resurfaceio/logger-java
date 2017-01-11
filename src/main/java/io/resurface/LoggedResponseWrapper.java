@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Resurface Labs LLC, All Rights Reserved
+// © 2016-2017 Resurface Labs LLC
 
 package io.resurface;
 
