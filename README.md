@@ -28,7 +28,7 @@ Requires Java 8. No other dependencies to conflict with your app.
 
 ## Installing with Maven
 
-Use these sections in your pom.xml:
+Use these sections in your `pom.xml`:
 
     <dependencies>
         <dependency>
@@ -54,8 +54,8 @@ Use these sections in your pom.xml:
 This works for Tomcat, Jetty and other application servers that support servlet filters. (We test against servlet spec version 
 3.1 and later)
 
-After <a href="#installing_with_maven">installing the library</a> or simply copying resurfaceio-logger-X.X.X.jar
-into the appropriate /lib directory, configure a logging filter in web.xml like this:
+After <a href="#installing_with_maven">installing the library</a> or simply copying `resurfaceio-logger-X.X.X.jar`
+into the appropriate `lib` directory, configure a logging filter in `web.xml` like this:
 
     <filter>
         <filter-name>HttpLoggerForServlets</filter-name>
@@ -135,7 +135,7 @@ messages as a standard HTTP/HTTPS POST. A single application can use multiple lo
 
 ### Setting Default URL
 
-Set the USAGE_LOGGERS_URL variable to provide a default value whenever the URL is not specified.
+Set the `USAGE_LOGGERS_URL` variable to provide a default value whenever the URL is not specified.
 
     // using Heroku cli
     heroku config:set USAGE_LOGGERS_URL=https://my-https-url
