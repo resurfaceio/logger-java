@@ -71,7 +71,7 @@ into the appropriate `lib` directory, configure a logging filter in `web.xml` li
     </filter-mapping>
     
 With this configuration, usage data will be logged to our 
-[free demo environment](https://demo-resurfaceio.herokuapp.com/messages), but you can alternatively
+[free demo environment](https://demo-resurfaceio.herokuapp.com/messages), but you can
 <a href="#logging_to_different_urls">log to any URL</a>.
 
 <a name="logging_from_spark_framework"/>
@@ -102,7 +102,7 @@ After <a href="#installing_with_maven">installing the library</a>, create a logg
     });
 
 With this configuration, usage data will be logged to our 
-[free demo environment](https://demo-resurfaceio.herokuapp.com/messages), but you can alternatively
+[free demo environment](https://demo-resurfaceio.herokuapp.com/messages), but you can
 <a href="#logging_to_different_urls">log to any URL</a>.
 
 NOTE: When integrating with Spark, logging from before/after filters is discouraged.
