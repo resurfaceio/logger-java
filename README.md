@@ -112,7 +112,7 @@ NOTE: When integrating with Spark, logging from before/after filters is discoura
 ## Logging To Different URLs
 
 Our loggers don't lock you into using any particular backend service. Loggers can send data to any URL that accepts JSON
-messages as a standard HTTP/HTTPS POST. A single application can use multiple loggers configured with different URLs.
+messages as a HTTP/HTTPS POST. A single application can use multiple loggers configured with different URLs.
 
     // for basic logger
     HttpLogger logger = new HttpLogger("https://my-https-url");
