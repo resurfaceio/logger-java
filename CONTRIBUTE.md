@@ -8,12 +8,23 @@ If you don't use IDEA, that's ok, but your code may get reformatted.
 
 ## Git Workflow 
 
-    git clone git@github.com:resurfaceio/resurfaceio-logger-java.git ~/resurfaceio-logger-java
-    cd ~/resurfaceio-logger-java
-    git pull
-    (make changes)
-    git status                                (review changes)
-    git add -A
-    git commit -m "#123 Updated readme"       (123 is the GitHub issue number)
-    git pull
-    git push origin master
+```
+git clone git@github.com:resurfaceio/resurfaceio-logger-java.git
+cd resurfaceio-logger-java
+git pull
+```
+
+Running unit tests:
+
+```
+mvn test
+```
+
+Committing changes:
+
+```
+git add -A
+git commit -m "#123 Updated readme"       (123 is the GitHub issue number)
+git pull
+git push origin master
+```
