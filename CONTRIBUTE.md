@@ -11,7 +11,6 @@ If you don't use IDEA, that's ok, but your code may get reformatted.
 ```
 git clone git@github.com:resurfaceio/resurfaceio-logger-java.git
 cd resurfaceio-logger-java
-git pull
 ```
 
 Running unit tests:
