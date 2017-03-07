@@ -205,6 +205,18 @@ public class HttpLoggerTest {
     }
 
     @Test
+    public void urlTest() {
+        String url1 = "http://resurface.io";
+        String url2 = "http://whatever.com";
+        HttpLogger logger1 = new HttpLogger(url1);
+        HttpLogger logger2 = new HttpLogger(url2);
+        HttpLogger logger3 = new HttpLogger("DEMO");
+        assertEquals(url1, logger1.getUrl());
+        assertEquals(url2, logger2.getUrl());
+        assertEquals(UsageLoggers.urlForDemo(), logger3.getUrl());
+    }
+
+    @Test
     public void versionTest() {
         String version = HttpLogger.version_lookup();
         assertTrue("null check", version != null);
