@@ -7,7 +7,9 @@ package io.resurface;
  */
 public final class UsageLoggers {
 
-    private static boolean disabled = "true".equals(System.getenv("USAGE_LOGGERS_DISABLE"));
+    private static final boolean DISABLED = "true".equals(System.getenv("USAGE_LOGGERS_DISABLE"));
+
+    private static boolean disabled = DISABLED;
 
     /**
      * Disable all usage loggers.
@@ -20,7 +22,7 @@ public final class UsageLoggers {
      * Enable all usage loggers, except those explicitly disabled.
      */
     public static void enable() {
-        if (!"true".equals(System.getenv("USAGE_LOGGERS_DISABLE"))) disabled = false;
+        if (!DISABLED) disabled = false;
     }
 
     /**

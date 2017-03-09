@@ -26,10 +26,16 @@ public class UsageLoggersTest {
     }
 
     @Test
-    public void urlForDemoTest() {
+    public void providesDemoUrlTest() {
         String url = UsageLoggers.urlForDemo();
         assertTrue("length check", url.length() > 0);
         assertTrue("parsing check", new HttpLogger(url).isEnabled());
+    }
+
+    @Test
+    public void providesEmptyDefaultUrlTest() {
+        String url = UsageLoggers.urlByDefault();
+        assertTrue("null check", url == null);
     }
 
 }
