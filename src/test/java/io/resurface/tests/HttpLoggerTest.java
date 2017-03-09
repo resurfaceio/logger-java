@@ -3,33 +3,19 @@
 package io.resurface.tests;
 
 import io.resurface.HttpLogger;
-import io.resurface.JsonMessage;
 import io.resurface.UsageLoggers;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static io.resurface.tests.Helper.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Tests against logger for HTTP usage.
+ * Tests against usage logger for HTTP/HTTPS protocol.
  */
 public class HttpLoggerTest {
 
     private final HttpLogger logger = new HttpLogger();
-
-    @Test
-    public void agentTest() {
-        String agent = HttpLogger.AGENT;
-        assertTrue("length check", agent.length() > 0);
-        assertTrue("endsWith check", agent.endsWith(".java"));
-        assertTrue("backslash check", !agent.contains("\\"));
-        assertTrue("double quote check", !agent.contains("\""));
-        assertTrue("single quote check", !agent.contains("'"));
-    }
 
     @Test
     public void appendRequestTest() {
@@ -108,46 +94,28 @@ public class HttpLoggerTest {
     }
 
     @Test
-    public void performsEnablingWhenExpectedTest() {
-        HttpLogger logger = new HttpLogger("DEMO", false);
-        assertTrue("logger disabled", !logger.isEnabled());
-        assertTrue("url matches", UsageLoggers.urlForDemo().equals(logger.getUrl()));
-        logger.enable();
-        assertTrue("logger enabled", logger.isEnabled());
-
-        List<String> queue = new ArrayList<>();
-        logger = new HttpLogger(queue, false);
-        assertTrue("logger disabled", !logger.isEnabled());
-        assertTrue("url is null", logger.getUrl() == null);
-        logger.enable().disable().enable();
-        assertTrue("logger enabled", logger.isEnabled());
-
-        logger = new HttpLogger(UsageLoggers.urlForDemo(), false);
-        assertTrue("logger disabled", !logger.isEnabled());
-        assertTrue("url matches", UsageLoggers.urlForDemo().equals(logger.getUrl()));
-        logger.enable().disable().enable().disable().disable().disable().enable();
-        assertTrue("logger enabled", logger.isEnabled());
+    public void maintainsAgentAndUrlTest() {
+        String url1 = "http://resurface.io";
+        String url2 = "http://whatever.com";
+        HttpLogger logger1 = new HttpLogger(url1);
+        HttpLogger logger2 = new HttpLogger(url2);
+        HttpLogger logger3 = new HttpLogger("DEMO");
+        assertEquals(logger1.getAgent(), HttpLogger.AGENT);
+        assertEquals(logger1.getUrl(), url1);
+        assertEquals(logger2.getAgent(), HttpLogger.AGENT);
+        assertEquals(logger2.getUrl(), url2);
+        assertEquals(logger3.getAgent(), HttpLogger.AGENT);
+        assertEquals(logger3.getUrl(), UsageLoggers.urlForDemo());
     }
 
     @Test
-    public void skipsEnablingForInvalidUrlsTest() {
-        for (String url : URLS_INVALID) {
-            HttpLogger logger = new HttpLogger(url);
-            assertTrue("logger disabled at first", !logger.isEnabled());
-            assertTrue("url is null", logger.getUrl() == null);
-            logger.enable();
-            assertTrue("logger still disabled", !logger.isEnabled());
-        }
-    }
-
-    @Test
-    public void skipsEnablingForNullUrlTest() {
-        String url = null;
-        HttpLogger logger = new HttpLogger(url);
-        assertTrue("logger disabled at first", !logger.isEnabled());
-        assertTrue("url is null", logger.getUrl() == null);
-        logger.enable();
-        assertTrue("logger still disabled", !logger.isEnabled());
+    public void providesValidAgentTest() {
+        String agent = HttpLogger.AGENT;
+        assertTrue("length check", agent.length() > 0);
+        assertTrue("endsWith check", agent.endsWith(".java"));
+        assertTrue("backslash check", !agent.contains("\\"));
+        assertTrue("double quote check", !agent.contains("\""));
+        assertTrue("single quote check", !agent.contains("'"));
     }
 
     @Test
@@ -159,73 +127,6 @@ public class HttpLoggerTest {
             assertTrue("log succeeds", logger.log(null, null, null, null));    // would fail if enabled
             assertTrue("submit succeeds", logger.submit(null));                // would fail if enabled
         }
-    }
-
-    @Test
-    public void submitToDemoUrlTest() {
-        HttpLogger logger = new HttpLogger(UsageLoggers.urlForDemo());
-        assertTrue("url matches", UsageLoggers.urlForDemo().equals(logger.getUrl()));
-        StringBuilder json = new StringBuilder(64);
-        JsonMessage.start(json, "echo", logger.getAgent(), logger.getVersion(), System.currentTimeMillis());
-        JsonMessage.stop(json);
-        assertTrue("submit succeeds", logger.submit(json.toString()));
-    }
-
-    @Test
-    public void submitToDemoUrlViaHttpTest() {
-        HttpLogger logger = new HttpLogger(UsageLoggers.urlForDemo().replace("https://", "http://"));
-        assertTrue("url matches", logger.getUrl().contains("http://"));
-        StringBuilder json = new StringBuilder(64);
-        JsonMessage.start(json, "echo", logger.getAgent(), logger.getVersion(), System.currentTimeMillis());
-        JsonMessage.stop(json);
-        assertTrue("submit succeeds", logger.submit(json.toString()));
-    }
-
-    @Test
-    public void submitToDeniedUrlAndFailsTest() {
-        for (String url : URLS_DENIED) {
-            HttpLogger logger = new HttpLogger(url);
-            assertTrue("url matches", url.equals(logger.getUrl()));
-            assertTrue("logger enabled", logger.isEnabled());
-            assertTrue("submit fails", !logger.submit("TEST-ABC"));
-        }
-    }
-
-    @Test
-    public void submitToQueueTest() {
-        List<String> queue = new ArrayList<>();
-        HttpLogger logger = new HttpLogger(queue);
-        assertTrue("url is null", logger.getUrl() == null);
-        assertTrue("logger enabled", logger.isEnabled());
-        assertTrue("queue size is 0", queue.size() == 0);
-        assertTrue("submit succeeds", logger.submit("TEST-123"));
-        assertTrue("queue size is 1", queue.size() == 1);
-        assertTrue("submit succeeds", logger.submit("TEST-234"));
-        assertTrue("queue size is 2", queue.size() == 2);
-    }
-
-    @Test
-    public void urlTest() {
-        String url1 = "http://resurface.io";
-        String url2 = "http://whatever.com";
-        HttpLogger logger1 = new HttpLogger(url1);
-        HttpLogger logger2 = new HttpLogger(url2);
-        HttpLogger logger3 = new HttpLogger("DEMO");
-        assertEquals(url1, logger1.getUrl());
-        assertEquals(url2, logger2.getUrl());
-        assertEquals(UsageLoggers.urlForDemo(), logger3.getUrl());
-    }
-
-    @Test
-    public void versionTest() {
-        String version = HttpLogger.version_lookup();
-        assertTrue("null check", version != null);
-        assertTrue("length check", version.length() > 0);
-        assertTrue("startsWith check", version.startsWith("1.6."));
-        assertTrue("backslash check", !version.contains("\\"));
-        assertTrue("double quote check", !version.contains("\""));
-        assertTrue("single quote check", !version.contains("'"));
-        assertEquals(version, new HttpLogger().getVersion());
     }
 
 }

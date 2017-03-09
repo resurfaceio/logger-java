@@ -11,7 +11,7 @@ import java.util.List;
 import static io.resurface.JsonMessage.*;
 
 /**
- * Logger for HTTP usage.
+ * Usage logger for HTTP/HTTPS protocol.
  */
 public class HttpLogger extends BaseLogger<HttpLogger> {
 
@@ -96,7 +96,7 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
     /**
      * Adds request headers to message.
      */
-    protected StringBuilder appendRequestHeaders(StringBuilder json, HttpServletRequest request) {
+    protected void appendRequestHeaders(StringBuilder json, HttpServletRequest request) {
         append(json, "request_headers").append(":[");
         Enumeration<String> header_names = request.getHeaderNames();
         for (int headers = 0; header_names.hasMoreElements(); ) {
@@ -105,23 +105,23 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
             name = name.toLowerCase();
             while (e.hasMoreElements()) append(json.append(headers++ == 0 ? '{' : ",{"), name, e.nextElement()).append('}');
         }
-        return json.append("]");
+        json.append("]");
     }
 
     /**
      * Adds request URL to message.
      */
-    protected StringBuilder appendRequestURL(StringBuilder json, HttpServletRequest request) {
+    protected void appendRequestURL(StringBuilder json, HttpServletRequest request) {
         String queryString = request.getQueryString();
         StringBuffer url = request.getRequestURL();
         if (queryString != null) url.append('?').append(queryString);
-        return append(json, "request_url", url.toString());
+        append(json, "request_url", url.toString());
     }
 
     /**
      * Adds response headers to message.
      */
-    protected StringBuilder appendResponseHeaders(StringBuilder json, HttpServletResponse response) {
+    protected void appendResponseHeaders(StringBuilder json, HttpServletResponse response) {
         append(json, "response_headers").append(":[");
         Iterator<String> header_names = response.getHeaderNames().iterator();
         for (int headers = 0; header_names.hasNext(); ) {
@@ -130,7 +130,7 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
             name = name.toLowerCase();
             while (i.hasNext()) append(json.append(headers++ == 0 ? '{' : ",{"), name, i.next()).append('}');
         }
-        return json.append("]");
+        json.append("]");
     }
 
 }

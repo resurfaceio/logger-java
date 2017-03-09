@@ -11,35 +11,35 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Abstract base class for all usage loggers, with type-safe chaining methods.
+ * Basic usage logger to embed or extend.
  */
-public abstract class BaseLogger<T extends BaseLogger> {
+public class BaseLogger<T extends BaseLogger> {
 
     /**
      * Initialize enabled logger using default url.
      */
-    protected BaseLogger(String agent) {
+    public BaseLogger(String agent) {
         this(agent, true);
     }
 
     /**
      * Initialize enabled/disabled logger using default url.
      */
-    protected BaseLogger(String agent, boolean enabled) {
+    public BaseLogger(String agent, boolean enabled) {
         this(agent, UsageLoggers.urlByDefault(), enabled);
     }
 
     /**
      * Initialize enabled logger using url.
      */
-    protected BaseLogger(String agent, String url) {
+    public BaseLogger(String agent, String url) {
         this(agent, url, true);
     }
 
     /**
      * Initialize enabled/disabled logger using url.
      */
-    protected BaseLogger(String agent, String url, boolean enabled) {
+    public BaseLogger(String agent, String url, boolean enabled) {
         this.agent = agent;
         this.version = version_lookup();
         this.queue = null;
@@ -69,14 +69,14 @@ public abstract class BaseLogger<T extends BaseLogger> {
     /**
      * Initialize enabled logger using queue.
      */
-    protected BaseLogger(String agent, List<String> queue) {
+    public BaseLogger(String agent, List<String> queue) {
         this(agent, queue, true);
     }
 
     /**
      * Initialize enabled/disabled logger using queue.
      */
-    protected BaseLogger(String agent, List<String> queue, boolean enabled) {
+    public BaseLogger(String agent, List<String> queue, boolean enabled) {
         this.agent = agent;
         this.version = version_lookup();
         this.enabled = enabled;
@@ -161,7 +161,7 @@ public abstract class BaseLogger<T extends BaseLogger> {
      * Retrieves version number from runtime properties file.
      */
     public static String version_lookup() {
-        try (InputStream is = HttpLogger.class.getResourceAsStream("/version.properties")) {
+        try (InputStream is = BaseLogger.class.getResourceAsStream("/version.properties")) {
             Properties p = new Properties();
             p.load(is);
             return p.getProperty("version", null);
