@@ -17,6 +17,8 @@ import java.io.UnsupportedEncodingException;
  */
 public class Helper {
 
+    static final String MOCK_AGENT = "myagent";
+
     static final String MOCK_FORM_CHECKBOX = "a=A1&a=A2&a=A3";
 
     static final String MOCK_FORM_REGISTER = "firstname=wreck+it&lastname=ralph";
@@ -38,7 +40,7 @@ public class Helper {
     static final String[] URLS_DENIED = {UsageLoggers.urlForDemo() + "/noway3is5this1valid2",
             "https://www.noway3is5this1valid2.com/"};
 
-    static final String[] URLS_INVALID = {"", "noway3is5this1valid2", "ftp://www.noway3is5this1valid2.com/",
+    static final String[] URLS_INVALID = {"", "noway3is5this1valid2", "ftp:\\www.noway3is5this1valid2.com/",
             "urn:ISSN:1535–3613"};
 
     static FilterChain mockCustomApp() {

@@ -94,18 +94,33 @@ public class HttpLoggerTest {
     }
 
     @Test
-    public void maintainsAgentAndUrlTest() {
+    public void managesMultipleInstancesTest() {
         String url1 = "http://resurface.io";
         String url2 = "http://whatever.com";
         HttpLogger logger1 = new HttpLogger(url1);
         HttpLogger logger2 = new HttpLogger(url2);
         HttpLogger logger3 = new HttpLogger("DEMO");
+
         assertEquals(logger1.getAgent(), HttpLogger.AGENT);
+        assertEquals(logger1.isEnabled(), true);
         assertEquals(logger1.getUrl(), url1);
         assertEquals(logger2.getAgent(), HttpLogger.AGENT);
+        assertEquals(logger2.isEnabled(), true);
         assertEquals(logger2.getUrl(), url2);
         assertEquals(logger3.getAgent(), HttpLogger.AGENT);
+        assertEquals(logger3.isEnabled(), true);
         assertEquals(logger3.getUrl(), UsageLoggers.urlForDemo());
+
+        UsageLoggers.disable();
+        assertEquals(UsageLoggers.isEnabled(), false);
+        assertEquals(logger1.isEnabled(), false);
+        assertEquals(logger2.isEnabled(), false);
+        assertEquals(logger3.isEnabled(), false);
+        UsageLoggers.enable();
+        assertEquals(UsageLoggers.isEnabled(), true);
+        assertEquals(logger1.isEnabled(), true);
+        assertEquals(logger2.isEnabled(), true);
+        assertEquals(logger3.isEnabled(), true);
     }
 
     @Test

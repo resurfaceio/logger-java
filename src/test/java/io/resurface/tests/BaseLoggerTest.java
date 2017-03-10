@@ -10,8 +10,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.resurface.tests.Helper.URLS_DENIED;
-import static io.resurface.tests.Helper.URLS_INVALID;
+import static io.resurface.tests.Helper.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -21,7 +20,7 @@ import static org.junit.Assert.assertTrue;
 public class BaseLoggerTest {
 
     @Test
-    public void maintainsAgentAndUrlTest() {
+    public void managesMultipleInstancesTest() {
         String agent1 = "agent1";
         String agent2 = "AGENT2";
         String agent3 = "aGeNt3";
@@ -30,12 +29,27 @@ public class BaseLoggerTest {
         BaseLogger logger1 = new BaseLogger(agent1, url1);
         BaseLogger logger2 = new BaseLogger(agent2, url2);
         BaseLogger logger3 = new BaseLogger(agent3, "DEMO");
+
         assertEquals(logger1.getAgent(), agent1);
+        assertEquals(logger1.isEnabled(), true);
         assertEquals(logger1.getUrl(), url1);
         assertEquals(logger2.getAgent(), agent2);
+        assertEquals(logger2.isEnabled(), true);
         assertEquals(logger2.getUrl(), url2);
         assertEquals(logger3.getAgent(), agent3);
+        assertEquals(logger3.isEnabled(), true);
         assertEquals(logger3.getUrl(), UsageLoggers.urlForDemo());
+
+        UsageLoggers.disable();
+        assertEquals(UsageLoggers.isEnabled(), false);
+        assertEquals(logger1.isEnabled(), false);
+        assertEquals(logger2.isEnabled(), false);
+        assertEquals(logger3.isEnabled(), false);
+        UsageLoggers.enable();
+        assertEquals(UsageLoggers.isEnabled(), true);
+        assertEquals(logger1.isEnabled(), true);
+        assertEquals(logger2.isEnabled(), true);
+        assertEquals(logger3.isEnabled(), true);
     }
 
     @Test
@@ -47,35 +61,35 @@ public class BaseLoggerTest {
         assertTrue("backslash check", !version.contains("\\"));
         assertTrue("double quote check", !version.contains("\""));
         assertTrue("single quote check", !version.contains("'"));
-        assertEquals(version, new BaseLogger("myagent").getVersion());
+        assertEquals(version, new BaseLogger(MOCK_AGENT).getVersion());
     }
 
     @Test
     public void performsEnablingWhenExpectedTest() {
-        BaseLogger logger = new BaseLogger("myagent", "DEMO", false);
+        BaseLogger logger = new BaseLogger(MOCK_AGENT, "DEMO", false);
         assertTrue("logger disabled", !logger.isEnabled());
         assertTrue("url matches", UsageLoggers.urlForDemo().equals(logger.getUrl()));
         logger.enable();
         assertTrue("logger enabled", logger.isEnabled());
 
+        logger = new BaseLogger(MOCK_AGENT, UsageLoggers.urlForDemo(), true);
+        assertTrue("logger enabled", logger.isEnabled());
+        assertTrue("url matches", UsageLoggers.urlForDemo().equals(logger.getUrl()));
+        logger.enable().disable().enable().disable().disable().disable().enable();
+        assertTrue("logger enabled", logger.isEnabled());
+
         List<String> queue = new ArrayList<>();
-        logger = new BaseLogger("myagent", queue, false);
+        logger = new BaseLogger(MOCK_AGENT, queue, false);
         assertTrue("logger disabled", !logger.isEnabled());
         assertTrue("url is null", logger.getUrl() == null);
         logger.enable().disable().enable();
-        assertTrue("logger enabled", logger.isEnabled());
-
-        logger = new BaseLogger("myagent", UsageLoggers.urlForDemo(), false);
-        assertTrue("logger disabled", !logger.isEnabled());
-        assertTrue("url matches", UsageLoggers.urlForDemo().equals(logger.getUrl()));
-        logger.enable().disable().enable().disable().disable().disable().enable();
         assertTrue("logger enabled", logger.isEnabled());
     }
 
     @Test
     public void skipsEnablingForInvalidUrlsTest() {
         for (String url : URLS_INVALID) {
-            BaseLogger logger = new BaseLogger("myagent", url);
+            BaseLogger logger = new BaseLogger(MOCK_AGENT, url);
             assertTrue("logger disabled at first", !logger.isEnabled());
             assertTrue("url is null", logger.getUrl() == null);
             logger.enable();
@@ -86,7 +100,7 @@ public class BaseLoggerTest {
     @Test
     public void skipsEnablingForNullUrlTest() {
         String url = null;
-        BaseLogger logger = new BaseLogger("myagent", url);
+        BaseLogger logger = new BaseLogger(MOCK_AGENT, url);
         assertTrue("logger disabled at first", !logger.isEnabled());
         assertTrue("url is null", logger.getUrl() == null);
         logger.enable();
@@ -95,7 +109,7 @@ public class BaseLoggerTest {
 
     @Test
     public void submitsToDemoUrlTest() {
-        BaseLogger logger = new BaseLogger("myagent", UsageLoggers.urlForDemo());
+        BaseLogger logger = new BaseLogger(MOCK_AGENT, UsageLoggers.urlForDemo());
         assertTrue("url matches", UsageLoggers.urlForDemo().equals(logger.getUrl()));
         StringBuilder json = new StringBuilder(64);
         JsonMessage.start(json, "echo", logger.getAgent(), logger.getVersion(), System.currentTimeMillis());
@@ -105,7 +119,7 @@ public class BaseLoggerTest {
 
     @Test
     public void submitsToDemoUrlViaHttpTest() {
-        BaseLogger logger = new BaseLogger("myagent", UsageLoggers.urlForDemo().replace("https://", "http://"));
+        BaseLogger logger = new BaseLogger(MOCK_AGENT, UsageLoggers.urlForDemo().replace("https://", "http://"));
         assertTrue("url matches", logger.getUrl().contains("http://"));
         StringBuilder json = new StringBuilder(64);
         JsonMessage.start(json, "echo", logger.getAgent(), logger.getVersion(), System.currentTimeMillis());
@@ -116,7 +130,7 @@ public class BaseLoggerTest {
     @Test
     public void submitsToDeniedUrlAndFailsTest() {
         for (String url : URLS_DENIED) {
-            BaseLogger logger = new BaseLogger("myagent", url);
+            BaseLogger logger = new BaseLogger(MOCK_AGENT, url);
             assertTrue("url matches", url.equals(logger.getUrl()));
             assertTrue("logger enabled", logger.isEnabled());
             assertTrue("submit fails", !logger.submit("TEST-ABC"));
@@ -126,7 +140,7 @@ public class BaseLoggerTest {
     @Test
     public void submitsToQueueTest() {
         List<String> queue = new ArrayList<>();
-        BaseLogger logger = new BaseLogger("myagent", queue);
+        BaseLogger logger = new BaseLogger(MOCK_AGENT, queue);
         assertTrue("url is null", logger.getUrl() == null);
         assertTrue("logger enabled", logger.isEnabled());
         assertTrue("queue size is 0", queue.size() == 0);
