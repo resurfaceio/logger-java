@@ -131,6 +131,7 @@ public class HttpLoggerTest {
         assertTrue("backslash check", !agent.contains("\\"));
         assertTrue("double quote check", !agent.contains("\""));
         assertTrue("single quote check", !agent.contains("'"));
+        assertEquals(new HttpLogger().getAgent(), agent);
     }
 
     @Test
@@ -138,9 +139,7 @@ public class HttpLoggerTest {
         for (String url : URLS_DENIED) {
             HttpLogger logger = new HttpLogger(url).disable();
             assertTrue("logger disabled", !logger.isEnabled());
-            assertTrue("url matches", url.equals(logger.getUrl()));
-            assertTrue("log succeeds", logger.log(null, null, null, null));    // would fail if enabled
-            assertTrue("submit succeeds", logger.submit(null));                // would fail if enabled
+            assertTrue("log succeeds", logger.log(null, null, null, null));  // would fail if enabled
         }
     }
 

@@ -108,6 +108,15 @@ public class BaseLoggerTest {
     }
 
     @Test
+    public void skipsLoggingWhenDisabledTest() {
+        for (String url : URLS_DENIED) {
+            BaseLogger logger = new BaseLogger(MOCK_AGENT, url).disable();
+            assertTrue("logger disabled", !logger.isEnabled());
+            assertTrue("log succeeds", logger.submit(null));  // would fail if enabled
+        }
+    }
+
+    @Test
     public void submitsToDemoUrlTest() {
         BaseLogger logger = new BaseLogger(MOCK_AGENT, UsageLoggers.urlForDemo());
         assertTrue("url matches", UsageLoggers.urlForDemo().equals(logger.getUrl()));
@@ -131,9 +140,8 @@ public class BaseLoggerTest {
     public void submitsToDeniedUrlAndFailsTest() {
         for (String url : URLS_DENIED) {
             BaseLogger logger = new BaseLogger(MOCK_AGENT, url);
-            assertTrue("url matches", url.equals(logger.getUrl()));
             assertTrue("logger enabled", logger.isEnabled());
-            assertTrue("submit fails", !logger.submit("TEST-ABC"));
+            assertTrue("submit fails", !logger.submit("{}"));
         }
     }
 
@@ -144,9 +152,9 @@ public class BaseLoggerTest {
         assertTrue("url is null", logger.getUrl() == null);
         assertTrue("logger enabled", logger.isEnabled());
         assertTrue("queue size is 0", queue.size() == 0);
-        assertTrue("submit succeeds", logger.submit("TEST-123"));
+        assertTrue("submit succeeds", logger.submit("{}"));
         assertTrue("queue size is 1", queue.size() == 1);
-        assertTrue("submit succeeds", logger.submit("TEST-234"));
+        assertTrue("submit succeeds", logger.submit("{}"));
         assertTrue("queue size is 2", queue.size() == 2);
     }
 
