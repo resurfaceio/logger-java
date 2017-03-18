@@ -17,7 +17,7 @@ import java.io.UnsupportedEncodingException;
  */
 public class Helper {
 
-    static final String MOCK_AGENT = "myagent";
+    static final String MOCK_AGENT = "helper.java";
 
     static final String MOCK_FORM_CHECKBOX = "a=A1&a=A2&a=A3";
 

@@ -121,7 +121,7 @@ public class BaseLoggerTest {
         BaseLogger logger = new BaseLogger(MOCK_AGENT, UsageLoggers.urlForDemo());
         assertTrue("url matches", UsageLoggers.urlForDemo().equals(logger.getUrl()));
         StringBuilder json = new StringBuilder(64);
-        JsonMessage.start(json, "echo", logger.getAgent(), logger.getVersion(), System.currentTimeMillis());
+        JsonMessage.start(json, "test-https", logger.getAgent(), logger.getVersion(), System.currentTimeMillis());
         JsonMessage.stop(json);
         assertTrue("submit succeeds", logger.submit(json.toString()));
     }
@@ -131,7 +131,7 @@ public class BaseLoggerTest {
         BaseLogger logger = new BaseLogger(MOCK_AGENT, UsageLoggers.urlForDemo().replace("https://", "http://"));
         assertTrue("url matches", logger.getUrl().contains("http://"));
         StringBuilder json = new StringBuilder(64);
-        JsonMessage.start(json, "echo", logger.getAgent(), logger.getVersion(), System.currentTimeMillis());
+        JsonMessage.start(json, "test-http", logger.getAgent(), logger.getVersion(), System.currentTimeMillis());
         JsonMessage.stop(json);
         assertTrue("submit succeeds", logger.submit(json.toString()));
     }
