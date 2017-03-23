@@ -8,7 +8,7 @@ import org.junit.Test;
 import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 
-import static org.junit.Assert.assertTrue;
+import static com.mscharhag.oleaster.matcher.Matchers.expect;
 
 /**
  * Tests against HttpServletRequest implementation for custom usage logging.
@@ -19,26 +19,26 @@ public class HttpServletRequestImplTest {
     public void useCharacterEncoding() throws UnsupportedEncodingException {
         String val = "UTF-8";
         HttpServletRequestImpl impl = new HttpServletRequestImpl();
-        assertTrue("null by default", impl.getCharacterEncoding() == null);
+        expect(impl.getCharacterEncoding()).toBeNull();
         impl.setCharacterEncoding(val);
-        assertTrue("value set ok", impl.getCharacterEncoding().equals(val));
+        expect(impl.getCharacterEncoding()).toEqual(val);
     }
 
     @Test
     public void useContentType() {
         HttpServletRequestImpl impl = new HttpServletRequestImpl();
-        assertTrue("null content type by default", impl.getContentType() == null);
-        assertTrue("null header by default", impl.getHeader("CONTENT-TYPE") == null);
+        expect(impl.getCharacterEncoding()).toBeNull();
+        expect(impl.getHeader("CONTENT-TYPE")).toBeNull();
 
         String val = "text/html";
         impl.setContentType(val);
-        assertTrue("content type set ok", impl.getContentType().equals(val));
-        assertTrue("header set ok", impl.getHeader("Content-Type").equals(val));
-        assertTrue("null header because of case", impl.getHeader("content-type") == null);
+        expect(impl.getContentType()).toEqual(val);
+        expect(impl.getHeader("Content-Type")).toEqual(val);
+        expect(impl.getHeader("content-type")).toBeNull();
 
         impl.setContentType(null);
-        assertTrue("null content type after update", impl.getContentType() == null);
-        assertTrue("null header after update", impl.getHeader("content-TYPE") == null);
+        expect(impl.getContentType()).toBeNull();
+        expect(impl.getHeader("content-TYPE")).toBeNull();
     }
 
     @Test
@@ -49,48 +49,48 @@ public class HttpServletRequestImplTest {
         String val2 = "swell";
 
         HttpServletRequestImpl impl = new HttpServletRequestImpl();
-        assertTrue("null by default", impl.getHeader(key) == null);
+        expect(impl.getHeader(key)).toBeNull();
 
         impl.setHeader(key, val);
-        assertTrue("key set ok", impl.getHeaderNames().nextElement().equals(key));
-        assertTrue("direct value read ok", impl.getHeader(key).equals(val));
-        assertTrue("enumeration value read ok", impl.getHeaders(key).nextElement().equals(val));
+        expect(impl.getHeaderNames().nextElement()).toEqual(key);
+        expect(impl.getHeader(key)).toEqual(val);
+        expect(impl.getHeaders(key).nextElement()).toEqual(val);
 
         impl.setHeader(key, val2);
-        assertTrue("key set ok", impl.getHeaderNames().nextElement().equals(key));
-        assertTrue("direct value2 read ok", impl.getHeader(key).equals(val2));
-        assertTrue("enumeration value2 read ok", impl.getHeaders(key).nextElement().equals(val2));
+        expect(impl.getHeaderNames().nextElement()).toEqual(key);
+        expect(impl.getHeader(key)).toEqual(val2);
+        expect(impl.getHeaders(key).nextElement()).toEqual(val2);
 
         impl.addHeader(key, val);
-        assertTrue("key set ok", impl.getHeaderNames().nextElement().equals(key));
-        assertTrue("direct value read ok", impl.getHeader(key).equals(val2));
+        expect(impl.getHeaderNames().nextElement()).toEqual(key);
+        expect(impl.getHeader(key)).toEqual(val2);
         Enumeration e = impl.getHeaders(key);
-        assertTrue("enumeration value read ok", e.nextElement().equals(val2));
-        assertTrue("enumeration value2 read ok", e.nextElement().equals(val));
+        expect(e.nextElement()).toEqual(val2);
+        expect(e.nextElement()).toEqual(val);
 
         impl.setHeader(key2, val2);
         e = impl.getHeaderNames();
-        assertTrue("header name 1 read ok", e.nextElement().equals(key));
-        assertTrue("header name 2 read ok", e.nextElement().equals(key2));
-        assertTrue("header name 2 upcased not read", impl.getHeader(key2.toUpperCase()) == null);
+        expect(e.nextElement()).toEqual(key);
+        expect(e.nextElement()).toEqual(key2);
+        expect(impl.getHeader(key2.toUpperCase())).toBeNull();
     }
 
     @Test
     public void useMethod() {
         String val = "!METHOD!";
         HttpServletRequestImpl impl = new HttpServletRequestImpl();
-        assertTrue("null by default", impl.getMethod() == null);
+        expect(impl.getMethod()).toBeNull();
         impl.setMethod(val);
-        assertTrue("value set ok", impl.getMethod().equals(val));
+        expect(impl.getMethod()).toEqual(val);
     }
 
     @Test
     public void useRequestURL() {
         String val = "http://resurface.io/yadda";
         HttpServletRequestImpl impl = new HttpServletRequestImpl();
-        assertTrue("null by default", impl.getRequestURL() == null);
+        expect(impl.getRequestURL()).toBeNull();
         impl.setRequestURL(val);
-        assertTrue("value set ok", impl.getRequestURL().toString().equals(val));
+        expect(impl.getRequestURL().toString()).toEqual(val);
     }
 
 }

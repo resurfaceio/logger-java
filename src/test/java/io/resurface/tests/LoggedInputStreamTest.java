@@ -9,7 +9,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.junit.Assert.*;
+import static com.mscharhag.oleaster.matcher.Matchers.expect;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Tests against servlet output stream allowing data to be read after being written/flushed.
@@ -24,7 +26,7 @@ public class LoggedInputStreamTest {
             new LoggedInputStream(input);
             fail("stream was created with null input");
         } catch (IllegalArgumentException iae) {
-            assertTrue("has expected message", iae.getMessage().contains("Null input"));
+            expect(iae.getMessage()).toContain("Null input");
         }
     }
 
@@ -36,7 +38,7 @@ public class LoggedInputStreamTest {
             new LoggedInputStream(input);
             fail("stream was created with null input");
         } catch (IllegalArgumentException iae) {
-            assertTrue("has expected message", iae.getMessage().contains("Null input"));
+            expect(iae.getMessage()).toContain("Null input");
         }
     }
 
@@ -53,11 +55,11 @@ public class LoggedInputStreamTest {
         byte[] test_bytes = "Hello World1234567890-=!@#$%^&*()_+[]{};:,.<>/?`~|".getBytes();
         InputStream input = new ByteArrayInputStream(test_bytes);
         LoggedInputStream lis = new LoggedInputStream(input);
-        assertTrue("has 50 bytes available", lis.available() == 50);
-        assertTrue("has expected first character (72)", lis.read() == 72);
-        assertTrue("has 49 bytes available", lis.available() == 49);
-        assertTrue("has expected first character (101)", lis.read() == 101);
-        assertTrue("has 48 bytes available", lis.available() == 48);
+        expect(lis.available()).toEqual(50);
+        expect(lis.read()).toEqual(72);
+        expect(lis.available()).toEqual(49);
+        expect(lis.read()).toEqual(101);
+        expect(lis.available()).toEqual(48);
         assertArrayEquals(test_bytes, lis.logged());
         assertArrayEquals(test_bytes, lis.logged());  // can read this more than once
     }

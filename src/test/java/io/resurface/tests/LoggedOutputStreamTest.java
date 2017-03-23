@@ -8,7 +8,9 @@ import org.junit.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static com.mscharhag.oleaster.matcher.Matchers.expect;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Tests against servlet output stream allowing data to be read after being written/flushed.
@@ -21,14 +23,14 @@ public class LoggedOutputStreamTest {
             new LoggedOutputStream(null);
             fail("stream was created with null output");
         } catch (IllegalArgumentException iae) {
-            assertTrue("has expected message", iae.getMessage().contains("Null output"));
+            expect(iae.getMessage()).toContain("Null output");
         }
     }
 
     @Test
     public void emptyOutputTest() {
         LoggedOutputStream los = new LoggedOutputStream(new ByteArrayOutputStream());
-        assertTrue("logged is zero length", los.logged().length == 0);
+        expect(los.logged().length).toEqual(0);
     }
 
     @Test

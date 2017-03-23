@@ -9,9 +9,9 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import static com.mscharhag.oleaster.matcher.Matchers.expect;
 import static io.resurface.tests.Helper.mockResponse;
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Tests against servlet response wrapper for HTTP usage logging.
@@ -21,8 +21,8 @@ public class LoggedResponseWrapperTest {
     @Test
     public void outputStreamClassTest() throws IOException {
         LoggedResponseWrapper w = new LoggedResponseWrapper(mockResponse());
-        assertTrue("output stream is present", w.getOutputStream() != null);
-        assertTrue("output stream is proper class", w.getOutputStream().getClass().equals(LoggedOutputStream.class));
+        expect(w.getOutputStream()).toBeNotNull();
+        expect(w.getOutputStream().getClass()).toEqual(LoggedOutputStream.class);
     }
 
     @Test
@@ -38,8 +38,8 @@ public class LoggedResponseWrapperTest {
     @Test
     public void printWriterClassTest() throws IOException {
         LoggedResponseWrapper w = new LoggedResponseWrapper(mockResponse());
-        assertTrue("print writer is present", w.getWriter() != null);
-        assertTrue("print writer is proper class", w.getWriter().getClass().equals(PrintWriter.class));
+        expect(w.getWriter()).toBeNotNull();
+        expect(w.getWriter().getClass()).toEqual(PrintWriter.class);
     }
 
     @Test
@@ -57,7 +57,7 @@ public class LoggedResponseWrapperTest {
         String test_string = "I bet he'd kick an ass or two";
         LoggedResponseWrapper w = new LoggedResponseWrapper(mockResponse());
         w.getWriter().print(test_string);
-        assertTrue("nothing logged", w.logged().length == 0);
+        expect(w.logged().length).toEqual(0);
     }
 
 }

@@ -10,8 +10,8 @@ import org.junit.Test;
 import java.io.BufferedReader;
 import java.io.IOException;
 
+import static com.mscharhag.oleaster.matcher.Matchers.expect;
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Tests against servlet request wrapper for HTTP usage logging.
@@ -21,35 +21,35 @@ public class LoggedRequestWrapperTest {
     @Test
     public void formParseFormCheckboxTest() throws IOException {
         LoggedRequestWrapper w = new LoggedRequestWrapper(Helper.mockRequestWithFormCheckbox());
-        assertTrue("has parameter map", w.getParameterMap().size() == 1);
-        assertTrue("has no anykey parameter", w.getParameter("anykey") == null);
-        assertTrue("has checkbox parameter", w.getParameter("a").equals("A1"));
-        assertTrue("has checkbox parameters", w.getParameterValues("a").length == 3);
+        expect(w.getParameterMap().size()).toEqual(1);
+        expect(w.getParameter("anykey")).toBeNull();
+        expect(w.getParameter("a")).toEqual("A1");
+        expect(w.getParameterValues("a").length).toEqual(3);
     }
 
     @Test
     public void formParseFormRegisterTest() throws IOException {
         LoggedRequestWrapper w = new LoggedRequestWrapper(Helper.mockRequestWithFormRegister());
-        assertTrue("has parameter map", w.getParameterMap().size() == 2);
-        assertTrue("has no anykey parameter", w.getParameter("anykey") == null);
-        assertTrue("has firstname parameter", w.getParameter("firstname").equals("wreck it"));
-        assertTrue("has lastname parameter", w.getParameter("lastname").equals("ralph"));
+        expect(w.getParameterMap().size()).toEqual(2);
+        expect(w.getParameter("anykey")).toBeNull();
+        expect(w.getParameter("firstname")).toEqual("wreck it");
+        expect(w.getParameter("lastname")).toEqual("ralph");
     }
 
     @Test
     public void formParseNothingTest() throws IOException {
         LoggedRequestWrapper w = new LoggedRequestWrapper(Helper.mockRequest());
-        assertTrue("has empty parameter map", w.getParameterMap().size() == 0);
-        assertTrue("has no anykey parameter", w.getParameter("anykey") == null);
-        assertTrue("has no firstname parameter", w.getParameter("firstname") == null);
-        assertTrue("has no lastname parameter", w.getParameter("lastname") == null);
+        expect(w.getParameterMap().size()).toEqual(0);
+        expect(w.getParameter("anykey")).toBeNull();
+        expect(w.getParameter("firstname")).toBeNull();
+        expect(w.getParameter("lastname")).toBeNull();
     }
 
     @Test
     public void inputStreamClassTest() throws IOException {
         LoggedRequestWrapper w = new LoggedRequestWrapper(Helper.mockRequest());
-        assertTrue("input stream is present", w.getInputStream() != null);
-        assertTrue("input stream is expected class", w.getInputStream().getClass().equals(LoggedInputStream.class));
+        expect(w.getInputStream()).toBeNotNull();
+        expect(w.getInputStream().getClass()).toEqual(LoggedInputStream.class);
     }
 
     @Test
@@ -62,15 +62,15 @@ public class LoggedRequestWrapperTest {
     @Test
     public void readerClassTest() throws IOException {
         LoggedRequestWrapper w = new LoggedRequestWrapper(Helper.mockRequest());
-        assertTrue("reader is present", w.getReader() != null);
-        assertTrue("reader is expected class", w.getReader().getClass().equals(BufferedReader.class));
+        expect(w.getReader()).toBeNotNull();
+        expect(w.getReader().getClass()).toEqual(BufferedReader.class);
     }
 
     @Test
     public void readerInputTest() throws IOException {
         byte[] test_bytes = {'W', 'T', 'F', '?'};
         LoggedRequestWrapper w = new LoggedRequestWrapper(new HttpServletRequestImpl(test_bytes));
-        for (int i = 0; i < test_bytes.length; i++) assertTrue("read " + i, w.getReader().read() == test_bytes[i]);
+        for (byte test_byte : test_bytes) expect(w.getReader().read()).toEqual(test_byte);
     }
 
 }
