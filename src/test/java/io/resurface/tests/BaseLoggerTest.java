@@ -19,7 +19,7 @@ import static io.resurface.tests.Helper.*;
 public class BaseLoggerTest {
 
     @Test
-    public void managesMultipleInstancesTest() {
+    public void createsMultipleInstancesTest() {
         String agent1 = "agent1";
         String agent2 = "AGENT2";
         String agent3 = "aGeNt3";
@@ -52,7 +52,7 @@ public class BaseLoggerTest {
     }
 
     @Test
-    public void providesValidVersionTest() {
+    public void hasValidVersionTest() {
         String version = BaseLogger.version_lookup();
         expect(version).toBeNotNull();
         expect(version.length()).toBeGreaterThan(0);

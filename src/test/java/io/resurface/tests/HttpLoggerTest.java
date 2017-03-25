@@ -7,93 +7,15 @@ import io.resurface.UsageLoggers;
 import org.junit.Test;
 
 import static com.mscharhag.oleaster.matcher.Matchers.expect;
-import static io.resurface.tests.Helper.*;
+import static io.resurface.tests.Helper.URLS_DENIED;
 
 /**
  * Tests against usage logger for HTTP/HTTPS protocol.
  */
 public class HttpLoggerTest {
 
-    private final HttpLogger logger = new HttpLogger();
-
     @Test
-    public void appendRequestTest() {
-        String json = logger.appendToBuffer(new StringBuilder(), MOCK_NOW, mockRequest(), null, mockResponse(), null).toString();
-        expect(parseable(json)).toBeTrue();
-        expect(json).toContain("\"agent\":\"" + HttpLogger.AGENT + "\"");
-        expect(json).toContain("\"category\":\"http\"");
-        expect(json).toContain("\"now\":\"" + MOCK_NOW + "\"");
-        expect(json.contains("\"request_body\"")).toBeFalse();
-        expect(json).toContain("\"request_headers\":[]");
-        expect(json).toContain("\"request_method\":\"GET\"");
-        expect(json).toContain("\"request_url\":\"" + MOCK_URL + "\"");
-        expect(json).toContain("\"version\":\"" + HttpLogger.version_lookup() + "\"");
-    }
-
-    @Test
-    public void formatRequestWithBodyTest() {
-        String json = logger.format(mockRequest(), MOCK_JSON, mockResponse(), null);
-        expect(parseable(json)).toBeTrue();
-        expect(json).toContain("\"agent\":\"" + HttpLogger.AGENT + "\"");
-        expect(json).toContain("\"category\":\"http\"");
-        expect(json).toContain("\"request_body\":\"" + MOCK_JSON_ESCAPED + "\"");
-        expect(json).toContain("\"request_headers\":[]");
-        expect(json).toContain("\"request_method\":\"GET\"");
-        expect(json).toContain("\"request_url\":\"" + MOCK_URL + "\"");
-        expect(json).toContain("\"version\":\"" + HttpLogger.version_lookup() + "\"");
-    }
-
-    @Test
-    public void formatRequestWithEmptyBodyTest() {
-        String json = logger.format(mockRequest(), "", mockResponse(), null);
-        expect(parseable(json)).toBeTrue();
-        expect(json).toContain("\"agent\":\"" + HttpLogger.AGENT + "\"");
-        expect(json).toContain("\"category\":\"http\"");
-        expect(json).toContain("\"request_body\":\"\"");
-        expect(json).toContain("\"request_headers\":[]");
-        expect(json).toContain("\"request_method\":\"GET\"");
-        expect(json).toContain("\"request_url\":\"" + MOCK_URL + "\"");
-        expect(json).toContain("\"version\":\"" + HttpLogger.version_lookup() + "\"");
-    }
-
-    @Test
-    public void formatResponseTest() {
-        String json = logger.format(mockRequest(), null, mockResponse(), null);
-        expect(parseable(json)).toBeTrue();
-        expect(json).toContain("\"agent\":\"" + HttpLogger.AGENT + "\"");
-        expect(json).toContain("\"category\":\"http\"");
-        expect(json.contains("\"response_body\"")).toBeFalse();
-        expect(json).toContain("\"response_code\":\"200\"");
-        expect(json).toContain("\"response_headers\":[]");
-        expect(json).toContain("\"version\":\"" + HttpLogger.version_lookup() + "\"");
-    }
-
-    @Test
-    public void formatResponseWithBodyTest() {
-        String json = logger.format(mockRequest(), null, mockResponse(), MOCK_HTML);
-        expect(parseable(json)).toBeTrue();
-        expect(json).toContain("\"agent\":\"" + HttpLogger.AGENT + "\"");
-        expect(json).toContain("\"category\":\"http\"");
-        expect(json).toContain("\"response_body\":\"" + MOCK_HTML_ESCAPED + "\"");
-        expect(json).toContain("\"response_code\":\"200\"");
-        expect(json).toContain("\"response_headers\":[]");
-        expect(json).toContain("\"version\":\"" + HttpLogger.version_lookup() + "\"");
-    }
-
-    @Test
-    public void formatResponseWithEmptyBodyTest() {
-        String json = logger.format(mockRequest(), null, mockResponse(), "");
-        expect(parseable(json)).toBeTrue();
-        expect(json).toContain("\"agent\":\"" + HttpLogger.AGENT + "\"");
-        expect(json).toContain("\"category\":\"http\"");
-        expect(json).toContain("\"response_body\":\"\"");
-        expect(json).toContain("\"response_code\":\"200\"");
-        expect(json).toContain("\"response_headers\":[]");
-        expect(json).toContain("\"version\":\"" + HttpLogger.version_lookup() + "\"");
-    }
-
-    @Test
-    public void managesMultipleInstancesTest() {
+    public void createsMultipleInstancesTest() {
         String url1 = "http://resurface.io";
         String url2 = "http://whatever.com";
         HttpLogger logger1 = new HttpLogger(url1);
@@ -123,7 +45,7 @@ public class HttpLoggerTest {
     }
 
     @Test
-    public void providesValidAgentTest() {
+    public void hasValidAgentTest() {
         String agent = HttpLogger.AGENT;
         expect(agent.length()).toBeGreaterThan(0);
         expect(agent).toEndWith(".java");
