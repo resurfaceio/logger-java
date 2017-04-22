@@ -151,7 +151,6 @@ public class BaseLogger<T extends BaseLogger> {
                 }
                 return url_connection.getResponseCode() == 200;
             } catch (IOException ioe) {
-                // todo retry?
                 return false;
             }
         }

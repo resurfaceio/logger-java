@@ -15,6 +15,14 @@ import static io.resurface.tests.Helper.URLS_DENIED;
 public class HttpLoggerTest {
 
     @Test
+    public void createsInstanceTest() {
+        HttpLogger logger = new HttpLogger();
+        expect(logger).toBeNotNull();
+        expect(logger.getAgent()).toEqual(HttpLogger.AGENT);
+        expect(logger.isEnabled()).toBeFalse();
+    }
+
+    @Test
     public void createsMultipleInstancesTest() {
         String url1 = "http://resurface.io";
         String url2 = "http://whatever.com";

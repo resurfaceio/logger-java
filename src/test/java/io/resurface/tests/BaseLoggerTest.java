@@ -3,7 +3,7 @@
 package io.resurface.tests;
 
 import io.resurface.BaseLogger;
-import io.resurface.JsonMessage;
+import io.resurface.Json;
 import io.resurface.UsageLoggers;
 import org.junit.Test;
 
@@ -17,6 +17,14 @@ import static io.resurface.tests.Helper.*;
  * Tests against basic usage logger to embed or extend.
  */
 public class BaseLoggerTest {
+
+    @Test
+    public void createsInstanceTest() {
+        BaseLogger logger = new BaseLogger(MOCK_AGENT);
+        expect(logger).toBeNotNull();
+        expect(logger.getAgent()).toEqual(MOCK_AGENT);
+        expect(logger.isEnabled()).toBeFalse();
+    }
 
     @Test
     public void createsMultipleInstancesTest() {
@@ -119,20 +127,28 @@ public class BaseLoggerTest {
     public void submitsToDemoUrlTest() {
         BaseLogger logger = new BaseLogger(MOCK_AGENT, UsageLoggers.urlForDemo());
         expect(logger.getUrl()).toEqual(UsageLoggers.urlForDemo());
-        StringBuilder json = new StringBuilder(64);
-        JsonMessage.start(json, "test-https", logger.getAgent(), logger.getVersion(), System.currentTimeMillis());
-        JsonMessage.stop(json);
-        expect(logger.submit(json.toString())).toBeTrue();
+        List<String[]> message = new ArrayList<>();
+        message.add(new String[]{"agent", logger.getAgent()});
+        message.add(new String[]{"version", logger.getVersion()});
+        message.add(new String[]{"now", String.valueOf(MOCK_NOW)});
+        message.add(new String[]{"protocol", "https"});
+        String json = Json.stringify(message);
+        expect(parseable(json)).toBeTrue();
+        expect(logger.submit(json)).toBeTrue();
     }
 
     @Test
     public void submitsToDemoUrlViaHttpTest() {
         BaseLogger logger = new BaseLogger(MOCK_AGENT, UsageLoggers.urlForDemo().replace("https://", "http://"));
         expect(logger.getUrl()).toStartWith("http://");
-        StringBuilder json = new StringBuilder(64);
-        JsonMessage.start(json, "test-http", logger.getAgent(), logger.getVersion(), System.currentTimeMillis());
-        JsonMessage.stop(json);
-        expect(logger.submit(json.toString())).toBeTrue();
+        List<String[]> message = new ArrayList<>();
+        message.add(new String[]{"agent", logger.getAgent()});
+        message.add(new String[]{"version", logger.getVersion()});
+        message.add(new String[]{"now", String.valueOf(MOCK_NOW)});
+        message.add(new String[]{"protocol", "http"});
+        String json = Json.stringify(message);
+        expect(parseable(json)).toBeTrue();
+        expect(logger.submit(json)).toBeTrue();
     }
 
     @Test

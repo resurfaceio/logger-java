@@ -2,32 +2,22 @@
 
 package io.resurface;
 
+import java.util.List;
+
 /**
  * Utility methods for formatting JSON messages.
  */
-public class JsonMessage {
+public class Json {
 
     /**
-     * Adds quote-delimited string to message.
-     */
-    public static StringBuilder append(StringBuilder json, CharSequence value) {
-        return (value == null) ? json : json.append("\"").append(value.toString()).append("\"");
-    }
-
-    /**
-     * Adds key/value pair to message.
+     * Adds comma-delimited key/value pair to message.
      */
     public static StringBuilder append(StringBuilder json, CharSequence key, CharSequence value) {
-        if ((key == null) || (value == null)) return json;
-        append(json, key).append(":\"");
-        return escape(json, value).append("\"");
-    }
-
-    /**
-     * Adds key/value pair to message.
-     */
-    public static StringBuilder append(StringBuilder json, CharSequence key, long value) {
-        return (key == null) ? json : append(json, key).append(":\"").append(value).append("\"");
+        if ((key != null) && (value != null)) {
+            json.append("\"").append(key.toString()).append("\",\"");
+            escape(json, value).append("\"");
+        }
+        return json;
     }
 
     /**
@@ -81,21 +71,18 @@ public class JsonMessage {
     }
 
     /**
-     * Starts message payload including the beginning brace.
+     * Formats list of string arrays as JSON.
      */
-    public static StringBuilder start(StringBuilder json, CharSequence category, CharSequence agent,
-                                      CharSequence version, long now) {
-        return json.append("{\"category\":\"").append(category)
-                .append("\",\"agent\":\"").append(agent)
-                .append("\",\"version\":\"").append(version)
-                .append("\",\"now\":\"").append(now).append("\"");
-    }
-
-    /**
-     * Finishes message payload including the closing brace.
-     */
-    public static StringBuilder stop(StringBuilder json) {
-        return json.append('}');
+    public static String stringify(List<String[]> message) {
+        StringBuilder json = new StringBuilder(1024);
+        json.append('[');
+        int idx = 0;
+        for (String[] entry : message) {
+            json.append(idx++ > 0 ? ",[" : '[');
+            append(json, entry[0], entry[1]).append(']');
+        }
+        json.append(']');
+        return json.toString();
     }
 
 }

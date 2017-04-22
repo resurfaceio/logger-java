@@ -5,7 +5,7 @@ package io.resurface.tests;
 import com.google.gson.Gson;
 import io.resurface.HttpServletRequestImpl;
 import io.resurface.HttpServletResponseImpl;
-import io.resurface.JsonMessage;
+import io.resurface.Json;
 import io.resurface.UsageLoggers;
 
 import javax.servlet.FilterChain;
@@ -25,11 +25,11 @@ public class Helper {
 
     static final String MOCK_JSON = "{ \"hello\" : \"world\" }";
 
-    static final String MOCK_JSON_ESCAPED = JsonMessage.escape(new StringBuilder(), MOCK_JSON).toString();
+    static final String MOCK_JSON_ESCAPED = Json.escape(new StringBuilder(), MOCK_JSON).toString();
 
     static final String MOCK_HTML = "<html>Hello World!</html>";
 
-    static final String MOCK_HTML_ESCAPED = JsonMessage.escape(new StringBuilder(), MOCK_HTML).toString();
+    static final String MOCK_HTML_ESCAPED = Json.escape(new StringBuilder(), MOCK_HTML).toString();
 
     static final long MOCK_NOW = 1455908640173L;
 
@@ -157,7 +157,7 @@ public class Helper {
     }
 
     static boolean parseable(String json) {
-        if (json == null || !json.startsWith("{") || !json.endsWith("}")) return false;
+        if (json == null || !json.startsWith("[") || !json.endsWith("]")) return false;
         try {
             parser.fromJson(json, Object.class);
             return true;

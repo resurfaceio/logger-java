@@ -4,41 +4,29 @@ package io.resurface.tests;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.mscharhag.oleaster.matcher.Matchers.expect;
-import static io.resurface.JsonMessage.*;
+import static io.resurface.Json.*;
 
 /**
  * Tests against utility methods for formatting JSON messages.
  */
-public class JsonMessageTest {
+public class JsonTest {
 
     @Test
-    public void appendNullsTest() {
-        expect(append(new StringBuilder(), null).toString()).toEqual("");
-        expect(append(new StringBuilder("ABC"), null).toString()).toEqual("ABC");
-        expect(append(new StringBuilder(), null, -1).toString()).toEqual("");
-        expect(append(new StringBuilder("123"), null, -1).toString()).toEqual("123");
+    public void appendTest() {
         expect(append(new StringBuilder(), null, null).toString()).toEqual("");
         expect(append(new StringBuilder("XYZ"), null, null).toString()).toEqual("XYZ");
-    }
-
-    @Test
-    public void appendNumbersTest() {
-        expect(append(new StringBuilder(), "name", -1).toString()).toEqual("\"name\":\"-1\"");
-        expect(append(new StringBuilder(), "name1", 123).toString()).toEqual("\"name1\":\"123\"");
-        expect(append(new StringBuilder("{"), "1_name1", 1455908665227L).toString()).toEqual("{\"1_name1\":\"1455908665227\"");
-    }
-
-    @Test
-    public void appendStringsTest() {
-        expect(append(new StringBuilder(), "A", "").toString()).toEqual("\"A\":\"\"");
-        expect(append(new StringBuilder(), "B", " ").toString()).toEqual("\"B\":\" \"");
-        expect(append(new StringBuilder(), "C", "   ").toString()).toEqual("\"C\":\"   \"");
-        expect(append(new StringBuilder(), "D", "\t").toString()).toEqual("\"D\":\"\\t\"");
-        expect(append(new StringBuilder(), "E", "\t\t ").toString()).toEqual("\"E\":\"\\t\\t \"");
-        expect(append(new StringBuilder("!"), "name-2", "value1").toString()).toEqual("!\"name-2\":\"value1\"");
-        expect(append(new StringBuilder(), "s", "the cow says \"moo").toString()).toEqual("\"s\":\"the cow says \\\"moo\"");
-        expect(append(new StringBuilder(), "1", "the cow says \"moo\"").toString()).toEqual("\"1\":\"the cow says \\\"moo\\\"\"");
+        expect(append(new StringBuilder(), "A", "").toString()).toEqual("\"A\",\"\"");
+        expect(append(new StringBuilder(), "B", " ").toString()).toEqual("\"B\",\" \"");
+        expect(append(new StringBuilder(), "C", "   ").toString()).toEqual("\"C\",\"   \"");
+        expect(append(new StringBuilder(), "D", "\t").toString()).toEqual("\"D\",\"\\t\"");
+        expect(append(new StringBuilder(), "E", "\t\t ").toString()).toEqual("\"E\",\"\\t\\t \"");
+        expect(append(new StringBuilder("!"), "name-2", "value1").toString()).toEqual("!\"name-2\",\"value1\"");
+        expect(append(new StringBuilder(), "s", "the cow says \"moo").toString()).toEqual("\"s\",\"the cow says \\\"moo\"");
+        expect(append(new StringBuilder(), "1", "the cow says \"moo\"").toString()).toEqual("\"1\",\"the cow says \\\"moo\\\"\"");
     }
 
     @Test
@@ -109,17 +97,12 @@ public class JsonMessageTest {
     }
 
     @Test
-    public void startTest() {
-        StringBuilder json = start(new StringBuilder(), "category1", "agent1", "version1", 1455908589662L);
-        expect(json.toString()).toContain("{\"category\":\"category1\",");
-        expect(json.toString()).toContain("\"agent\":\"agent1\",");
-        expect(json.toString()).toContain("\"version\":\"version1\",");
-        expect(json.toString()).toContain("\"now\":\"1455908589662\"");
-    }
-
-    @Test
-    public void stopTest() {
-        expect(stop(new StringBuilder()).toString()).toEqual("}");
+    public void stringifyTest() {
+        List<String[]> message = new ArrayList<>();
+        message.add(new String[]{"A", "B"});
+        expect(stringify(message)).toEqual("[[\"A\",\"B\"]]");
+        message.add(new String[]{"C1", "D2"});
+        expect(stringify(message)).toEqual("[[\"A\",\"B\"],[\"C1\",\"D2\"]]");
     }
 
 }

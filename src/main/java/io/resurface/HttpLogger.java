@@ -4,11 +4,10 @@ package io.resurface;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
-
-import static io.resurface.JsonMessage.*;
 
 /**
  * Usage logger for HTTP/HTTPS protocol.
@@ -63,74 +62,72 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
     }
 
     /**
-     * Appends HTTP request and response at the end of the supplied JSON message.
+     * Formats HTTP request and response as JSON message.
      */
-    public StringBuilder appendToBuffer(StringBuilder json, long now, HttpServletRequest request, String request_body,
-                                        HttpServletResponse response, String response_body) {
-        start(json, "http", getAgent(), getVersion(), now);
-        append(json.append(','), "request_method", request.getMethod());
-        appendRequestURL(json.append(','), request);
-        appendRequestHeaders(json.append(','), request);
-        if (request_body != null) append(json.append(','), "request_body", request_body);
-        append(json.append(','), "response_code", response.getStatus());
-        appendResponseHeaders(json.append(','), response);
-        if (response_body != null) append(json.append(','), "response_body", response_body);
-        return stop(json);
+    public String format(HttpServletRequest request, String request_body,
+                         HttpServletResponse response, String response_body) {
+        return format(request, request_body, response, response_body, System.currentTimeMillis());
     }
 
     /**
      * Formats HTTP request and response as JSON message.
      */
-    public String format(HttpServletRequest request, String request_body, HttpServletResponse response, String response_body) {
-        StringBuilder sb = new StringBuilder(1024);  // todo recycle these?
-        return appendToBuffer(sb, System.currentTimeMillis(), request, request_body, response, response_body).toString();
+    public String format(HttpServletRequest request, String request_body,
+                         HttpServletResponse response, String response_body, long now) {
+        List<String[]> message = new ArrayList<>();
+        message.add(new String[]{"request_method", request.getMethod()});
+        message.add(new String[]{"request_url", formatURL(request)});
+        message.add(new String[]{"response_code", String.valueOf(response.getStatus())});
+        appendRequestHeaders(message, request);
+        appendResponseHeaders(message, response);
+        if (request_body != null) message.add(new String[]{"request_body", request_body});
+        if (response_body != null) message.add(new String[]{"response_body", response_body});
+        message.add(new String[]{"agent", this.agent});
+        message.add(new String[]{"version", this.version});
+        message.add(new String[]{"now", String.valueOf(now)});
+        return Json.stringify(message);
     }
 
     /**
      * Logs HTTP request and response to intended destination.
      */
-    public boolean log(HttpServletRequest request, String request_body, HttpServletResponse response, String response_body) {
+    public boolean log(HttpServletRequest request, String request_body,
+                       HttpServletResponse response, String response_body) {
         return !isEnabled() || submit(format(request, request_body, response, response_body));
     }
 
     /**
      * Adds request headers to message.
      */
-    protected void appendRequestHeaders(StringBuilder json, HttpServletRequest request) {
-        append(json, "request_headers").append(":[");
+    protected void appendRequestHeaders(List<String[]> message, HttpServletRequest request) {
         Enumeration<String> header_names = request.getHeaderNames();
-        for (int headers = 0; header_names.hasMoreElements(); ) {
+        while (header_names.hasMoreElements()) {
             String name = header_names.nextElement();
             Enumeration<String> e = request.getHeaders(name);
-            name = name.toLowerCase();
-            while (e.hasMoreElements()) append(json.append(headers++ == 0 ? '{' : ",{"), name, e.nextElement()).append('}');
+            name = "request_header." + name.toLowerCase();
+            while (e.hasMoreElements()) message.add(new String[]{name, e.nextElement()});
         }
-        json.append("]");
-    }
-
-    /**
-     * Adds request URL to message.
-     */
-    protected void appendRequestURL(StringBuilder json, HttpServletRequest request) {
-        String queryString = request.getQueryString();
-        StringBuffer url = request.getRequestURL();
-        if (queryString != null) url.append('?').append(queryString);
-        append(json, "request_url", url.toString());
     }
 
     /**
      * Adds response headers to message.
      */
-    protected void appendResponseHeaders(StringBuilder json, HttpServletResponse response) {
-        append(json, "response_headers").append(":[");
-        Iterator<String> header_names = response.getHeaderNames().iterator();
-        for (int headers = 0; header_names.hasNext(); ) {
-            String name = header_names.next();
+    protected void appendResponseHeaders(List<String[]> message, HttpServletResponse response) {
+        for (String name : response.getHeaderNames()) {
             Iterator<String> i = response.getHeaders(name).iterator();
-            name = name.toLowerCase();
-            while (i.hasNext()) append(json.append(headers++ == 0 ? '{' : ",{"), name, i.next()).append('}');
+            name = "response_header." + name.toLowerCase();
+            while (i.hasNext()) message.add(new String[]{name, i.next()});
         }
-        json.append("]");
+    }
+
+    /**
+     * Returns complete request URL including query string.
+     */
+    protected String formatURL(HttpServletRequest request) {
+        String queryString = request.getQueryString();
+        StringBuffer url = request.getRequestURL();
+        if (queryString != null) url.append('?').append(queryString);
+        return url.toString();
     }
 
 }
