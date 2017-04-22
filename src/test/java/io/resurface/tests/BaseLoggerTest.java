@@ -56,7 +56,7 @@ public class BaseLoggerTest {
         String version = BaseLogger.version_lookup();
         expect(version).toBeNotNull();
         expect(version.length()).toBeGreaterThan(0);
-        expect(version).toStartWith("1.6.");
+        expect(version).toStartWith("1.7.");
         expect(version.contains("\\")).toBeFalse();
         expect(version.contains("\"")).toBeFalse();
         expect(version.contains("'")).toBeFalse();
