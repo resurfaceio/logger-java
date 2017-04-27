@@ -9,7 +9,7 @@
     <version>1.7.0-SNAPSHOT</version>
     <name>resurfaceio-logger</name>
     <description>Java library for logging to resurface.io</description>
-    <url>https://github.com/resurfaceio/resurfaceio-logger-java</url>
+    <url>https://github.com/resurfaceio/logger-java</url>
 
     <build>
         <plugins>
@@ -88,7 +88,7 @@
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/resurfaceio/resurfaceio-logger-java/issues</url>
+        <url>https://github.com/resurfaceio/logger-java/issues</url>
     </issueManagement>
 
     <licenses>
@@ -109,8 +109,8 @@
     </organization>
 
     <scm>
-        <connection>scm:git:git@github.com:resurfaceio/resurfaceio-logger-java.git</connection>
-        <developerConnection>scm:git:git@github.com:resurfaceio/resurfaceio-logger-java.git</developerConnection>
-        <url>scm:git:git@github.com:resurfaceio/resurfaceio-logger-java.git</url>
+        <connection>scm:git:git@github.com:resurfaceio/logger-java.git</connection>
+        <developerConnection>scm:git:git@github.com:resurfaceio/logger-java.git</developerConnection>
+        <url>scm:git:git@github.com:resurfaceio/logger-java.git</url>
     </scm>
 </project>

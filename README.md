@@ -41,7 +41,7 @@ Use these sections in your `pom.xml`:
     <repositories>
         <repository>
             <id>resurfaceio-mavenrepo</id>
-            <url>https://github.com/resurfaceio/resurfaceio-mavenrepo/raw/master</url>
+            <url>https://github.com/resurfaceio/mavenrepo/raw/master</url>
             <releases><enabled>false</enabled></releases>
             <snapshots><enabled>true</enabled></snapshots>
         </repository>
