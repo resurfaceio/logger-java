@@ -7,7 +7,7 @@ import io.resurface.UsageLoggers;
 import org.junit.Test;
 
 import static com.mscharhag.oleaster.matcher.Matchers.expect;
-import static io.resurface.tests.Helper.URLS_DENIED;
+import static io.resurface.tests.Helper.MOCK_URLS_DENIED;
 
 /**
  * Tests against usage logger for HTTP/HTTPS protocol.
@@ -65,7 +65,7 @@ public class HttpLoggerTest {
 
     @Test
     public void skipsLoggingWhenDisabledTest() {
-        for (String url : URLS_DENIED) {
+        for (String url : MOCK_URLS_DENIED) {
             HttpLogger logger = new HttpLogger(url).disable();
             expect(logger.isEnabled()).toBeFalse();
             expect(logger.log(null, null, null, null)).toBeTrue();  // would fail if enabled

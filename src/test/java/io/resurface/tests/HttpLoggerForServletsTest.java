@@ -31,7 +31,7 @@ public class HttpLoggerForServletsTest {
         expect(parseable(json)).toBeTrue();
         expect(json).toContain("[\"request_method\",\"GET\"]");
         expect(json).toContain("[\"request_url\",\"" + MOCK_URL + "\"]");
-        expect(json).toContain("[\"response_body\",\"" + MOCK_HTML_ESCAPED + "\"]");
+        expect(json).toContain("[\"response_body\",\"" + MOCK_HTML + "\"]");
         expect(json).toContain("[\"response_code\",\"404\"]");
         expect(json).toContain("[\"response_header.a\",\"Z\"]");
         expect(json).toContain("[\"response_header.content-type\",\"text/html\"]");
@@ -89,7 +89,7 @@ public class HttpLoggerForServletsTest {
         expect(json).toContain("[\"request_header.content-type\",\"Application/JSON\"]");
         expect(json).toContain("[\"request_method\",\"POST\"]");
         expect(json).toContain("[\"request_url\",\"" + MOCK_URL + '?' + MOCK_QUERY_STRING + "\"]");
-        expect(json).toContain("[\"response_body\",\"" + MOCK_HTML_ESCAPED + "\"]");
+        expect(json).toContain("[\"response_body\",\"" + MOCK_HTML + "\"]");
         expect(json).toContain("[\"response_code\",\"404\"]");
         expect(json).toContain("[\"response_header.a\",\"Z\"]");
         expect(json).toContain("[\"response_header.content-type\",\"text/html\"]");

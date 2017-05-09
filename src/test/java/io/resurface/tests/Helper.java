@@ -29,18 +29,16 @@ public class Helper {
 
     static final String MOCK_HTML = "<html>Hello World!</html>";
 
-    static final String MOCK_HTML_ESCAPED = Json.escape(new StringBuilder(), MOCK_HTML).toString();
-
     static final long MOCK_NOW = 1455908640173L;
 
     static final String MOCK_QUERY_STRING = "foo=bar";
 
-    static final String MOCK_URL = "http://something.com/index.html";
+    static final String MOCK_URL = "http://something.com:3000/index.html";
 
-    static final String[] URLS_DENIED = {UsageLoggers.urlForDemo() + "/noway3is5this1valid2",
+    static final String[] MOCK_URLS_DENIED = {UsageLoggers.urlForDemo() + "/noway3is5this1valid2",
             "https://www.noway3is5this1valid2.com/"};
 
-    static final String[] URLS_INVALID = {"", "noway3is5this1valid2", "ftp:\\www.noway3is5this1valid2.com/",
+    static final String[] MOCK_URLS_INVALID = {"", "noway3is5this1valid2", "ftp:\\www.noway3is5this1valid2.com/",
             "urn:ISSN:1535–3613"};
 
     static FilterChain mockCustomApp() {
@@ -123,10 +121,11 @@ public class Helper {
     }
 
     static HttpServletRequestImpl mockRequestWithBody2() throws UnsupportedEncodingException {
-        HttpServletRequestImpl impl = mockRequestWithBody();
-        impl.addHeader("A", "1");
-        impl.addHeader("A", "2");
-        return impl;
+        HttpServletRequestImpl r = mockRequestWithBody();
+        r.addHeader("ABC", "123");
+        r.addHeader("A", "1");
+        r.addHeader("A", "2");
+        return r;
     }
 
     static HttpServletRequestImpl mockRequestWithFormCheckbox() throws UnsupportedEncodingException {
@@ -152,6 +151,14 @@ public class Helper {
     static HttpServletResponseImpl mockResponse() {
         HttpServletResponseImpl r = new HttpServletResponseImpl();
         r.setCharacterEncoding("UTF-8");
+        r.setStatus(200);
+        return r;
+    }
+
+    static HttpServletResponseImpl mockResponseWithBody() {
+        HttpServletResponseImpl r = new HttpServletResponseImpl();
+        r.setCharacterEncoding("UTF-8");
+        r.setContentType("text/html; charset=utf-8");
         r.setStatus(200);
         return r;
     }

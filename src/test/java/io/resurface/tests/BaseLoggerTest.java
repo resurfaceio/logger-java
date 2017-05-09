@@ -95,7 +95,7 @@ public class BaseLoggerTest {
 
     @Test
     public void skipsEnablingForInvalidUrlsTest() {
-        for (String url : URLS_INVALID) {
+        for (String url : MOCK_URLS_INVALID) {
             BaseLogger logger = new BaseLogger(MOCK_AGENT, url);
             expect(logger.isEnabled()).toBeFalse();
             expect(logger.getUrl()).toBeNull();
@@ -116,7 +116,7 @@ public class BaseLoggerTest {
 
     @Test
     public void skipsLoggingWhenDisabledTest() {
-        for (String url : URLS_DENIED) {
+        for (String url : MOCK_URLS_DENIED) {
             BaseLogger logger = new BaseLogger(MOCK_AGENT, url).disable();
             expect(logger.isEnabled()).toBeFalse();
             expect(logger.submit(null)).toBeTrue();  // would fail if enabled
@@ -153,7 +153,7 @@ public class BaseLoggerTest {
 
     @Test
     public void submitsToDeniedUrlAndFailsTest() {
-        for (String url : URLS_DENIED) {
+        for (String url : MOCK_URLS_DENIED) {
             BaseLogger logger = new BaseLogger(MOCK_AGENT, url);
             expect(logger.isEnabled()).toBeTrue();
             expect(logger.submit("{}")).toBeFalse();
