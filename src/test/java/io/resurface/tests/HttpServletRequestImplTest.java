@@ -11,7 +11,7 @@ import java.util.Enumeration;
 import static com.mscharhag.oleaster.matcher.Matchers.expect;
 
 /**
- * Tests against HttpServletRequest implementation for custom usage logging.
+ * Tests against HttpServletRequest mock implementation.
  */
 public class HttpServletRequestImplTest {
 

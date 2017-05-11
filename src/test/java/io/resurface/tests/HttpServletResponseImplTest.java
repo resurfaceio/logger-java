@@ -12,7 +12,7 @@ import java.util.Iterator;
 import static com.mscharhag.oleaster.matcher.Matchers.expect;
 
 /**
- * Tests against HttpServletResponse implementation for custom usage logging.
+ * Tests against HttpServletResponse mock implementation.
  */
 public class HttpServletResponseImplTest {
 

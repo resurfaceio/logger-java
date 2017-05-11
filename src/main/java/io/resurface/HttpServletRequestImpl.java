@@ -11,7 +11,7 @@ import java.security.Principal;
 import java.util.*;
 
 /**
- * HttpServletRequest implementation for custom usage logging.
+ * HttpServletRequest mock implementation.
  */
 public class HttpServletRequestImpl implements HttpServletRequest {
 

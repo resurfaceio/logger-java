@@ -10,7 +10,7 @@ import java.io.PrintWriter;
 import java.util.*;
 
 /**
- * HttpServletResponse implementation for custom usage logging.
+ * HttpServletResponse mock implementation.
  */
 public class HttpServletResponseImpl implements HttpServletResponse {
 
@@ -99,7 +99,7 @@ public class HttpServletResponseImpl implements HttpServletResponse {
 
     @Override
     public Collection<String> getHeaders(String name) {
-        return headers.containsKey(name) ? headers.get(name) : null;
+        return headers.getOrDefault(name, null);
     }
 
     @Override
