@@ -1,4 +1,4 @@
-# resurfaceio-logger-java
+# Contributing to resurfaceio-logger-java
 &copy; 2016-2017 Resurface Labs LLC
 
 ## Coding Conventions
@@ -7,6 +7,8 @@ Our code style is whatever IntelliJ IDEA does by default, with the exception of 
 If you don't use IDEA, that's ok, but your code may get reformatted.
 
 ## Git Workflow 
+
+Initial setup: 
 
 ```
 git clone git@github.com:resurfaceio/logger-java.git resurfaceio-logger-java
