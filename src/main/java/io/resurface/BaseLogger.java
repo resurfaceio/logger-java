@@ -149,7 +149,7 @@ public class BaseLogger<T extends BaseLogger> {
                     os.write(json.getBytes());
                     os.flush();
                 }
-                return url_connection.getResponseCode() == 200;
+                return url_connection.getResponseCode() == 204;
             } catch (IOException ioe) {
                 return false;
             }

@@ -43,7 +43,7 @@ public final class UsageLoggers {
      * Returns url for official demo.
      */
     public static String urlForDemo() {
-        return "https://demo-resurfaceio.herokuapp.com/messages";
+        return "https://demo-resurfaceio.herokuapp.com/ping";
     }
 
 }
