@@ -6,9 +6,9 @@
 
     <groupId>io.resurface</groupId>
     <artifactId>resurfaceio-logger</artifactId>
-    <version>1.7.4-SNAPSHOT</version>
+    <version>1.7.5-SNAPSHOT</version>
     <name>resurfaceio-logger</name>
-    <description>Java library for logging to resurface.io</description>
+    <description>Library for usage logging</description>
     <url>https://github.com/resurfaceio/logger-java</url>
 
     <build>
@@ -113,4 +113,16 @@
         <developerConnection>scm:git:git@github.com:resurfaceio/logger-java.git</developerConnection>
         <url>scm:git:git@github.com:resurfaceio/logger-java.git</url>
     </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
 </project>
