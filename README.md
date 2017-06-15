@@ -13,7 +13,6 @@ This library makes it easy to log actual usage of Java web/json apps.
 <li><a href="#advanced_topics">Advanced Topics</a><ul>
 <li><a href="#setting_default_url">Setting Default URL</a></li>
 <li><a href="#disabling_all_logging">Disabling All Logging</a></li>
-<li><a href="#install_snapshot_build">Installing Snapshot Build</a></li>
 <li><a href="#using_api_directly">Using API Directly</a></li>
 </ul></li>
 </ul>
@@ -123,29 +122,6 @@ programmatically.
 
     // at runtime
     UsageLoggers.disable();
-
-<a name="install_snapshot_build"/>
-
-### Installing Snapshot Build
-
-Use these sections in your `pom.xml`:
-
-    <dependencies>
-        <dependency>
-            <groupId>io.resurface</groupId>
-            <artifactId>resurfaceio-logger</artifactId>
-            <version>1.7.5-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
-
-    <repositories>
-        <repository>
-            <id>resurfaceio-mavenrepo</id>
-            <url>https://github.com/resurfaceio/mavenrepo/raw/master</url>
-            <releases><enabled>false</enabled></releases>
-            <snapshots><enabled>true</enabled></snapshots>
-        </repository>
-    </repositories>
 
 <a name="using_api_directly"/>
 
