@@ -28,7 +28,7 @@ public class HttpLoggerTest {
         String url2 = "http://whatever.com";
         HttpLogger logger1 = new HttpLogger(url1);
         HttpLogger logger2 = new HttpLogger(url2);
-        HttpLogger logger3 = new HttpLogger("DEMO");
+        HttpLogger logger3 = new HttpLogger(Helper.DEMO_URL);
 
         expect(logger1.getAgent()).toEqual(HttpLogger.AGENT);
         expect(logger1.isEnabled()).toBeTrue();
@@ -38,7 +38,7 @@ public class HttpLoggerTest {
         expect(logger2.getUrl()).toEqual(url2);
         expect(logger3.getAgent()).toEqual(HttpLogger.AGENT);
         expect(logger3.isEnabled()).toBeTrue();
-        expect(logger3.getUrl()).toEqual(UsageLoggers.urlForDemo());
+        expect(logger3.getUrl()).toEqual(Helper.DEMO_URL);
 
         UsageLoggers.disable();
         expect(UsageLoggers.isEnabled()).toBeFalse();

@@ -35,7 +35,7 @@ public class BaseLoggerTest {
         String url2 = "http://whatever.com";
         BaseLogger logger1 = new BaseLogger(agent1, url1);
         BaseLogger logger2 = new BaseLogger(agent2, url2);
-        BaseLogger logger3 = new BaseLogger(agent3, "DEMO");
+        BaseLogger logger3 = new BaseLogger(agent3, Helper.DEMO_URL);
 
         expect(logger1.getAgent()).toEqual(agent1);
         expect(logger1.isEnabled()).toBeTrue();
@@ -45,7 +45,7 @@ public class BaseLoggerTest {
         expect(logger2.getUrl()).toEqual(url2);
         expect(logger3.getAgent()).toEqual(agent3);
         expect(logger3.isEnabled()).toBeTrue();
-        expect(logger3.getUrl()).toEqual(UsageLoggers.urlForDemo());
+        expect(logger3.getUrl()).toEqual(Helper.DEMO_URL);
 
         UsageLoggers.disable();
         expect(UsageLoggers.isEnabled()).toBeFalse();
@@ -73,16 +73,10 @@ public class BaseLoggerTest {
 
     @Test
     public void performsEnablingWhenExpectedTest() {
-        BaseLogger logger = new BaseLogger(MOCK_AGENT, "DEMO", false);
+        BaseLogger logger = new BaseLogger(MOCK_AGENT, Helper.DEMO_URL, false);
         expect(logger.isEnabled()).toBeFalse();
-        expect(logger.getUrl()).toEqual(UsageLoggers.urlForDemo());
+        expect(logger.getUrl()).toEqual(Helper.DEMO_URL);
         logger.enable();
-        expect(logger.isEnabled()).toBeTrue();
-
-        logger = new BaseLogger(MOCK_AGENT, UsageLoggers.urlForDemo(), true);
-        expect(logger.isEnabled()).toBeTrue();
-        expect(logger.getUrl()).toEqual(UsageLoggers.urlForDemo());
-        logger.enable().disable().enable().disable().disable().disable().enable();
         expect(logger.isEnabled()).toBeTrue();
 
         List<String> queue = new ArrayList<>();
@@ -125,8 +119,8 @@ public class BaseLoggerTest {
 
     @Test
     public void submitsToDemoUrlTest() {
-        BaseLogger logger = new BaseLogger(MOCK_AGENT, UsageLoggers.urlForDemo());
-        expect(logger.getUrl()).toEqual(UsageLoggers.urlForDemo());
+        BaseLogger logger = new BaseLogger(MOCK_AGENT, Helper.DEMO_URL);
+        expect(logger.getUrl()).toEqual(Helper.DEMO_URL);
         List<String[]> message = new ArrayList<>();
         message.add(new String[]{"agent", logger.getAgent()});
         message.add(new String[]{"version", logger.getVersion()});
@@ -139,7 +133,7 @@ public class BaseLoggerTest {
 
     @Test
     public void submitsToDemoUrlViaHttpTest() {
-        BaseLogger logger = new BaseLogger(MOCK_AGENT, UsageLoggers.urlForDemo().replace("https://", "http://"));
+        BaseLogger logger = new BaseLogger(MOCK_AGENT, Helper.DEMO_URL.replace("https://", "http://"));
         expect(logger.getUrl()).toStartWith("http://");
         List<String[]> message = new ArrayList<>();
         message.add(new String[]{"agent", logger.getAgent()});

@@ -39,11 +39,4 @@ public final class UsageLoggers {
         return System.getenv("USAGE_LOGGERS_URL");
     }
 
-    /**
-     * Returns url for official demo.
-     */
-    public static String urlForDemo() {
-        return "https://demo-resurfaceio.herokuapp.com/ping";
-    }
-
 }

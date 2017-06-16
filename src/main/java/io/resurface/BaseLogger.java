@@ -49,8 +49,6 @@ public class BaseLogger<T extends BaseLogger> {
         if (url == null) {
             this.url = UsageLoggers.urlByDefault();
             if (this.url == null) this.enabled = false;
-        } else if (url.equals("DEMO")) {
-            this.url = UsageLoggers.urlForDemo();
         } else {
             this.url = url;
         }

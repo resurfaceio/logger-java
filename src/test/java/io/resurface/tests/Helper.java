@@ -6,7 +6,6 @@ import com.google.gson.Gson;
 import io.resurface.HttpServletRequestImpl;
 import io.resurface.HttpServletResponseImpl;
 import io.resurface.Json;
-import io.resurface.UsageLoggers;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletResponse;
@@ -16,6 +15,8 @@ import java.io.UnsupportedEncodingException;
  * Provides mock objects and utilities for testing.
  */
 public class Helper {
+
+    static final String DEMO_URL = "https://demo-resurfaceio.herokuapp.com/ping";
 
     static final String MOCK_AGENT = "helper.java";
 
@@ -35,7 +36,7 @@ public class Helper {
 
     static final String MOCK_URL = "http://something.com:3000/index.html";
 
-    static final String[] MOCK_URLS_DENIED = {UsageLoggers.urlForDemo() + "/noway3is5this1valid2",
+    static final String[] MOCK_URLS_DENIED = {Helper.DEMO_URL + "/noway3is5this1valid2",
             "https://www.noway3is5this1valid2.com/"};
 
     static final String[] MOCK_URLS_INVALID = {"", "noway3is5this1valid2", "ftp:\\www.noway3is5this1valid2.com/",

@@ -18,11 +18,4 @@ public class UsageLoggersTest {
         expect(url).toBeNull();
     }
 
-    @Test
-    public void providesDemoUrlTest() {
-        String url = UsageLoggers.urlForDemo();
-        expect(url.length()).toBeGreaterThan(0);
-        expect(url).toStartWith("https://");
-    }
-
 }
