@@ -78,6 +78,12 @@ After <a href="#installing_with_maven">installing the library</a>, create a logg
         return "";
     });
 
+Alternatively configure an `after` filter to log across multiple routes at once.
+
+    after((request, response) -> {
+        logger.log(request.raw(), request.body(), response.raw(), response.body());
+    });    
+
 <a name="advanced_topics"/>
 
 ## Advanced Topics
