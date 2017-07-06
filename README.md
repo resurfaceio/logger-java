@@ -144,10 +144,10 @@ yields complete control over how usage logging is implemented.
 
     // create and configure logger
     HttpLogger logger;
+    logger = new HttpLogger(my_https_url);                           // log to remote url
+    logger = new HttpLogger(my_https_url, false);                    // (initially disabled)
     logger = new HttpLogger(queue);                                  // log to appendable queue
     logger = new HttpLogger(queue, false);                           // (initially disabled)
-    logger = new HttpLogger(my_https_url);                           // log to https url
-    logger = new HttpLogger(my_https_url, false);                    // (initially disabled)
     logger.disable();                                                // disable logging for tests
     logger.enable();                                                 // enable logging again
     if (logger.isEnabled()) ...                                      // test if logging is enabled
