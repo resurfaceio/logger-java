@@ -113,14 +113,14 @@
             <name>Rob Dickinson</name>
             <url>https://github.com/RobDickinson</url>
             <organization>resurface.io</organization>
-            <organizationUrl>http://resurface.io</organizationUrl>
+            <organizationUrl>https://resurface.io</organizationUrl>
             <roles>
                 <role>architect</role>
                 <role>developer</role>
             </roles>
             <timezone>America/Denver</timezone>
             <properties>
-                <picUrl>http://resurface.io/headshot_rob_128.jpg</picUrl>
+                <picUrl>https://resurface.io/headshot_rob_128.jpg</picUrl>
             </properties>
         </developer>
     </developers>
@@ -144,7 +144,7 @@
 
     <organization>
         <name>resurface.io</name>
-        <url>http://resurface.io</url>
+        <url>https://resurface.io</url>
     </organization>
 
     <scm>
