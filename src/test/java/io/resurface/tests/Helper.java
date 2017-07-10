@@ -16,7 +16,7 @@ import java.io.UnsupportedEncodingException;
  */
 public class Helper {
 
-    static final String DEMO_URL = "https://demo-resurfaceio.herokuapp.com/ping";
+    static final String DEMO_URL = "https://demo.resurface.io/ping";
 
     static final String MOCK_AGENT = "helper.java";
 
