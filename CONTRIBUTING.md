@@ -39,8 +39,6 @@ mvn install
 
 ## Release Process
 
-All [integration tests](https://github.com/resurfaceio/logger-tests) must pass first.
-
 Configure environment variables (in `.bash_profile`):
 
 ```
