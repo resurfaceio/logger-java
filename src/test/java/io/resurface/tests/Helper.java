@@ -22,7 +22,7 @@ public class Helper {
 
     static final String MOCK_FORM_CHECKBOX = "a=A1&a=A2&a=A3";
 
-    static final String MOCK_FORM_REGISTER = "firstname=wreck+it&lastname=ralph";
+    static final String MOCK_FORM_REGISTER = "firstname=wreck+it&lastname=ralph&middle=&=";
 
     static final String MOCK_JSON = "{ \"hello\" : \"world\" }";
 

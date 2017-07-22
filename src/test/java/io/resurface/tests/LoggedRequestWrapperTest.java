@@ -30,10 +30,11 @@ public class LoggedRequestWrapperTest {
     @Test
     public void formParseFormRegisterTest() throws IOException {
         LoggedRequestWrapper w = new LoggedRequestWrapper(Helper.mockRequestWithFormRegister());
-        expect(w.getParameterMap().size()).toEqual(2);
+        expect(w.getParameterMap().size()).toEqual(3);
         expect(w.getParameter("anykey")).toBeNull();
         expect(w.getParameter("firstname")).toEqual("wreck it");
         expect(w.getParameter("lastname")).toEqual("ralph");
+        expect(w.getParameter("middle")).toEqual("");
     }
 
     @Test

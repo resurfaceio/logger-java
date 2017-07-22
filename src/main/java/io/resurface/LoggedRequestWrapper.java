@@ -112,8 +112,9 @@ public class LoggedRequestWrapper extends javax.servlet.http.HttpServletRequestW
             this.parameters = new HashMap<>(pairs.length);
             for (String pair : pairs) {
                 String[] fields = pair.split("=");
+                if (fields.length == 0) continue;
                 String name = URLDecoder.decode(fields[0], encoding);
-                String value = URLDecoder.decode(fields[1], encoding);
+                String value = fields.length == 2 ? URLDecoder.decode(fields[1], encoding) : "";
                 String[] values = parameters.get(name);
                 if (values == null) {
                     parameters.put(name, new String[]{value});
