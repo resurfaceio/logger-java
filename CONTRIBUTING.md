@@ -30,6 +30,8 @@ git pull --rebase                         (avoid merge bubbles)
 git push origin master
 ```
 
+## Release Process
+
 Publish snapshot build to [mavenrepo](https://github.com/resurfaceio/mavenrepo) for integration testing:
 
 ```
@@ -37,7 +39,7 @@ mvn install
 (merge changes .m2 to resurfaceio/mavenrepo)
 ```
 
-## Release Process
+All [integration tests](https://github.com/resurfaceio/logger-tests) must pass before proceeding.
 
 Configure environment variables (in `.bash_profile`):
 
