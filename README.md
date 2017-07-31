@@ -9,6 +9,7 @@ This library makes it easy to log actual usage of Java web/json apps.
 <li><a href="#dependencies">Dependencies</a></li>
 <li><a href="#installing_with_maven">Installing With Maven</a></li>
 <li><a href="#logging_from_servlet_filter">Logging From Servlet Filter</a></li>
+<li><a href="#logging_from_spring_boot">Logging From Spring Boot</a></li>
 <li><a href="#logging_from_spark_framework">Logging From Spark Framework</a></li>
 <li><a href="#advanced_topics">Advanced Topics</a><ul>
 <li><a href="#setting_default_url">Setting Default URL</a></li>
@@ -55,7 +56,25 @@ After <a href="#installing_with_maven">installing the library</a>, add a logging
         <filter-name>HttpLoggerForServlets</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    
+
+<a name="logging_from_spring_boot"/>
+
+## Logging From Spring Boot
+
+After <a href="#installing_with_maven">installing the library</a>, use a `FilterRegistrationBean`
+to add a logging servlet filter.
+
+    @Bean
+    public FilterRegistrationBean httpLoggerFilter() {
+        FilterRegistrationBean frb = new FilterRegistrationBean();
+        frb.setFilter(new io.resurface.HttpLoggerForServlets());
+        frb.addInitParameter("url", "https://...");
+        frb.addUrlPatterns("/*");
+        frb.setName("HttpLoggerForServlets");
+        frb.setOrder(1024);  // usually best with high number
+        return frb;
+    }
+
 <a name="logging_from_spark_framework"/>
 
 ## Logging From Spark Framework
