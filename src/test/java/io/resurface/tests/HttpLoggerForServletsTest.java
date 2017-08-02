@@ -32,7 +32,7 @@ public class HttpLoggerForServletsTest {
         expect(json).toContain("[\"request_method\",\"GET\"]");
         expect(json).toContain("[\"request_url\",\"" + MOCK_URL + "\"]");
         expect(json).toContain("[\"response_body\",\"" + MOCK_HTML + "\"]");
-        expect(json).toContain("[\"response_code\",\"404\"]");
+        expect(json).toContain("[\"response_code\",\"200\"]");
         expect(json).toContain("[\"response_header.a\",\"Z\"]");
         expect(json).toContain("[\"response_header.content-type\",\"text/html\"]");
         expect(json.contains("request_body")).toBeFalse();
@@ -50,7 +50,7 @@ public class HttpLoggerForServletsTest {
         expect(parseable(json)).toBeTrue();
         expect(json).toContain("[\"request_method\",\"GET\"]");
         expect(json).toContain("[\"response_body\",\"" + MOCK_JSON_ESCAPED + "\"]");
-        expect(json).toContain("[\"response_code\",\"500\"]");
+        expect(json).toContain("[\"response_code\",\"200\"]");
         expect(json).toContain("[\"response_header.content-type\",\"application/json; charset=utf-8\"]");
         expect(json.contains("request_body")).toBeFalse();
         expect(json.contains("request_header")).toBeFalse();
@@ -70,7 +70,7 @@ public class HttpLoggerForServletsTest {
         expect(json).toContain("[\"request_method\",\"POST\"]");
         expect(json).toContain("[\"request_url\",\"" + MOCK_URL + '?' + MOCK_QUERY_STRING + "\"]");
         expect(json).toContain("[\"response_body\",\"" + MOCK_JSON_ESCAPED + "\"]");
-        expect(json).toContain("[\"response_code\",\"500\"]");
+        expect(json).toContain("[\"response_code\",\"200\"]");
         expect(json).toContain("[\"response_header.content-type\",\"application/json; charset=utf-8\"]");
     }
 
@@ -90,7 +90,7 @@ public class HttpLoggerForServletsTest {
         expect(json).toContain("[\"request_method\",\"POST\"]");
         expect(json).toContain("[\"request_url\",\"" + MOCK_URL + '?' + MOCK_QUERY_STRING + "\"]");
         expect(json).toContain("[\"response_body\",\"" + MOCK_HTML + "\"]");
-        expect(json).toContain("[\"response_code\",\"404\"]");
+        expect(json).toContain("[\"response_code\",\"200\"]");
         expect(json).toContain("[\"response_header.a\",\"Z\"]");
         expect(json).toContain("[\"response_header.content-type\",\"text/html\"]");
     }

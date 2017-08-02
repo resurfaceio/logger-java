@@ -71,7 +71,7 @@ public class Helper {
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json; charset=utf-8");
             response.getOutputStream().write(MOCK_JSON.getBytes());
-            response.setStatus(500);
+            response.setStatus(200);
         };
     }
 
@@ -91,7 +91,7 @@ public class Helper {
             response.setContentType("text/html");
             response.setHeader("A", "Z");
             response.getOutputStream().write(MOCK_HTML.getBytes());
-            response.setStatus(404);
+            response.setStatus(200);
         };
     }
 

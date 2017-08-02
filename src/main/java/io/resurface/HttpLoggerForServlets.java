@@ -78,7 +78,7 @@ public class HttpLoggerForServlets implements Filter {
         LoggedResponseWrapper response_wrapper = new LoggedResponseWrapper(response);
         chain.doFilter(request_wrapper != null ? request_wrapper : request, response_wrapper);
         response_wrapper.flushBuffer();
-        if (response.getStatus() != 304) {
+        if (response.getStatus() < 300) {
             String response_encoding = response.getCharacterEncoding();
             if ((response_encoding != null) && isStringContentType(response.getContentType())) {
                 String request_body = request_wrapper == null ? null : new String(request_wrapper.logged(), request_encoding);
