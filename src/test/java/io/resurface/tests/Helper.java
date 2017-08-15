@@ -141,7 +141,7 @@ public class Helper {
 
     static HttpServletRequestImpl mockRequestWithFormRegister() throws UnsupportedEncodingException {
         HttpServletRequestImpl r = new HttpServletRequestImpl(MOCK_FORM_REGISTER.getBytes());
-        r.setCharacterEncoding("UTF-8");
+        // leave character encoding unspecified
         r.setContentType("application/X-WWW-FORM-URLENCODED");
         r.setMethod("POST");
         r.setQueryString(MOCK_QUERY_STRING);

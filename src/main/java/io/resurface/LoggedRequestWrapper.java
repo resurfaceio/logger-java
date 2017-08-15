@@ -102,11 +102,12 @@ public class LoggedRequestWrapper extends javax.servlet.http.HttpServletRequestW
             // check request before parsing
             String content_type = getRequest().getContentType();
             if (content_type == null || !content_type.toLowerCase().contains("x-www-form-urlencoded")) return;
-            String encoding = getRequest().getCharacterEncoding();
             byte[] logged = stream.logged();
-            if ((encoding == null) || (logged == null)) return;
+            if (logged == null) return;
 
             // parse form into parameters
+            String encoding = getRequest().getCharacterEncoding();
+            encoding = (encoding == null) ? "ISO-8859-1" : encoding;
             String body = new String(logged(), encoding);
             String[] pairs = body.split("&");
             this.parameters = new HashMap<>(pairs.length);
