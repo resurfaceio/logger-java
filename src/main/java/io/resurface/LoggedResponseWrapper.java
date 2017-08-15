@@ -47,8 +47,9 @@ public class LoggedResponseWrapper extends javax.servlet.http.HttpServletRespons
     @Override
     public PrintWriter getWriter() throws IOException {
         if (writer == null) {
-            // @todo this fails if character encoding hasn't been set already, what to do?
-            writer = new PrintWriter(new OutputStreamWriter(getOutputStream(), getCharacterEncoding()));
+            String encoding = getCharacterEncoding();
+            encoding = (encoding == null) ? "ISO-8859-1" : encoding;
+            writer = new PrintWriter(new OutputStreamWriter(getOutputStream(), encoding));
         }
         return writer;
     }
