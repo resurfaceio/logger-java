@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Usage logger for HTTP/HTTPS protocol.
@@ -89,6 +90,13 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
     }
 
     /**
+     * Returns true if content type indicates string data.
+     */
+    public static boolean isStringContentType(String s) {
+        return s != null && STRING_TYPES_REGEX.matcher(s).find();
+    }
+
+    /**
      * Logs HTTP request and response to intended destination.
      */
     public boolean log(HttpServletRequest request, String request_body,
@@ -129,5 +137,8 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
         if (queryString != null) url.append('?').append(queryString);
         return url.toString();
     }
+
+    private static final String STRING_TYPES = "(?i)^text/(html|plain|xml)|application/(json|soap|xml|x-www-form-urlencoded)";
+    private static final Pattern STRING_TYPES_REGEX = Pattern.compile(STRING_TYPES);
 
 }

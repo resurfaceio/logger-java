@@ -7,7 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
-import java.util.regex.Pattern;
+
+import static io.resurface.HttpLogger.isStringContentType;
 
 /**
  * Servlet filter for HTTP usage logging.
@@ -88,18 +89,8 @@ public class HttpLoggerForServlets implements Filter {
         }
     }
 
-    /**
-     * Returns true if content type indicates string data.
-     */
-    protected boolean isStringContentType(String s) {
-        return s != null && STRING_TYPES_PATTERN.matcher(s).find();
-    }
-
     protected FilterConfig config;
     protected HttpLogger logger;
     protected final List<String> queue;
-
-    protected final String STRING_TYPES_REGEX = "(?i)^text/(html|plain|xml)|application/(json|soap|xml|x-www-form-urlencoded)";
-    protected final Pattern STRING_TYPES_PATTERN = Pattern.compile(STRING_TYPES_REGEX);
 
 }
