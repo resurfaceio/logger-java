@@ -20,15 +20,13 @@ public class Helper {
 
     static final String MOCK_AGENT = "helper.java";
 
-    static final String MOCK_FORM_CHECKBOX = "a=A1&a=A2&a=A3";
+    static final String MOCK_HTML = "<html>Hello World!</html>";
 
-    static final String MOCK_FORM_REGISTER = "firstname=wreck+it&lastname=ralph&middle=&=";
+    static final String MOCK_HTML2 = "<html>Hola Mundo!</html>";
 
     static final String MOCK_JSON = "{ \"hello\" : \"world\" }";
 
     static final String MOCK_JSON_ESCAPED = Json.escape(new StringBuilder(), MOCK_JSON).toString();
-
-    static final String MOCK_HTML = "<html>Hello World!</html>";
 
     static final long MOCK_NOW = 1455908640173L;
 
@@ -46,41 +44,22 @@ public class Helper {
         return (req, res) -> {
             HttpServletResponse response = (HttpServletResponse) res;
             response.setContentType("application/super-troopers");
-            response.setStatus(999);
+            response.setStatus(200);
         };
     }
 
-    static FilterChain mockCustomRedirectApp() {
+    static FilterChain mockCustom404App() {
         return (req, res) -> {
             HttpServletResponse response = (HttpServletResponse) res;
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/whatever");
-            response.setStatus(304);
+            response.setStatus(404);
         };
     }
 
     static FilterChain mockExceptionApp() {
         return (req, res) -> {
             throw new UnsupportedEncodingException("simulated failure");
-        };
-    }
-
-    static FilterChain mockJsonApp() {
-        return (req, res) -> {
-            HttpServletResponse response = (HttpServletResponse) res;
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("application/json; charset=utf-8");
-            response.getOutputStream().write(MOCK_JSON.getBytes());
-            response.setStatus(200);
-        };
-    }
-
-    static FilterChain mockJsonRedirectApp() {
-        return (req, res) -> {
-            HttpServletResponse response = (HttpServletResponse) res;
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("application/json");
-            response.setStatus(304);
         };
     }
 
@@ -95,12 +74,31 @@ public class Helper {
         };
     }
 
-    static FilterChain mockHtmlRedirectApp() {
+    static FilterChain mockHtml404App() {
         return (req, res) -> {
             HttpServletResponse response = (HttpServletResponse) res;
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html; charset=utf-8");
-            response.setStatus(304);
+            response.setStatus(404);
+        };
+    }
+
+    static FilterChain mockJsonApp() {
+        return (req, res) -> {
+            HttpServletResponse response = (HttpServletResponse) res;
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("application/json; charset=utf-8");
+            response.getOutputStream().write(MOCK_JSON.getBytes());
+            response.setStatus(200);
+        };
+    }
+
+    static FilterChain mockJson404App() {
+        return (req, res) -> {
+            HttpServletResponse response = (HttpServletResponse) res;
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("application/json");
+            response.setStatus(404);
         };
     }
 
@@ -111,41 +109,23 @@ public class Helper {
         return r;
     }
 
-    static HttpServletRequestImpl mockRequestWithBody() throws UnsupportedEncodingException {
-        HttpServletRequestImpl r = new HttpServletRequestImpl(MOCK_JSON.getBytes());
-        r.setCharacterEncoding("UTF-8");
-        r.setContentType("Application/JSON");
+    static HttpServletRequestImpl mockRequestWithJson() throws UnsupportedEncodingException {
+        HttpServletRequestImpl r = new HttpServletRequestImpl();
+        r.addHeader("Content-Type", "Application/JSON");
+        r.addParam("message", MOCK_JSON);
         r.setMethod("POST");
         r.setQueryString(MOCK_QUERY_STRING);
         r.setRequestURL(MOCK_URL);
         return r;
     }
 
-    static HttpServletRequestImpl mockRequestWithBody2() throws UnsupportedEncodingException {
-        HttpServletRequestImpl r = mockRequestWithBody();
+    static HttpServletRequestImpl mockRequestWithJson2() throws UnsupportedEncodingException {
+        HttpServletRequestImpl r = mockRequestWithJson();
         r.addHeader("ABC", "123");
         r.addHeader("A", "1");
         r.addHeader("A", "2");
-        return r;
-    }
-
-    static HttpServletRequestImpl mockRequestWithFormCheckbox() throws UnsupportedEncodingException {
-        HttpServletRequestImpl r = new HttpServletRequestImpl(MOCK_FORM_CHECKBOX.getBytes());
-        r.setCharacterEncoding("UTF-8");
-        r.setContentType("application/x-www-form-urlencoded");
-        r.setMethod("POST");
-        r.setQueryString(MOCK_QUERY_STRING);
-        r.setRequestURL(MOCK_URL);
-        return r;
-    }
-
-    static HttpServletRequestImpl mockRequestWithFormRegister() throws UnsupportedEncodingException {
-        HttpServletRequestImpl r = new HttpServletRequestImpl(MOCK_FORM_REGISTER.getBytes());
-        // leave character encoding unspecified
-        r.setContentType("application/X-WWW-FORM-URLENCODED");
-        r.setMethod("POST");
-        r.setQueryString(MOCK_QUERY_STRING);
-        r.setRequestURL(MOCK_URL);
+        r.addParam("ABC", "123");
+        r.addParam("ABC", "234");
         return r;
     }
 
@@ -156,7 +136,7 @@ public class Helper {
         return r;
     }
 
-    static HttpServletResponseImpl mockResponseWithBody() {
+    static HttpServletResponseImpl mockResponseWithHtml() {
         HttpServletResponseImpl r = new HttpServletResponseImpl();
         r.setCharacterEncoding("UTF-8");
         r.setContentType("text/html; charset=utf-8");

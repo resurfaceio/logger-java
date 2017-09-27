@@ -15,19 +15,19 @@ import java.util.*;
  */
 public class HttpServletRequestImpl implements HttpServletRequest {
 
-    public HttpServletRequestImpl() {
-        this(new byte[0]);
-    }
-
-    public HttpServletRequestImpl(byte[] bytes) {
-        stream = new LoggedInputStream(bytes);
-    }
-
     public void addHeader(String name, String value) {
         if (headers.containsKey(name)) {
             headers.get(name).add(value);
         } else {
             setHeader(name, value);
+        }
+    }
+
+    public void addParam(String name, String value) {
+        if (params.containsKey(name)) {
+            params.get(name).add(value);
+        } else {
+            setParam(name, value);
         }
     }
 
@@ -58,7 +58,7 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public String getCharacterEncoding() {
-        return characterEncoding;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -108,7 +108,7 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public ServletInputStream getInputStream() throws IOException {
-        return stream;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -148,7 +148,8 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public String getParameter(String name) {
-        throw new UnsupportedOperationException();
+        String[] values = getParameterValues(name);
+        return (values == null || values.length == 0) ? null : values[0];
     }
 
     @Override
@@ -158,12 +159,19 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public Enumeration<String> getParameterNames() {
-        throw new UnsupportedOperationException();
+        return java.util.Collections.enumeration(params.keySet());
     }
 
     @Override
     public String[] getParameterValues(String name) {
-        throw new UnsupportedOperationException();
+        List<String> values = params.get(name);
+        if (values == null) {
+            return null;
+        } else {
+            String[] results = new String[values.size()];
+            results = values.toArray(results);
+            return results;
+        }
     }
 
     @Override
@@ -347,7 +355,7 @@ public class HttpServletRequestImpl implements HttpServletRequest {
     }
 
     public void setCharacterEncoding(String characterEncoding) throws UnsupportedEncodingException {
-        this.characterEncoding = characterEncoding;
+        throw new UnsupportedOperationException();
     }
 
     public void setContentType(String contentType) {
@@ -362,6 +370,12 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     public void setMethod(String method) {
         this.method = method;
+    }
+
+    public void setParam(String name, String value) {
+        List<String> values = new ArrayList<>();
+        values.add(value);
+        params.put(name, values);
     }
 
     public void setQueryString(String queryString) {
@@ -383,11 +397,10 @@ public class HttpServletRequestImpl implements HttpServletRequest {
         throw new UnsupportedOperationException();
     }
 
-    private String characterEncoding;
     private final Map<String, List<String>> headers = new HashMap<>();
     private String method;
+    private final Map<String, List<String>> params = new HashMap<>();
     private String queryString;
     private String requestURL;
-    private final ServletInputStream stream;
 
 }

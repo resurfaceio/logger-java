@@ -5,7 +5,6 @@ package io.resurface.tests;
 import io.resurface.HttpServletRequestImpl;
 import org.junit.Test;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 
 import static com.mscharhag.oleaster.matcher.Matchers.expect;
@@ -16,18 +15,8 @@ import static com.mscharhag.oleaster.matcher.Matchers.expect;
 public class HttpServletRequestImplTest {
 
     @Test
-    public void useCharacterEncoding() throws UnsupportedEncodingException {
-        String val = "UTF-8";
-        HttpServletRequestImpl impl = new HttpServletRequestImpl();
-        expect(impl.getCharacterEncoding()).toBeNull();
-        impl.setCharacterEncoding(val);
-        expect(impl.getCharacterEncoding()).toEqual(val);
-    }
-
-    @Test
     public void useContentType() {
         HttpServletRequestImpl impl = new HttpServletRequestImpl();
-        expect(impl.getCharacterEncoding()).toBeNull();
         expect(impl.getHeader("CONTENT-TYPE")).toBeNull();
 
         String val = "text/html";
@@ -72,6 +61,7 @@ public class HttpServletRequestImplTest {
         e = impl.getHeaderNames();
         expect(e.nextElement()).toEqual(key);
         expect(e.nextElement()).toEqual(key2);
+        expect(impl.getHeader(key2)).toEqual(val2);
         expect(impl.getHeader(key2.toUpperCase())).toBeNull();
     }
 
@@ -82,6 +72,36 @@ public class HttpServletRequestImplTest {
         expect(impl.getMethod()).toBeNull();
         impl.setMethod(val);
         expect(impl.getMethod()).toEqual(val);
+    }
+
+    @Test
+    public void useParams() {
+        String key = "2345";
+        String key2 = "fish";
+        String val = "u-turn";
+        String val2 = "swell";
+
+        HttpServletRequestImpl impl = new HttpServletRequestImpl();
+        expect(impl.getParameter(key)).toBeNull();
+        expect(impl.getParameterValues(key)).toBeNull();
+
+        impl.addParam(key, val);
+        expect(impl.getParameterNames().nextElement()).toEqual(key);
+        expect(impl.getParameter(key)).toEqual(val);
+        expect(impl.getParameterValues(key)[0]).toEqual(val);
+
+        impl.addParam(key, val2);
+        expect(impl.getParameterNames().nextElement()).toEqual(key);
+        expect(impl.getParameter(key)).toEqual(val);
+        expect(impl.getParameterValues(key)[0]).toEqual(val);
+        expect(impl.getParameterValues(key)[1]).toEqual(val2);
+
+        impl.addParam(key2, val2);
+        Enumeration e = impl.getParameterNames();
+        expect(e.nextElement()).toEqual(key);
+        expect(e.nextElement()).toEqual(key2);
+        expect(impl.getParameter(key2)).toEqual(val2);
+        expect(impl.getParameter(key2.toUpperCase())).toBeNull();
     }
 
     @Test

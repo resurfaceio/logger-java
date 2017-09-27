@@ -68,24 +68,18 @@ public class HttpLoggerForServlets implements Filter {
      */
     protected void process(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        // Construct request and response wrappers
-        LoggedRequestWrapper request_wrapper = null;
-        if (isStringContentType(request.getContentType())) request_wrapper = new LoggedRequestWrapper(request);
+        // Construct response wrapper and pass through filter chain
         LoggedResponseWrapper response_wrapper = new LoggedResponseWrapper(response);
-
-        // Pass request & response wrappers through filter chain
-        chain.doFilter(request_wrapper != null ? request_wrapper : request, response_wrapper);
+        chain.doFilter(request, response_wrapper);
         response_wrapper.flushBuffer();
 
         // Log successful responses having string content types
-        if ((response.getStatus() < 300) && isStringContentType(response.getContentType())) {
-            String request_encoding = request.getCharacterEncoding();
-            request_encoding = (request_encoding == null) ? "ISO-8859-1" : request_encoding;
+        int status = response.getStatus();
+        if ((status < 300 || status == 302) && isStringContentType(response.getContentType())) {
             String response_encoding = response.getCharacterEncoding();
             response_encoding = (response_encoding == null) ? "ISO-8859-1" : response_encoding;
-            String request_body = request_wrapper == null ? null : new String(request_wrapper.logged(), request_encoding);
             String response_body = new String(response_wrapper.logged(), response_encoding);
-            logger.log(request, request_body, response, response_body);
+            logger.log(request, null, response, response_body);
         }
     }
 

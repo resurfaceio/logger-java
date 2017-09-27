@@ -28,23 +28,25 @@ public class HttpLoggerJsonTest {
         expect(json).toContain("[\"request_url\",\"" + MOCK_URL + "\"]");
         expect(json.contains("request_body")).toBeFalse();
         expect(json.contains("request_header")).toBeFalse();
+        expect(json.contains("request_param")).toBeFalse();
         expect(json.contains("response_body")).toBeFalse();
         expect(json.contains("response_header")).toBeFalse();
     }
 
     @Test
     public void formatRequestWithBodyTest() throws UnsupportedEncodingException {
-        String json = logger.format(mockRequestWithBody(), MOCK_JSON, mockResponse(), null);
+        String json = logger.format(mockRequestWithJson(), MOCK_JSON, mockResponse(), null);
         expect(parseable(json)).toBeTrue();
         expect(json).toContain("[\"request_body\",\"" + MOCK_JSON_ESCAPED + "\"]");
         expect(json).toContain("[\"request_header.content-type\",\"Application/JSON\"]");
         expect(json).toContain("[\"request_method\",\"POST\"]");
+        expect(json).toContain("[\"request_param.message\",\"" + MOCK_JSON_ESCAPED + "\"]");
         expect(json).toContain("[\"request_url\",\"" + MOCK_URL + '?' + MOCK_QUERY_STRING + "\"]");
     }
 
     @Test
     public void formatRequestWithEmptyBodyTest() throws UnsupportedEncodingException {
-        String json = logger.format(mockRequestWithBody2(), "", mockResponse(), null);
+        String json = logger.format(mockRequestWithJson2(), "", mockResponse(), null);
         expect(parseable(json)).toBeTrue();
         expect(json).toContain("[\"request_body\",\"\"]");
         expect(json).toContain("[\"request_header.a\",\"1\"]");
@@ -52,6 +54,9 @@ public class HttpLoggerJsonTest {
         expect(json).toContain("[\"request_header.abc\",\"123\"]");
         expect(json).toContain("[\"request_header.content-type\",\"Application/JSON\"]");
         expect(json).toContain("[\"request_method\",\"POST\"]");
+        expect(json).toContain("[\"request_param.abc\",\"123\"]");
+        expect(json).toContain("[\"request_param.abc\",\"234\"]");
+        expect(json).toContain("[\"request_param.message\",\"" + MOCK_JSON_ESCAPED + "\"]");
         expect(json).toContain("[\"request_url\",\"" + MOCK_URL + '?' + MOCK_QUERY_STRING + "\"]");
     }
 
@@ -66,16 +71,16 @@ public class HttpLoggerJsonTest {
 
     @Test
     public void formatResponseWithBodyTest() {
-        String json = logger.format(mockRequest(), null, mockResponseWithBody(), MOCK_HTML);
+        String json = logger.format(mockRequest(), null, mockResponseWithHtml(), MOCK_HTML2);
         expect(parseable(json)).toBeTrue();
-        expect(json).toContain("[\"response_body\",\"" + MOCK_HTML + "\"]");
+        expect(json).toContain("[\"response_body\",\"" + MOCK_HTML2 + "\"]");
         expect(json).toContain("[\"response_code\",\"200\"]");
         expect(json).toContain("[\"response_header.content-type\",\"text/html; charset=utf-8\"]");
     }
 
     @Test
     public void formatResponseWithEmptyBodyTest() {
-        String json = logger.format(mockRequest(), null, mockResponseWithBody(), "");
+        String json = logger.format(mockRequest(), null, mockResponseWithHtml(), "");
         expect(parseable(json)).toBeTrue();
         expect(json).toContain("[\"response_body\",\"\"]");
         expect(json).toContain("[\"response_code\",\"200\"]");

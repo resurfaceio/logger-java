@@ -80,6 +80,7 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
         message.add(new String[]{"request_url", formatURL(request)});
         message.add(new String[]{"response_code", String.valueOf(response.getStatus())});
         appendRequestHeaders(message, request);
+        appendRequestParams(message, request);
         appendResponseHeaders(message, response);
         if (request_body != null) message.add(new String[]{"request_body", request_body});
         if (response_body != null) message.add(new String[]{"response_body", response_body});
@@ -114,6 +115,21 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
             Enumeration<String> e = request.getHeaders(name);
             name = "request_header." + name.toLowerCase();
             while (e.hasMoreElements()) message.add(new String[]{name, e.nextElement()});
+        }
+    }
+
+    /**
+     * Adds request params to message.
+     */
+    protected void appendRequestParams(List<String[]> message, HttpServletRequest request) {
+        Enumeration<String> param_names = request.getParameterNames();
+        while (param_names.hasMoreElements()) {
+            String name = param_names.nextElement();
+            String[] values = request.getParameterValues(name);
+            if (values != null) {
+                name = "request_param." + name.toLowerCase();
+                for (String value : values) message.add(new String[]{name, value});
+            }
         }
     }
 
