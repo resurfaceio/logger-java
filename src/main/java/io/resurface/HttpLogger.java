@@ -82,8 +82,8 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
         appendRequestHeaders(message, request);
         appendRequestParams(message, request);
         appendResponseHeaders(message, response);
-        if (request_body != null) message.add(new String[]{"request_body", request_body});
-        if (response_body != null) message.add(new String[]{"response_body", response_body});
+        if (request_body != null && !request_body.equals("")) message.add(new String[]{"request_body", request_body});
+        if (response_body != null && !response_body.equals("")) message.add(new String[]{"response_body", response_body});
         message.add(new String[]{"agent", this.agent});
         message.add(new String[]{"version", this.version});
         message.add(new String[]{"now", String.valueOf(now)});

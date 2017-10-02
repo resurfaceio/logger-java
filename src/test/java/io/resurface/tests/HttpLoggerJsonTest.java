@@ -48,7 +48,6 @@ public class HttpLoggerJsonTest {
     public void formatRequestWithEmptyBodyTest() throws UnsupportedEncodingException {
         String json = logger.format(mockRequestWithJson2(), "", mockResponse(), null);
         expect(parseable(json)).toBeTrue();
-        expect(json).toContain("[\"request_body\",\"\"]");
         expect(json).toContain("[\"request_header.a\",\"1\"]");
         expect(json).toContain("[\"request_header.a\",\"2\"]");
         expect(json).toContain("[\"request_header.abc\",\"123\"]");
@@ -58,6 +57,7 @@ public class HttpLoggerJsonTest {
         expect(json).toContain("[\"request_param.abc\",\"234\"]");
         expect(json).toContain("[\"request_param.message\",\"" + MOCK_JSON_ESCAPED + "\"]");
         expect(json).toContain("[\"request_url\",\"" + MOCK_URL + '?' + MOCK_QUERY_STRING + "\"]");
+        expect(json.contains("request_body")).toBeFalse();
     }
 
     @Test
@@ -82,9 +82,9 @@ public class HttpLoggerJsonTest {
     public void formatResponseWithEmptyBodyTest() {
         String json = logger.format(mockRequest(), null, mockResponseWithHtml(), "");
         expect(parseable(json)).toBeTrue();
-        expect(json).toContain("[\"response_body\",\"\"]");
         expect(json).toContain("[\"response_code\",\"200\"]");
         expect(json).toContain("[\"response_header.content-type\",\"text/html; charset=utf-8\"]");
+        expect(json.contains("response_body")).toBeFalse();
     }
 
 }
