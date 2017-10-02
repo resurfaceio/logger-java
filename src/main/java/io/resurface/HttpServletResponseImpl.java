@@ -3,16 +3,14 @@
 package io.resurface;
 
 import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
 /**
- * HttpServletResponse mock implementation.
+ * HttpServletResponse custom implementation.
  */
-public class HttpServletResponseImpl implements HttpServletResponse {
+public class HttpServletResponseImpl extends BaseServletResponseImpl {
 
     public HttpServletResponseImpl() {
         stream = new ServletOutputStream() {
@@ -21,16 +19,6 @@ public class HttpServletResponseImpl implements HttpServletResponse {
                 // do nothing
             }
         };
-    }
-
-    @Override
-    public void addCookie(Cookie cookie) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void addDateHeader(String name, long date) {
-        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -43,43 +31,13 @@ public class HttpServletResponseImpl implements HttpServletResponse {
     }
 
     @Override
-    public void addIntHeader(String name, int value) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public boolean containsHeader(String name) {
         return headers.containsKey(name);
     }
 
     @Override
-    public String encodeRedirectUrl(String url) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String encodeRedirectURL(String url) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String encodeUrl(String url) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String encodeURL(String url) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void flushBuffer() throws IOException {
         // ignore, nothing to do
-    }
-
-    @Override
-    public int getBufferSize() {
-        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -108,11 +66,6 @@ public class HttpServletResponseImpl implements HttpServletResponse {
     }
 
     @Override
-    public Locale getLocale() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public ServletOutputStream getOutputStream() throws IOException {
         return stream;
     }
@@ -128,48 +81,8 @@ public class HttpServletResponseImpl implements HttpServletResponse {
     }
 
     @Override
-    public boolean isCommitted() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void reset() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void resetBuffer() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void sendError(int sc) throws IOException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void sendError(int sc, String msg) throws IOException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void sendRedirect(String location) throws IOException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setBufferSize(int size) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void setCharacterEncoding(String characterEncoding) {
         this.characterEncoding = characterEncoding;
-    }
-
-    @Override
-    public void setContentLength(int len) {
-        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -178,25 +91,10 @@ public class HttpServletResponseImpl implements HttpServletResponse {
     }
 
     @Override
-    public void setDateHeader(String name, long date) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void setHeader(String name, String value) {
         List<String> values = new ArrayList<>();
         values.add(value);
         headers.put(name, values);
-    }
-
-    @Override
-    public void setIntHeader(String name, int value) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setLocale(Locale loc) {
-        throw new UnsupportedOperationException();
     }
 
     @Override
