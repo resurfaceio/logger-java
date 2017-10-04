@@ -77,7 +77,8 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
                          HttpServletResponse response, String response_body, long now) {
         List<String[]> message = new ArrayList<>();
         message.add(new String[]{"request_method", request.getMethod()});
-        message.add(new String[]{"request_url", formatURL(request)});
+        String formatted_url = formatURL(request);
+        if (formatted_url != null) message.add(new String[]{"request_url", formatted_url});
         message.add(new String[]{"response_code", String.valueOf(response.getStatus())});
         appendRequestHeaders(message, request);
         appendRequestParams(message, request);
@@ -148,10 +149,12 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
      * Returns complete request URL including query string.
      */
     protected String formatURL(HttpServletRequest request) {
-        String queryString = request.getQueryString();
         StringBuffer url = request.getRequestURL();
-        if (queryString != null) url.append('?').append(queryString);
-        return url.toString();
+        if (url != null) {
+            String queryString = request.getQueryString();
+            if (queryString != null) url.append('?').append(queryString);
+        }
+        return (url == null) ? null : url.toString();
     }
 
     private static final String STRING_TYPES = "(?i)^text/(html|plain|xml)|application/(json|soap|xml|x-www-form-urlencoded)";

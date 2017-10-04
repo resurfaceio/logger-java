@@ -3,6 +3,8 @@
 package io.resurface.tests;
 
 import io.resurface.HttpLogger;
+import io.resurface.HttpServletRequestImpl;
+import io.resurface.HttpServletResponseImpl;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
@@ -29,8 +31,6 @@ public class HttpLoggerJsonTest {
         expect(json.contains("request_body")).toBeFalse();
         expect(json.contains("request_header")).toBeFalse();
         expect(json.contains("request_param")).toBeFalse();
-        expect(json.contains("response_body")).toBeFalse();
-        expect(json.contains("response_header")).toBeFalse();
     }
 
     @Test
@@ -61,6 +61,17 @@ public class HttpLoggerJsonTest {
     }
 
     @Test
+    public void formatRequestWithMissingDetailsTest() {
+        String json = logger.format(new HttpServletRequestImpl(), null, mockResponse(), null, MOCK_NOW);
+        expect(parseable(json)).toBeTrue();
+        expect(json.contains("request_body")).toBeFalse();
+        expect(json.contains("request_header")).toBeFalse();
+        expect(json.contains("request_method")).toBeFalse();
+        expect(json.contains("request_param")).toBeFalse();
+        expect(json.contains("request_url")).toBeFalse();
+    }
+
+    @Test
     public void formatResponseTest() {
         String json = logger.format(mockRequest(), null, mockResponse(), null);
         expect(parseable(json)).toBeTrue();
@@ -87,4 +98,12 @@ public class HttpLoggerJsonTest {
         expect(json.contains("response_body")).toBeFalse();
     }
 
+    @Test
+    public void formatResponseWithMissingDetailsTest() {
+        String json = logger.format(mockRequest(), null, new HttpServletResponseImpl(), null);
+        expect(parseable(json)).toBeTrue();
+        expect(json).toContain("[\"response_code\",\"0\"]");
+        expect(json.contains("response_body")).toBeFalse();
+        expect(json.contains("response_header")).toBeFalse();
+    }
 }
