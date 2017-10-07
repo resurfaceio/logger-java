@@ -13,8 +13,8 @@ This library makes it easy to log actual usage of Java web/json apps.
 <li><a href="#logging_from_spark_framework">Logging From Spark Framework</a></li>
 <li><a href="#advanced_topics">Advanced Topics</a><ul>
 <li><a href="#setting_default_url">Setting Default URL</a></li>
-<li><a href="#disabling_all_logging">Disabling All Logging</a></li>
-<li><a href="#using_api_directly">Using API Directly</a></li>
+<li><a href="#enabling_and_disabling">Enabling and Disabling Loggers</a></li>
+<li><a href="#logging_api">Logging API</a></li>
 </ul></li>
 </ul>
 
@@ -61,7 +61,7 @@ After <a href="#installing_with_maven">installing the library</a>, add a logging
 
 ## Logging From Spring Boot
 
-After <a href="#installing_with_maven">installing the library</a>, use a `FilterRegistrationBean`
+After <a href="#installing_with_maven">installing the library</a>, configure a `FilterRegistrationBean`
 to add a logging servlet filter.
 
     @Bean
@@ -79,7 +79,7 @@ to add a logging servlet filter.
 
 ## Logging From Spark Framework
 
-After <a href="#installing_with_maven">installing the library</a>, create a logger and use it from the routes of interest.
+After <a href="#installing_with_maven">installing the library</a>, create a logger and call it from the routes of interest.
 
     import io.resurface.HttpLogger;
 
@@ -115,13 +115,16 @@ Alternatively configure an `after` filter to log across multiple routes at once.
 
 Set the `USAGE_LOGGERS_URL` variable to provide a default value whenever the URL is not specified.
 
-    // using Heroku cli
-    heroku config:set USAGE_LOGGERS_URL=https://my-https-url
+    // from command line
+    export USAGE_LOGGERS_URL="https://my-logging-url"
+    
+    // when launching Java app
+    java -DUSAGE_LOGGERS_URL="https://my-logging-url" ...
 
-    // when starting Java container
-    java -DUSAGE_LOGGERS_URL="https://my-https-url" your_application
+    // for Heroku app
+    heroku config:set USAGE_LOGGERS_URL=https://my-logging-url
 
-Loggers look for this environment variable when no other options are set, as in these examples.
+Loggers look for this environment variable when no URL is provided.
 
     // for basic logger
     HttpLogger logger = new HttpLogger();
@@ -130,38 +133,42 @@ Loggers look for this environment variable when no other options are set, as in 
     <filter>
         <filter-name>HttpLoggerForServlets</filter-name>
         <filter-class>io.resurface.HttpLoggerForServlets</filter-class>
-        <!-- intentionally leaving url param unspecified -->
     </filter>
 
-<a name="disabling_all_logging"/>
+<a name="enabling_and_disabling"/>
 
-### Disabling All Logging
+### Enabling and Disabling Loggers
 
-It's important to have a "kill switch" to universally disable all logging. For example, loggers might be disabled when
-running automated tests. All loggers can also be disabled at runtime, either by setting an environment variable or
-programmatically.
+Individual loggers can be controlled through their `enable` and `disable` methods. When disabled, loggers will
+not send any logging data, and the result returned by the `log` method will always be true (success).
+
+All loggers for an application can be enabled or disabled at once with the `UsageLoggers` class. This even controls
+loggers that have not yet been created by the application.
+
+    UsageLoggers.disable();    // disable all loggers
+    UsageLoggers.enable();     // enable all loggers
+
+All loggers can be permanently disabled with the `USAGE_LOGGERS_DISABLE` environment variable. When set to true,
+loggers will never become enabled, even if `UsageLoggers.enable()` is called by the application. This is primarily 
+done by automated tests to disable all logging even if other control logic exists. 
+
+    // from command line
+    export USAGE_LOGGERS_DISABLE="true"
+
+    // when launching Java app
+    java -DUSAGE_LOGGERS_DISABLE="true" ...
 
     // for Heroku app
     heroku config:set USAGE_LOGGERS_DISABLE=true
 
-    // when starting Java container
-    java -DUSAGE_LOGGERS_DISABLE="true"
+<a name="logging_api"/>
 
-    // at runtime
-    UsageLoggers.disable();
+### Logging API
 
-<a name="using_api_directly"/>
-
-### Using API Directly
-
-Loggers can be directly integrated into your application if other options don't fit. This requires the most effort, but
-yields complete control over how usage logging is implemented.
+Loggers can be directly integrated into your application with this API, which gives complete control over how
+usage logging is implemented.
 
     import io.resurface.*;
-
-    // manage all loggers (even those not created yet)
-    UsageLoggers.disable();                                          // disable all loggers
-    UsageLoggers.enable();                                           // enable all loggers
 
     // create and configure logger
     HttpLogger logger;
