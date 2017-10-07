@@ -199,7 +199,7 @@ usage logging is implemented.
     logger.log(request, null, response, null);
 
     // log with specified request/response bodies
-    logger.log(request, "my-request, response, "my-response");
+    logger.log(request, "my-request-body", response, "my-response-body");
 
     // submit a custom message (destination may accept or not)
     logger.submit("...");
