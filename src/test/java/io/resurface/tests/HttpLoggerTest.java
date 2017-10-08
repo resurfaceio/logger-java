@@ -53,6 +53,27 @@ public class HttpLoggerTest {
     }
 
     @Test
+    public void detectsStringContentTypesTest() {
+        HttpLogger logger = new HttpLogger();
+
+        expect(logger.isStringContentType("application/json")).toBeTrue();
+        expect(HttpLogger.isStringContentType("application/soap")).toBeTrue();
+        expect(HttpLogger.isStringContentType("application/xml")).toBeTrue();
+        expect(HttpLogger.isStringContentType("application/x-www-form-urlencoded")).toBeTrue();
+        expect(HttpLogger.isStringContentType("text/html")).toBeTrue();
+        expect(HttpLogger.isStringContentType("text/html; charset=utf-8")).toBeTrue();
+        expect(HttpLogger.isStringContentType("text/plain")).toBeTrue();
+        expect(HttpLogger.isStringContentType("text/plain123")).toBeTrue();
+        expect(HttpLogger.isStringContentType("text/xml")).toBeTrue();
+        expect(HttpLogger.isStringContentType("Text/XML")).toBeTrue();
+
+        expect(logger.isStringContentType("application/")).toBeFalse();
+        expect(HttpLogger.isStringContentType("json")).toBeFalse();
+        expect(HttpLogger.isStringContentType("html")).toBeFalse();
+        expect(HttpLogger.isStringContentType("xml")).toBeFalse();
+    }
+
+    @Test
     public void hasValidAgentTest() {
         String agent = HttpLogger.AGENT;
         expect(agent.length()).toBeGreaterThan(0);
