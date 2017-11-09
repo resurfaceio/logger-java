@@ -94,14 +94,14 @@ HttpLogger logger = new HttpLogger("https://my-logging-url");
 
 get("/hello", (request, response) -> {
     String response_body = "Hello World";
-    logger.log(request.raw(), null, response.raw(), response_body);
+    logger.log(request.raw(), response.raw(), response_body);
     return response_body;
 });
 
 post("/hello_post", (request, response) -> {
-    response.status(401);
-    logger.log(request.raw(), request.body(), response.raw(), null);
-    return "";
+    String response_body = "POSTED: " + request.body();
+    logger.log(request.raw(), response.raw(), response_body, request.body());
+    return response_body;
 });
 ```
 
@@ -110,7 +110,7 @@ Alternatively configure an `after` filter to log across multiple routes at once.
 ```java
 after((request, response) -> {
     if (response.body() != null) {  // log successful responses only, not 404/500s
-        logger.log(request.raw(), request.body(), response.raw(), response.body());
+        logger.log(request.raw(), response.raw(), response.body(), request.body());
     }
 });
 ```
@@ -215,10 +215,10 @@ response.setHeader("B", "234");
 response.setStatus(200);
 
 // log objects defined above
-logger.log(request, null, response, null);
+logger.log(request, response);
 
 // log with specified request/response bodies
-logger.log(request, "my-request-body", response, "my-response-body");
+logger.log(request, response, "my-response-body", "my-request-body");
 
 // submit a custom message (destination may accept or not)
 logger.submit("...");

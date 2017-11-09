@@ -21,7 +21,7 @@ public class HttpLoggerJsonTest {
 
     @Test
     public void formatRequestTest() {
-        String json = logger.format(mockRequest(), null, mockResponse(), null, MOCK_NOW);
+        String json = logger.format(mockRequest(), mockResponse(), null, null, MOCK_NOW);
         expect(parseable(json)).toBeTrue();
         expect(json).toContain("[\"agent\",\"" + logger.getAgent() + "\"]");
         expect(json).toContain("[\"version\",\"" + logger.getVersion() + "\"]");
@@ -35,7 +35,7 @@ public class HttpLoggerJsonTest {
 
     @Test
     public void formatRequestWithBodyTest() throws UnsupportedEncodingException {
-        String json = logger.format(mockRequestWithJson(), MOCK_JSON, mockResponse(), null);
+        String json = logger.format(mockRequestWithJson(), mockResponse(), null, MOCK_JSON);
         expect(parseable(json)).toBeTrue();
         expect(json).toContain("[\"request_body\",\"" + MOCK_JSON_ESCAPED + "\"]");
         expect(json).toContain("[\"request_header.content-type\",\"Application/JSON\"]");
@@ -46,7 +46,7 @@ public class HttpLoggerJsonTest {
 
     @Test
     public void formatRequestWithEmptyBodyTest() throws UnsupportedEncodingException {
-        String json = logger.format(mockRequestWithJson2(), "", mockResponse(), null);
+        String json = logger.format(mockRequestWithJson2(), mockResponse(), null, "");
         expect(parseable(json)).toBeTrue();
         expect(json).toContain("[\"request_header.a\",\"1\"]");
         expect(json).toContain("[\"request_header.a\",\"2\"]");
@@ -62,7 +62,7 @@ public class HttpLoggerJsonTest {
 
     @Test
     public void formatRequestWithMissingDetailsTest() {
-        String json = logger.format(new HttpServletRequestImpl(), null, mockResponse(), null, MOCK_NOW);
+        String json = logger.format(new HttpServletRequestImpl(), mockResponse(), null, null, MOCK_NOW);
         expect(parseable(json)).toBeTrue();
         expect(json.contains("request_body")).toBeFalse();
         expect(json.contains("request_header")).toBeFalse();
@@ -73,7 +73,7 @@ public class HttpLoggerJsonTest {
 
     @Test
     public void formatResponseTest() {
-        String json = logger.format(mockRequest(), null, mockResponse(), null);
+        String json = logger.format(mockRequest(), mockResponse());
         expect(parseable(json)).toBeTrue();
         expect(json).toContain("[\"response_code\",\"200\"]");
         expect(json.contains("response_body")).toBeFalse();
@@ -82,7 +82,7 @@ public class HttpLoggerJsonTest {
 
     @Test
     public void formatResponseWithBodyTest() {
-        String json = logger.format(mockRequest(), null, mockResponseWithHtml(), MOCK_HTML2);
+        String json = logger.format(mockRequest(), mockResponseWithHtml(), MOCK_HTML2);
         expect(parseable(json)).toBeTrue();
         expect(json).toContain("[\"response_body\",\"" + MOCK_HTML2 + "\"]");
         expect(json).toContain("[\"response_code\",\"200\"]");
@@ -91,7 +91,7 @@ public class HttpLoggerJsonTest {
 
     @Test
     public void formatResponseWithEmptyBodyTest() {
-        String json = logger.format(mockRequest(), null, mockResponseWithHtml(), "");
+        String json = logger.format(mockRequest(), mockResponseWithHtml(), "");
         expect(parseable(json)).toBeTrue();
         expect(json).toContain("[\"response_code\",\"200\"]");
         expect(json).toContain("[\"response_header.content-type\",\"text/html; charset=utf-8\"]");
@@ -100,7 +100,7 @@ public class HttpLoggerJsonTest {
 
     @Test
     public void formatResponseWithMissingDetailsTest() {
-        String json = logger.format(mockRequest(), null, new HttpServletResponseImpl(), null);
+        String json = logger.format(mockRequest(), new HttpServletResponseImpl());
         expect(parseable(json)).toBeTrue();
         expect(json).toContain("[\"response_code\",\"0\"]");
         expect(json.contains("response_body")).toBeFalse();

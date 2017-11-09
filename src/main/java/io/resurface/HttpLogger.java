@@ -65,16 +65,29 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
     /**
      * Formats HTTP request and response as JSON message.
      */
-    public String format(HttpServletRequest request, String request_body,
-                         HttpServletResponse response, String response_body) {
-        return format(request, request_body, response, response_body, System.currentTimeMillis());
+    public String format(HttpServletRequest request, HttpServletResponse response) {
+        return format(request, response, null, null, System.currentTimeMillis());
     }
 
     /**
      * Formats HTTP request and response as JSON message.
      */
-    public String format(HttpServletRequest request, String request_body,
-                         HttpServletResponse response, String response_body, long now) {
+    public String format(HttpServletRequest request, HttpServletResponse response, String response_body) {
+        return format(request, response, response_body, null, System.currentTimeMillis());
+    }
+
+    /**
+     * Formats HTTP request and response as JSON message.
+     */
+    public String format(HttpServletRequest request, HttpServletResponse response, String response_body, String request_body) {
+        return format(request, response, response_body, request_body, System.currentTimeMillis());
+    }
+
+    /**
+     * Formats HTTP request and response as JSON message.
+     */
+    public String format(HttpServletRequest request, HttpServletResponse response,
+                         String response_body, String request_body, long now) {
         List<String[]> message = new ArrayList<>();
         message.add(new String[]{"request_method", request.getMethod()});
         String formatted_url = formatURL(request);
@@ -101,9 +114,22 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
     /**
      * Logs HTTP request and response to intended destination.
      */
-    public boolean log(HttpServletRequest request, String request_body,
-                       HttpServletResponse response, String response_body) {
-        return !isEnabled() || submit(format(request, request_body, response, response_body));
+    public boolean log(HttpServletRequest request, HttpServletResponse response) {
+        return !isEnabled() || submit(format(request, response, null, null));
+    }
+
+    /**
+     * Logs HTTP request and response to intended destination.
+     */
+    public boolean log(HttpServletRequest request, HttpServletResponse response, String response_body) {
+        return !isEnabled() || submit(format(request, response, response_body, null));
+    }
+
+    /**
+     * Logs HTTP request and response to intended destination.
+     */
+    public boolean log(HttpServletRequest request, HttpServletResponse response, String response_body, String request_body) {
+        return !isEnabled() || submit(format(request, response, response_body, request_body));
     }
 
     /**
