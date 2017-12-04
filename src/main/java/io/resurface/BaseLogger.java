@@ -114,6 +114,13 @@ public class BaseLogger<T extends BaseLogger> {
     }
 
     /**
+     * Returns true if message submission is being skipped.
+     */
+    public boolean getSkipSubmission() {
+        return skip_submission;
+    }
+
+    /**
      * Returns url destination where messages are sent.
      */
     public String getUrl() {
@@ -142,10 +149,17 @@ public class BaseLogger<T extends BaseLogger> {
     }
 
     /**
+     * Sets if message submission will be skipped.
+     */
+    public void setSkipSubmission(boolean skip_submission) {
+        this.skip_submission = skip_submission;
+    }
+
+    /**
      * Submits JSON message to intended destination.
      */
     public boolean submit(String json) {
-        if (!isEnabled()) {
+        if (this.skip_submission || !isEnabled()) {
             return true;
         } else if (queue != null) {
             queue.add(json);
@@ -195,6 +209,7 @@ public class BaseLogger<T extends BaseLogger> {
     protected boolean enabled;
     protected final List<String> queue;
     protected boolean skip_compression = false;
+    protected boolean skip_submission = false;
     protected String url;
     protected final String version;
 

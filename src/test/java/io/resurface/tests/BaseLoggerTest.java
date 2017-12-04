@@ -23,7 +23,6 @@ public class BaseLoggerTest {
         BaseLogger logger = new BaseLogger(MOCK_AGENT);
         expect(logger).toBeNotNull();
         expect(logger.getAgent()).toEqual(MOCK_AGENT);
-        expect(logger.getSkipCompression()).toBeFalse();
         expect(logger.isEnabled()).toBeFalse();
     }
 
@@ -169,6 +168,22 @@ public class BaseLoggerTest {
         expect(queue.size()).toEqual(1);
         expect(logger.submit("{}")).toBeTrue();
         expect(queue.size()).toEqual(2);
+    }
+
+    @Test
+    public void usesSkipOptionsTest() {
+        BaseLogger logger = new BaseLogger(MOCK_AGENT, Helper.DEMO_URL);
+        expect(logger.getSkipCompression()).toBeFalse();
+        expect(logger.getSkipSubmission()).toBeFalse();
+
+        logger.setSkipCompression(true);
+        expect(logger.getSkipCompression()).toBeTrue();
+        expect(logger.getSkipSubmission()).toBeFalse();
+
+        logger.setSkipCompression(false);
+        logger.setSkipSubmission(true);
+        expect(logger.getSkipCompression()).toBeFalse();
+        expect(logger.getSkipSubmission()).toBeTrue();
     }
 
 }
