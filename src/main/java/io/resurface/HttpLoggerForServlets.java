@@ -30,6 +30,13 @@ public class HttpLoggerForServlets implements Filter {
     }
 
     /**
+     * Returns wrapped logger instance.
+     */
+    public HttpLogger getLogger() {
+        return this.logger;
+    }
+
+    /**
      * Called when filter is placed into service.
      */
     public void init(FilterConfig config) {
