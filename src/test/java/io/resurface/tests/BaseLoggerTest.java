@@ -23,6 +23,7 @@ public class BaseLoggerTest {
         BaseLogger logger = new BaseLogger(MOCK_AGENT);
         expect(logger).toBeNotNull();
         expect(logger.getAgent()).toEqual(MOCK_AGENT);
+        expect(logger.getSkipCompression()).toBeFalse();
         expect(logger.isEnabled()).toBeFalse();
     }
 
@@ -128,6 +129,9 @@ public class BaseLoggerTest {
         message.add(new String[]{"protocol", "https"});
         String json = Json.stringify(message);
         expect(parseable(json)).toBeTrue();
+        expect(logger.submit(json)).toBeTrue();
+        logger.setSkipCompression(true);
+        expect(logger.getSkipCompression()).toBeTrue();
         expect(logger.submit(json)).toBeTrue();
     }
 

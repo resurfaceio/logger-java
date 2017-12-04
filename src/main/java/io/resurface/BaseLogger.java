@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 import java.util.Properties;
+import java.util.zip.DeflaterOutputStream;
 
 /**
  * Basic usage logger to embed or extend.
@@ -106,6 +107,13 @@ public class BaseLogger<T extends BaseLogger> {
     }
 
     /**
+     * Returns true if message compression is being skipped.
+     */
+    public boolean getSkipCompression() {
+        return skip_compression;
+    }
+
+    /**
      * Returns url destination where messages are sent.
      */
     public String getUrl() {
@@ -127,6 +135,13 @@ public class BaseLogger<T extends BaseLogger> {
     }
 
     /**
+     * Sets if message compression will be skipped.
+     */
+    public void setSkipCompression(boolean skip_compression) {
+        this.skip_compression = skip_compression;
+    }
+
+    /**
      * Submits JSON message to intended destination.
      */
     public boolean submit(String json) {
@@ -143,8 +158,17 @@ public class BaseLogger<T extends BaseLogger> {
                 url_connection.setReadTimeout(1000);
                 url_connection.setRequestMethod("POST");
                 url_connection.setDoOutput(true);
+                if (!this.skip_compression) url_connection.setRequestProperty("Content-Encoding", "deflated");
                 try (OutputStream os = url_connection.getOutputStream()) {
-                    os.write(json.getBytes());
+                    if (this.skip_compression) {
+                        os.write(json.getBytes());
+                    } else {
+                        try (DeflaterOutputStream dos = new DeflaterOutputStream(os, true)) {
+                            dos.write(json.getBytes());
+                            dos.finish();
+                            dos.flush();
+                        }
+                    }
                     os.flush();
                 }
                 return url_connection.getResponseCode() == 204;
@@ -170,6 +194,7 @@ public class BaseLogger<T extends BaseLogger> {
     protected final String agent;
     protected boolean enabled;
     protected final List<String> queue;
+    protected boolean skip_compression = false;
     protected String url;
     protected final String version;
 
