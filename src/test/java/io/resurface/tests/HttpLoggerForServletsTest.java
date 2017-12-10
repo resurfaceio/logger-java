@@ -33,8 +33,8 @@ public class HttpLoggerForServletsTest {
         expect(json).toContain("[\"request_url\",\"" + MOCK_URL + "\"]");
         expect(json).toContain("[\"response_body\",\"" + MOCK_HTML + "\"]");
         expect(json).toContain("[\"response_code\",\"200\"]");
-        expect(json).toContain("[\"response_header.a\",\"Z\"]");
-        expect(json).toContain("[\"response_header.content-type\",\"text/html\"]");
+        expect(json).toContain("[\"response_header:a\",\"Z\"]");
+        expect(json).toContain("[\"response_header:content-type\",\"text/html\"]");
         expect(json.contains("request_body")).toBeFalse();
         expect(json.contains("request_header")).toBeFalse();
         expect(json.contains("request_param")).toBeFalse();
@@ -52,7 +52,7 @@ public class HttpLoggerForServletsTest {
         expect(json).toContain("[\"request_method\",\"GET\"]");
         expect(json).toContain("[\"response_body\",\"" + MOCK_JSON_ESCAPED + "\"]");
         expect(json).toContain("[\"response_code\",\"200\"]");
-        expect(json).toContain("[\"response_header.content-type\",\"application/json; charset=utf-8\"]");
+        expect(json).toContain("[\"response_header:content-type\",\"application/json; charset=utf-8\"]");
         expect(json.contains("request_body")).toBeFalse();
         expect(json.contains("request_header")).toBeFalse();
         expect(json.contains("request_param")).toBeFalse();
@@ -67,13 +67,13 @@ public class HttpLoggerForServletsTest {
         expect(queue.size()).toEqual(1);
         String json = queue.get(0);
         expect(parseable(json)).toBeTrue();
-        expect(json).toContain("[\"request_header.content-type\",\"Application/JSON\"]");
+        expect(json).toContain("[\"request_header:content-type\",\"Application/JSON\"]");
         expect(json).toContain("[\"request_method\",\"POST\"]");
-        expect(json).toContain("[\"request_param.message\",\"" + MOCK_JSON_ESCAPED + "\"]");
+        expect(json).toContain("[\"request_param:message\",\"" + MOCK_JSON_ESCAPED + "\"]");
         expect(json).toContain("[\"request_url\",\"" + MOCK_URL + '?' + MOCK_QUERY_STRING + "\"]");
         expect(json).toContain("[\"response_body\",\"" + MOCK_JSON_ESCAPED + "\"]");
         expect(json).toContain("[\"response_code\",\"200\"]");
-        expect(json).toContain("[\"response_header.content-type\",\"application/json; charset=utf-8\"]");
+        expect(json).toContain("[\"response_header:content-type\",\"application/json; charset=utf-8\"]");
     }
 
     @Test
@@ -85,18 +85,18 @@ public class HttpLoggerForServletsTest {
         expect(queue.size()).toEqual(1);
         String json = queue.get(0);
         expect(parseable(json)).toBeTrue();
-        expect(json).toContain("[\"request_header.a\",\"1\"]");
-        expect(json).toContain("[\"request_header.a\",\"2\"]");
-        expect(json).toContain("[\"request_header.content-type\",\"Application/JSON\"]");
+        expect(json).toContain("[\"request_header:a\",\"1\"]");
+        expect(json).toContain("[\"request_header:a\",\"2\"]");
+        expect(json).toContain("[\"request_header:content-type\",\"Application/JSON\"]");
         expect(json).toContain("[\"request_method\",\"POST\"]");
-        expect(json).toContain("[\"request_param.abc\",\"123\"]");
-        expect(json).toContain("[\"request_param.abc\",\"234\"]");
-        expect(json).toContain("[\"request_param.message\",\"" + MOCK_JSON_ESCAPED + "\"]");
+        expect(json).toContain("[\"request_param:abc\",\"123\"]");
+        expect(json).toContain("[\"request_param:abc\",\"234\"]");
+        expect(json).toContain("[\"request_param:message\",\"" + MOCK_JSON_ESCAPED + "\"]");
         expect(json).toContain("[\"request_url\",\"" + MOCK_URL + '?' + MOCK_QUERY_STRING + "\"]");
         expect(json).toContain("[\"response_body\",\"" + MOCK_HTML + "\"]");
         expect(json).toContain("[\"response_code\",\"200\"]");
-        expect(json).toContain("[\"response_header.a\",\"Z\"]");
-        expect(json).toContain("[\"response_header.content-type\",\"text/html\"]");
+        expect(json).toContain("[\"response_header:a\",\"Z\"]");
+        expect(json).toContain("[\"response_header:content-type\",\"text/html\"]");
     }
 
     @Test

@@ -140,7 +140,7 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
         while (header_names.hasMoreElements()) {
             String name = header_names.nextElement();
             Enumeration<String> e = request.getHeaders(name);
-            name = "request_header." + name.toLowerCase();
+            name = "request_header:" + name.toLowerCase();
             while (e.hasMoreElements()) message.add(new String[]{name, e.nextElement()});
         }
     }
@@ -154,7 +154,7 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
             String name = param_names.nextElement();
             String[] values = request.getParameterValues(name);
             if (values != null) {
-                name = "request_param." + name.toLowerCase();
+                name = "request_param:" + name.toLowerCase();
                 for (String value : values) message.add(new String[]{name, value});
             }
         }
@@ -166,7 +166,7 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
     protected void appendResponseHeaders(List<String[]> message, HttpServletResponse response) {
         for (String name : response.getHeaderNames()) {
             Iterator<String> i = response.getHeaders(name).iterator();
-            name = "response_header." + name.toLowerCase();
+            name = "response_header:" + name.toLowerCase();
             while (i.hasNext()) message.add(new String[]{name, i.next()});
         }
     }
