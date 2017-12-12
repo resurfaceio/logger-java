@@ -66,16 +66,16 @@ public class HttpLoggerForServlets implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         if (logger.isEnabled()) {
-            process((HttpServletRequest) request, (HttpServletResponse) response, chain);
+            log((HttpServletRequest) request, (HttpServletResponse) response, chain);
         } else {
             chain.doFilter(request, response);
         }
     }
 
     /**
-     * Called when an active logger passes a request/response through the filter chain.
+     * Logs the request/response from within the filter chain.
      */
-    protected void process(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+    protected void log(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         // Construct response wrapper and pass through filter chain
         LoggedResponseWrapper response_wrapper = new LoggedResponseWrapper(response);
