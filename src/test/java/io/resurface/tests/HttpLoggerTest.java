@@ -19,6 +19,7 @@ public class HttpLoggerTest {
         HttpLogger logger = new HttpLogger();
         expect(logger).toBeNotNull();
         expect(logger.getAgent()).toEqual(HttpLogger.AGENT);
+        expect(logger.isEnableable()).toBeFalse();
         expect(logger.isEnabled()).toBeFalse();
     }
 
@@ -31,12 +32,15 @@ public class HttpLoggerTest {
         HttpLogger logger3 = new HttpLogger(Helper.DEMO_URL);
 
         expect(logger1.getAgent()).toEqual(HttpLogger.AGENT);
+        expect(logger1.isEnableable()).toBeTrue();
         expect(logger1.isEnabled()).toBeTrue();
         expect(logger1.getUrl()).toEqual(url1);
         expect(logger2.getAgent()).toEqual(HttpLogger.AGENT);
+        expect(logger2.isEnableable()).toBeTrue();
         expect(logger2.isEnabled()).toBeTrue();
         expect(logger2.getUrl()).toEqual(url2);
         expect(logger3.getAgent()).toEqual(HttpLogger.AGENT);
+        expect(logger3.isEnableable()).toBeTrue();
         expect(logger3.isEnabled()).toBeTrue();
         expect(logger3.getUrl()).toEqual(Helper.DEMO_URL);
 
@@ -90,6 +94,7 @@ public class HttpLoggerTest {
     public void skipsLoggingWhenDisabledTest() {
         for (String url : MOCK_URLS_DENIED) {
             HttpLogger logger = new HttpLogger(url).disable();
+            expect(logger.isEnableable()).toBeTrue();
             expect(logger.isEnabled()).toBeFalse();
             expect(logger.log(null, null, null, null)).toBeTrue();  // would fail if enabled
         }

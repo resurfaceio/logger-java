@@ -63,6 +63,7 @@ public class BaseLogger<T extends BaseLogger> {
                 this.enabled = false;
             }
         }
+        this.enableable = (this.url != null);
     }
 
     /**
@@ -81,6 +82,7 @@ public class BaseLogger<T extends BaseLogger> {
         this.enabled = enabled;
         this.queue = queue;
         this.url = null;
+        this.enableable = (this.queue != null);
     }
 
     /**
@@ -95,7 +97,7 @@ public class BaseLogger<T extends BaseLogger> {
      * Enable this logger.
      */
     public T enable() {
-        if ((queue != null) || (url != null)) enabled = true;
+        if (enableable) enabled = true;
         return (T) this;
     }
 
@@ -135,7 +137,14 @@ public class BaseLogger<T extends BaseLogger> {
     }
 
     /**
-     * Returns true if this logger is enabled.
+     * Returns true if this logger can ever be enabled.
+     */
+    public boolean isEnableable() {
+        return enableable;
+    }
+
+    /**
+     * Returns true if this logger is currently enabled.
      */
     public boolean isEnabled() {
         return enabled && UsageLoggers.isEnabled();
@@ -206,6 +215,7 @@ public class BaseLogger<T extends BaseLogger> {
     }
 
     protected final String agent;
+    protected final boolean enableable;
     protected boolean enabled;
     protected final List<String> queue;
     protected boolean skip_compression = false;

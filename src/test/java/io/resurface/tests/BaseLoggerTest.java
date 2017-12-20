@@ -23,6 +23,7 @@ public class BaseLoggerTest {
         BaseLogger logger = new BaseLogger(MOCK_AGENT);
         expect(logger).toBeNotNull();
         expect(logger.getAgent()).toEqual(MOCK_AGENT);
+        expect(logger.isEnableable()).toBeFalse();
         expect(logger.isEnabled()).toBeFalse();
     }
 
@@ -38,12 +39,15 @@ public class BaseLoggerTest {
         BaseLogger logger3 = new BaseLogger(agent3, Helper.DEMO_URL);
 
         expect(logger1.getAgent()).toEqual(agent1);
+        expect(logger1.isEnableable()).toBeTrue();
         expect(logger1.isEnabled()).toBeTrue();
         expect(logger1.getUrl()).toEqual(url1);
         expect(logger2.getAgent()).toEqual(agent2);
+        expect(logger2.isEnableable()).toBeTrue();
         expect(logger2.isEnabled()).toBeTrue();
         expect(logger2.getUrl()).toEqual(url2);
         expect(logger3.getAgent()).toEqual(agent3);
+        expect(logger3.isEnableable()).toBeTrue();
         expect(logger3.isEnabled()).toBeTrue();
         expect(logger3.getUrl()).toEqual(Helper.DEMO_URL);
 
@@ -74,6 +78,7 @@ public class BaseLoggerTest {
     @Test
     public void performsEnablingWhenExpectedTest() {
         BaseLogger logger = new BaseLogger(MOCK_AGENT, Helper.DEMO_URL, false);
+        expect(logger.isEnableable()).toBeTrue();
         expect(logger.isEnabled()).toBeFalse();
         expect(logger.getUrl()).toEqual(Helper.DEMO_URL);
         logger.enable();
@@ -81,6 +86,7 @@ public class BaseLoggerTest {
 
         List<String> queue = new ArrayList<>();
         logger = new BaseLogger(MOCK_AGENT, queue, false);
+        expect(logger.isEnableable()).toBeTrue();
         expect(logger.isEnabled()).toBeFalse();
         expect(logger.getUrl()).toBeNull();
         logger.enable().disable().enable();
@@ -91,6 +97,7 @@ public class BaseLoggerTest {
     public void skipsEnablingForInvalidUrlsTest() {
         for (String url : MOCK_URLS_INVALID) {
             BaseLogger logger = new BaseLogger(MOCK_AGENT, url);
+            expect(logger.isEnableable()).toBeFalse();
             expect(logger.isEnabled()).toBeFalse();
             expect(logger.getUrl()).toBeNull();
             logger.enable();
@@ -102,6 +109,7 @@ public class BaseLoggerTest {
     public void skipsEnablingForNullUrlTest() {
         String url = null;
         BaseLogger logger = new BaseLogger(MOCK_AGENT, url);
+        expect(logger.isEnableable()).toBeFalse();
         expect(logger.isEnabled()).toBeFalse();
         expect(logger.getUrl()).toBeNull();
         logger.enable();
@@ -112,6 +120,7 @@ public class BaseLoggerTest {
     public void skipsLoggingWhenDisabledTest() {
         for (String url : MOCK_URLS_DENIED) {
             BaseLogger logger = new BaseLogger(MOCK_AGENT, url).disable();
+            expect(logger.isEnableable()).toBeTrue();
             expect(logger.isEnabled()).toBeFalse();
             expect(logger.submit(null)).toBeTrue();  // would fail if enabled
         }
@@ -152,6 +161,7 @@ public class BaseLoggerTest {
     public void submitsToDeniedUrlAndFailsTest() {
         for (String url : MOCK_URLS_DENIED) {
             BaseLogger logger = new BaseLogger(MOCK_AGENT, url);
+            expect(logger.isEnableable()).toBeTrue();
             expect(logger.isEnabled()).toBeTrue();
             expect(logger.submit("{}")).toBeFalse();
         }
@@ -162,6 +172,7 @@ public class BaseLoggerTest {
         List<String> queue = new ArrayList<>();
         BaseLogger logger = new BaseLogger(MOCK_AGENT, queue);
         expect(logger.getUrl()).toBeNull();
+        expect(logger.isEnableable()).toBeTrue();
         expect(logger.isEnabled()).toBeTrue();
         expect(queue.size()).toEqual(0);
         expect(logger.submit("{}")).toBeTrue();
