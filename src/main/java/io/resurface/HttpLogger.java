@@ -18,6 +18,16 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
     public static final String AGENT = "HttpLogger.java";
 
     /**
+     * Returns true if content type indicates string data.
+     */
+    public static boolean isStringContentType(String s) {
+        return s != null && STRING_TYPES_REGEX.matcher(s).find();
+    }
+
+    private static final String STRING_TYPES = "(?i)^text/(html|plain|xml)|application/(json|soap|xml|x-www-form-urlencoded)";
+    private static final Pattern STRING_TYPES_REGEX = Pattern.compile(STRING_TYPES);
+
+    /**
      * Initialize enabled logger using default url.
      */
     public HttpLogger() {
@@ -93,13 +103,6 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
     }
 
     /**
-     * Returns true if content type indicates string data.
-     */
-    public static boolean isStringContentType(String s) {
-        return s != null && STRING_TYPES_REGEX.matcher(s).find();
-    }
-
-    /**
      * Logs HTTP request and response to intended destination.
      */
     public boolean log(HttpServletRequest request, HttpServletResponse response) {
@@ -119,8 +122,5 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
     public boolean log(HttpServletRequest request, HttpServletResponse response, String response_body, String request_body) {
         return !isEnabled() || submit(format(request, response, response_body, request_body));
     }
-
-    private static final String STRING_TYPES = "(?i)^text/(html|plain|xml)|application/(json|soap|xml|x-www-form-urlencoded)";
-    private static final Pattern STRING_TYPES_REGEX = Pattern.compile(STRING_TYPES);
 
 }
