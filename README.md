@@ -76,7 +76,6 @@ public FilterRegistrationBean httpLoggerFilter() {
     frb.addInitParameter("url", "https://my-logging-url");
     frb.addUrlPatterns("/*");
     frb.setName("HttpLoggerForServlets");
-    frb.setOrder(1024);  // usually best with high number
     return frb;
 }
 ```
