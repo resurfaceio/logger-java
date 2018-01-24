@@ -88,8 +88,7 @@ public class HttpLoggerForServlets implements Filter {
             String response_encoding = response.getCharacterEncoding();
             response_encoding = (response_encoding == null) ? "ISO-8859-1" : response_encoding;
             String response_body = new String(response_wrapper.logged(), response_encoding);
-            String message = logger.format(request, response, response_body);
-            logger.submit(message);
+            logger.submit(logger.format(request, response, response_body));
         }
     }
 
