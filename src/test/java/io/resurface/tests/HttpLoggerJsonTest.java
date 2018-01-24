@@ -7,8 +7,6 @@ import io.resurface.HttpServletRequestImpl;
 import io.resurface.HttpServletResponseImpl;
 import org.junit.Test;
 
-import java.io.UnsupportedEncodingException;
-
 import static com.mscharhag.oleaster.matcher.Matchers.expect;
 import static io.resurface.tests.Helper.*;
 
@@ -34,7 +32,7 @@ public class HttpLoggerJsonTest {
     }
 
     @Test
-    public void formatRequestWithBodyTest() throws UnsupportedEncodingException {
+    public void formatRequestWithBodyTest() {
         String json = logger.format(mockRequestWithJson(), mockResponse(), null, MOCK_JSON);
         expect(parseable(json)).toBeTrue();
         expect(json).toContain("[\"request_body\",\"" + MOCK_JSON_ESCAPED + "\"]");
@@ -45,7 +43,7 @@ public class HttpLoggerJsonTest {
     }
 
     @Test
-    public void formatRequestWithEmptyBodyTest() throws UnsupportedEncodingException {
+    public void formatRequestWithEmptyBodyTest() {
         String json = logger.format(mockRequestWithJson2(), mockResponse(), null, "");
         expect(parseable(json)).toBeTrue();
         expect(json).toContain("[\"request_header:a\",\"1\"]");
