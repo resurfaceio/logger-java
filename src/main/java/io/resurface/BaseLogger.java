@@ -168,7 +168,7 @@ public class BaseLogger<T extends BaseLogger> {
      * Submits JSON message to intended destination.
      */
     public boolean submit(String json) {
-        if (this.skip_submission || !isEnabled()) {
+        if (json == null || this.skip_submission || !isEnabled()) {
             return true;
         } else if (queue != null) {
             queue.add(json);
@@ -215,7 +215,7 @@ public class BaseLogger<T extends BaseLogger> {
     }
 
     protected final String agent;
-    protected final boolean enableable;
+    protected boolean enableable;
     protected boolean enabled;
     protected final List<String> queue;
     protected boolean skip_compression = false;
