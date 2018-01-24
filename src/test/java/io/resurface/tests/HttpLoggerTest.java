@@ -25,8 +25,8 @@ public class HttpLoggerTest {
 
     @Test
     public void createsMultipleInstancesTest() {
-        String url1 = "http://resurface.io";
-        String url2 = "http://whatever.com";
+        String url1 = "https://resurface.io";
+        String url2 = "https://whatever.com";
         HttpLogger logger1 = new HttpLogger(url1);
         HttpLogger logger2 = new HttpLogger(url2);
         HttpLogger logger3 = new HttpLogger(Helper.DEMO_URL);
