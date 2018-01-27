@@ -44,9 +44,7 @@ public class HttpLoggerForServlets implements Filter {
         if (this.queue != null) {
             this.logger = new HttpLogger(queue);
         } else if (config != null) {
-            this.logger = new HttpLogger(config.getInitParameter("url"));
-            this.logger.setSkipCompression("true".equals(config.getInitParameter("skip_compression")));
-            this.logger.setSkipSubmission("true".equals(config.getInitParameter("skip_submission")));
+            this.logger = new HttpLogger(config.getInitParameter("url"), config.getInitParameter("rules"));
         } else {
             this.logger = new HttpLogger();
         }

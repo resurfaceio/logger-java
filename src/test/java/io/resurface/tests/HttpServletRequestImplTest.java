@@ -5,17 +5,18 @@ package io.resurface.tests;
 import io.resurface.HttpServletRequestImpl;
 import org.junit.Test;
 
+import javax.servlet.http.HttpSession;
 import java.util.Enumeration;
 
 import static com.mscharhag.oleaster.matcher.Matchers.expect;
 
 /**
- * Tests against HttpServletRequest mock implementation.
+ * Tests against mock HttpServletRequest implementation.
  */
 public class HttpServletRequestImplTest {
 
     @Test
-    public void useContentType() {
+    public void useContentTypeTest() {
         HttpServletRequestImpl impl = new HttpServletRequestImpl();
         expect(impl.getHeader("CONTENT-TYPE")).toBeNull();
 
@@ -31,7 +32,7 @@ public class HttpServletRequestImplTest {
     }
 
     @Test
-    public void useHeaders() {
+    public void useHeadersTest() {
         String key = "2345";
         String key2 = "fish";
         String val = "u-turn";
@@ -66,7 +67,7 @@ public class HttpServletRequestImplTest {
     }
 
     @Test
-    public void useMethod() {
+    public void useMethodTest() {
         String val = "!METHOD!";
         HttpServletRequestImpl impl = new HttpServletRequestImpl();
         expect(impl.getMethod()).toBeNull();
@@ -75,7 +76,7 @@ public class HttpServletRequestImplTest {
     }
 
     @Test
-    public void useParams() {
+    public void useParamsTest() {
         String key = "2345";
         String key2 = "fish";
         String val = "u-turn";
@@ -105,12 +106,30 @@ public class HttpServletRequestImplTest {
     }
 
     @Test
-    public void useRequestURL() {
+    public void useRequestURLTest() {
         String val = "http://resurface.io/yadda";
         HttpServletRequestImpl impl = new HttpServletRequestImpl();
         expect(impl.getRequestURL()).toBeNull();
         impl.setRequestURL(val);
         expect(impl.getRequestURL().toString()).toEqual(val);
+    }
+
+    @Test
+    public void useSessionTest() {
+        HttpServletRequestImpl impl = new HttpServletRequestImpl();
+        HttpSession session = impl.getSession(false);
+        expect(session).toBeNull();
+
+        session = impl.getSession();
+        expect(session).toBeNotNull();
+        session.setAttribute("A", "1");
+        expect(session.getAttribute("A")).toEqual("1");
+
+        session = impl.getSession(false);
+        expect(session.getAttribute("A")).toEqual("1");
+
+        session = impl.getSession(true);
+        expect(session.getAttribute("A")).toEqual("1");
     }
 
 }

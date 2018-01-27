@@ -12,12 +12,12 @@ import java.util.Iterator;
 import static com.mscharhag.oleaster.matcher.Matchers.expect;
 
 /**
- * Tests against HttpServletResponse mock implementation.
+ * Tests against mock HttpServletResponse implementation.
  */
 public class HttpServletResponseImplTest {
 
     @Test
-    public void useCharacterEncoding() {
+    public void useCharacterEncodingTest() {
         String val = "UTF-8";
         HttpServletResponseImpl impl = new HttpServletResponseImpl();
         expect(impl.getCharacterEncoding()).toBeNull();
@@ -26,7 +26,7 @@ public class HttpServletResponseImplTest {
     }
 
     @Test
-    public void useContentType() {
+    public void useContentTypeTest() {
         HttpServletResponseImpl impl = new HttpServletResponseImpl();
         expect(impl.getContentType()).toBeNull();
         expect(impl.getHeader("CONTENT-TYPE")).toBeNull();
@@ -43,7 +43,7 @@ public class HttpServletResponseImplTest {
     }
 
     @Test
-    public void useHeaders() {
+    public void useHeadersTest() {
         String key = "kenny";
         String key2 = "kyle";
         String val = "stan";
@@ -77,14 +77,14 @@ public class HttpServletResponseImplTest {
     }
 
     @Test
-    public void useOutputStream() throws IOException {
+    public void useOutputStreamTest() throws IOException {
         HttpServletResponseImpl impl = new HttpServletResponseImpl();
         expect(impl.getOutputStream()).toBeNotNull();
         expect(impl.getOutputStream() instanceof ServletOutputStream).toBeTrue();
     }
 
     @Test
-    public void useStatus() {
+    public void useStatusTest() {
         int val = 123;
         HttpServletResponseImpl impl = new HttpServletResponseImpl();
         expect(impl.getStatus()).toEqual(0);

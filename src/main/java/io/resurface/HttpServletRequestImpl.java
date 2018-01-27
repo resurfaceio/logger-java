@@ -2,10 +2,11 @@
 
 package io.resurface;
 
+import javax.servlet.http.HttpSession;
 import java.util.*;
 
 /**
- * HttpServletRequest custom implementation.
+ * Mock HttpServletRequest implementation.
  */
 public class HttpServletRequestImpl extends BaseServletRequestImpl {
 
@@ -83,6 +84,12 @@ public class HttpServletRequestImpl extends BaseServletRequestImpl {
         return requestURL == null ? null : new StringBuffer(requestURL);
     }
 
+    @Override
+    public HttpSession getSession(boolean create) {
+        if (create && this.session == null) this.session = new HttpSessionImpl();
+        return this.session;
+    }
+
     public void setContentType(String contentType) {
         setHeader("Content-Type", contentType);
     }
@@ -116,5 +123,6 @@ public class HttpServletRequestImpl extends BaseServletRequestImpl {
     private final Map<String, List<String>> params = new HashMap<>();
     private String queryString;
     private String requestURL;
+    private HttpSession session;
 
 }

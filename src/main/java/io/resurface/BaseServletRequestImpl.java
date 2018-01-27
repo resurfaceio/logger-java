@@ -14,7 +14,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Base class for HttpServletRequest mock implementations.
+ * Base class for mock HttpServletRequest implementations.
  */
 public class BaseServletRequestImpl implements HttpServletRequest {
 
@@ -260,7 +260,7 @@ public class BaseServletRequestImpl implements HttpServletRequest {
 
     @Override
     public HttpSession getSession() {
-        throw new UnsupportedOperationException();
+        return getSession(true);
     }
 
     @Override

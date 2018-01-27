@@ -10,9 +10,9 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Message implementation for HTTP/HTTPS protocol.
+ * Message implementation for HTTP logger.
  */
-public class HttpMessageImpl {
+public class HttpMessage {
 
     /**
      * Builds list of key/value pairs for HTTP request and response.

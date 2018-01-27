@@ -8,7 +8,7 @@ import java.io.PrintWriter;
 import java.util.*;
 
 /**
- * HttpServletResponse custom implementation.
+ * Mock HttpServletResponse implementation.
  */
 public class HttpServletResponseImpl extends BaseServletResponseImpl {
 

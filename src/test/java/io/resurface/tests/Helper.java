@@ -24,6 +24,17 @@ public class Helper {
 
     static final String MOCK_HTML2 = "<html>Hola Mundo!</html>";
 
+    static final String MOCK_HTML3 = "<html>1 World 2 World Red World Blue World!</html>";
+
+    static final String MOCK_HTML4 = "<html>1 World\n2 World\nRed World \nBlue World!\n</html>";
+
+    static final String MOCK_HTML5 = "<html>\n"
+            + "<input type=\"hidden\">SENSITIVE</input>\n"
+            + "<input class='foo' type=\"hidden\">\n"
+            + "SENSITIVE\n"
+            + "</input>\n"
+            + "</html>";
+
     static final String MOCK_JSON = "{ \"hello\" : \"world\" }";
 
     static final String MOCK_JSON_ESCAPED = Json.escape(new StringBuilder(), MOCK_JSON).toString();
@@ -109,7 +120,7 @@ public class Helper {
         return r;
     }
 
-    static HttpServletRequestImpl mockRequestWithJson() throws UnsupportedEncodingException {
+    static HttpServletRequestImpl mockRequestWithJson() {
         HttpServletRequestImpl r = new HttpServletRequestImpl();
         r.addHeader("Content-Type", "Application/JSON");
         r.addParam("message", MOCK_JSON);
@@ -119,7 +130,7 @@ public class Helper {
         return r;
     }
 
-    static HttpServletRequestImpl mockRequestWithJson2() throws UnsupportedEncodingException {
+    static HttpServletRequestImpl mockRequestWithJson2() {
         HttpServletRequestImpl r = mockRequestWithJson();
         r.addHeader("ABC", "123");
         r.addHeader("A", "1");

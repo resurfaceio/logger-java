@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.Locale;
 
 /**
- * Base class for HttpServletResponse mock implementations.
+ * Base class for mock HttpServletResponse implementations.
  */
 public class BaseServletResponseImpl implements HttpServletResponse {
 
