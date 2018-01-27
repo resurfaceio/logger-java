@@ -54,7 +54,7 @@ public class HttpRules {
         if (m.matches()) return new HttpRule("remove_unless", parseRegex(r, m.group(1)), parseRegex(r, m.group(2)), null);
         m = REGEX_REPLACE.matcher(r);
         if (m.matches())
-            return new HttpRule("replace", parseRegex(r, m.group(1)), parseRegex(r, m.group(2)), parseString(r, m.group(3)));
+            return new HttpRule("replace", parseRegex(r, m.group(1)), parseRegexFind(r, m.group(2)), parseString(r, m.group(3)));
         m = REGEX_SAMPLE.matcher(r);
         if (m.matches()) {
             Integer m1 = Integer.valueOf(m.group(1));
@@ -75,9 +75,25 @@ public class HttpRules {
     }
 
     /**
-     * Parses regex used by rule.
+     * Parses regex for matching.
      */
     private static Pattern parseRegex(String r, String regex) {
+        String str = parseString(r, regex);
+        if ("*".equals(str) || "+".equals(str) || "?".equals(str))
+            throw new IllegalArgumentException(String.format("Invalid regex (%s) in rule: %s", regex, r));
+        if (!str.startsWith("^")) str = "^" + str;
+        if (!str.endsWith("$")) str = str + "$";
+        try {
+            return Pattern.compile(str);
+        } catch (PatternSyntaxException pse) {
+            throw new IllegalArgumentException(String.format("Invalid regex (%s) in rule: %s", regex, r));
+        }
+    }
+
+    /**
+     * Parses regex for finding.
+     */
+    private static Pattern parseRegexFind(String r, String regex) {
         try {
             return Pattern.compile(parseString(r, regex));
         } catch (PatternSyntaxException pse) {
@@ -86,7 +102,7 @@ public class HttpRules {
     }
 
     /**
-     * Parses string expression used by rule.
+     * Parses delimited string expression.
      */
     private static String parseString(String r, String str) {
         for (String sep : new String[]{"~", "!", "%", "|", "/"}) {
