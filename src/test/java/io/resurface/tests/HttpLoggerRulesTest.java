@@ -283,6 +283,54 @@ public class HttpLoggerRulesTest {
     }
 
     @Test
+    public void usesRemoveIfFoundRulesTest() {
+        List<String> queue = new ArrayList<>();
+        HttpLogger logger = new HttpLogger(queue, "!response_header:blahblahblah! remove_if_found !.*!");
+        logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, MOCK_JSON);
+        expect(queue.size()).toEqual(1);
+
+        queue = new ArrayList<>();
+        logger = new HttpLogger(queue, "!.*! remove_if_found !.*!");
+        logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, MOCK_JSON);
+        expect(queue.size()).toEqual(0);
+
+        queue = new ArrayList<>();
+        logger = new HttpLogger(queue, "!request_body! remove_if_found !.*!");
+        logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, MOCK_JSON);
+        expect(queue.size()).toEqual(1);
+        expect(queue.get(0).contains("[\"request_body\",")).toBeFalse();
+        expect(queue.get(0).contains("[\"response_body\",")).toBeTrue();
+
+        queue = new ArrayList<>();
+        logger = new HttpLogger(queue, "!response_body! remove_if_found !.*!");
+        logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, MOCK_JSON);
+        expect(queue.size()).toEqual(1);
+        expect(queue.get(0).contains("[\"request_body\",")).toBeTrue();
+        expect(queue.get(0).contains("[\"response_body\",")).toBeFalse();
+
+        queue = new ArrayList<>();
+        logger = new HttpLogger(queue, "!response_body|request_body! remove_if_found !World!");
+        logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, MOCK_JSON);
+        expect(queue.size()).toEqual(1);
+        expect(queue.get(0).contains("[\"request_body\",")).toBeTrue();
+        expect(queue.get(0).contains("[\"response_body\",")).toBeFalse();
+
+        queue = new ArrayList<>();
+        logger = new HttpLogger(queue, "!response_body|request_body! remove_if_found !.*World.*!");
+        logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, MOCK_JSON);
+        expect(queue.size()).toEqual(1);
+        expect(queue.get(0).contains("[\"request_body\",")).toBeTrue();
+        expect(queue.get(0).contains("[\"response_body\",")).toBeFalse();
+
+        queue = new ArrayList<>();
+        logger = new HttpLogger(queue, "!response_body|request_body! remove_if_found !blahblahblah!");
+        logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, MOCK_JSON);
+        expect(queue.size()).toEqual(1);
+        expect(queue.get(0).contains("[\"request_body\",")).toBeTrue();
+        expect(queue.get(0).contains("[\"response_body\",")).toBeTrue();
+    }
+
+    @Test
     public void usesRemoveUnlessRulesTest() {
         List<String> queue = new ArrayList<>();
         HttpLogger logger = new HttpLogger(queue, "!response_header:blahblahblah! remove_unless !.*!");
@@ -324,6 +372,54 @@ public class HttpLoggerRulesTest {
 
         queue = new ArrayList<>();
         logger = new HttpLogger(queue, "!response_body! remove_unless !.*!\n!request_body! remove_unless !.*!");
+        logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, MOCK_JSON);
+        expect(queue.size()).toEqual(1);
+        expect(queue.get(0).contains("[\"request_body\",")).toBeTrue();
+        expect(queue.get(0).contains("[\"response_body\",")).toBeTrue();
+    }
+
+    @Test
+    public void usesRemoveUnlessFoundRulesTest() {
+        List<String> queue = new ArrayList<>();
+        HttpLogger logger = new HttpLogger(queue, "!response_header:blahblahblah! remove_unless_found !.*!");
+        logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, MOCK_JSON);
+        expect(queue.size()).toEqual(1);
+
+        queue = new ArrayList<>();
+        logger = new HttpLogger(queue, "!.*! remove_unless_found !blahblahblah!");
+        logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, MOCK_JSON);
+        expect(queue.size()).toEqual(0);
+
+        queue = new ArrayList<>();
+        logger = new HttpLogger(queue, "!request_body! remove_unless_found !blahblahblah!");
+        logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, MOCK_JSON);
+        expect(queue.size()).toEqual(1);
+        expect(queue.get(0).contains("[\"request_body\",")).toBeFalse();
+        expect(queue.get(0).contains("[\"response_body\",")).toBeTrue();
+
+        queue = new ArrayList<>();
+        logger = new HttpLogger(queue, "!response_body! remove_unless_found !blahblahblah!");
+        logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, MOCK_JSON);
+        expect(queue.size()).toEqual(1);
+        expect(queue.get(0).contains("[\"request_body\",")).toBeTrue();
+        expect(queue.get(0).contains("[\"response_body\",")).toBeFalse();
+
+        queue = new ArrayList<>();
+        logger = new HttpLogger(queue, "!response_body|request_body! remove_unless_found !World!");
+        logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, MOCK_JSON);
+        expect(queue.size()).toEqual(1);
+        expect(queue.get(0).contains("[\"request_body\",")).toBeFalse();
+        expect(queue.get(0).contains("[\"response_body\",")).toBeTrue();
+
+        queue = new ArrayList<>();
+        logger = new HttpLogger(queue, "!response_body|request_body! remove_unless_found !.*World.*!");
+        logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, MOCK_JSON);
+        expect(queue.size()).toEqual(1);
+        expect(queue.get(0).contains("[\"request_body\",")).toBeFalse();
+        expect(queue.get(0).contains("[\"response_body\",")).toBeTrue();
+
+        queue = new ArrayList<>();
+        logger = new HttpLogger(queue, "!response_body|request_body! remove_unless_found !.*!");
         logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, MOCK_JSON);
         expect(queue.size()).toEqual(1);
         expect(queue.get(0).contains("[\"request_body\",")).toBeTrue();
@@ -507,6 +603,34 @@ public class HttpLoggerRulesTest {
     }
 
     @Test
+    public void usesStopIfFoundRulesTest() {
+        List<String> queue = new ArrayList<>();
+        HttpLogger logger = new HttpLogger(queue, "!response_header:blahblahblah! stop_if_found !.*!");
+        logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, null);
+        expect(queue.size()).toEqual(1);
+
+        queue = new ArrayList<>();
+        logger = new HttpLogger(queue, "!response_body! stop_if_found !.*!");
+        logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, MOCK_JSON);
+        expect(queue.size()).toEqual(0);
+
+        queue = new ArrayList<>();
+        logger = new HttpLogger(queue, "!response_body! stop_if_found !World!");
+        logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, MOCK_JSON);
+        expect(queue.size()).toEqual(0);
+
+        queue = new ArrayList<>();
+        logger = new HttpLogger(queue, "!response_body! stop_if_found !.*World.*!");
+        logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, MOCK_JSON);
+        expect(queue.size()).toEqual(0);
+
+        queue = new ArrayList<>();
+        logger = new HttpLogger(queue, "!response_body! stop_if_found !blahblahblah!");
+        logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, MOCK_JSON);
+        expect(queue.size()).toEqual(1);
+    }
+
+    @Test
     public void usesStopUnlessRulesTest() {
         List<String> queue = new ArrayList<>();
         HttpLogger logger = new HttpLogger(queue, "!response_header:blahblahblah! stop_unless !.*!");
@@ -525,6 +649,34 @@ public class HttpLoggerRulesTest {
 
         queue = new ArrayList<>();
         logger = new HttpLogger(queue, "!response_body! stop_unless !.*blahblahblah.*!");
+        logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, null);
+        expect(queue.size()).toEqual(0);
+    }
+
+    @Test
+    public void usesStopUnlessFoundRulesTest() {
+        List<String> queue = new ArrayList<>();
+        HttpLogger logger = new HttpLogger(queue, "!response_header:blahblahblah! stop_unless_found !.*!");
+        logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, null);
+        expect(queue.size()).toEqual(0);
+
+        queue = new ArrayList<>();
+        logger = new HttpLogger(queue, "!response_body! stop_unless_found !.*!");
+        logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, null);
+        expect(queue.size()).toEqual(1);
+
+        queue = new ArrayList<>();
+        logger = new HttpLogger(queue, "!response_body! stop_unless_found !World!");
+        logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, null);
+        expect(queue.size()).toEqual(1);
+
+        queue = new ArrayList<>();
+        logger = new HttpLogger(queue, "!response_body! stop_unless_found !.*World.*!");
+        logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, null);
+        expect(queue.size()).toEqual(1);
+
+        queue = new ArrayList<>();
+        logger = new HttpLogger(queue, "!response_body! stop_unless_found !blahblahblah!");
         logger.log(mockRequestWithJson2(), mockResponseWithHtml(), MOCK_HTML, null);
         expect(queue.size()).toEqual(0);
     }

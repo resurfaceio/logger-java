@@ -146,12 +146,16 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
         this.rules_copy_session_field = prs.stream().filter(r -> "copy_session_field".equals(r.verb)).collect(toList());
         this.rules_remove = prs.stream().filter(r -> "remove".equals(r.verb)).collect(toList());
         this.rules_remove_if = prs.stream().filter(r -> "remove_if".equals(r.verb)).collect(toList());
+        this.rules_remove_if_found = prs.stream().filter(r -> "remove_if_found".equals(r.verb)).collect(toList());
         this.rules_remove_unless = prs.stream().filter(r -> "remove_unless".equals(r.verb)).collect(toList());
+        this.rules_remove_unless_found = prs.stream().filter(r -> "remove_unless_found".equals(r.verb)).collect(toList());
         this.rules_replace = prs.stream().filter(r -> "replace".equals(r.verb)).collect(toList());
         this.rules_sample = prs.stream().filter(r -> "sample".equals(r.verb)).collect(toList());
         this.rules_stop = prs.stream().filter(r -> "stop".equals(r.verb)).collect(toList());
         this.rules_stop_if = prs.stream().filter(r -> "stop_if".equals(r.verb)).collect(toList());
+        this.rules_stop_if_found = prs.stream().filter(r -> "stop_if_found".equals(r.verb)).collect(toList());
         this.rules_stop_unless = prs.stream().filter(r -> "stop_unless".equals(r.verb)).collect(toList());
+        this.rules_stop_unless_found = prs.stream().filter(r -> "stop_unless_found".equals(r.verb)).collect(toList());
         this.skip_compression = prs.stream().anyMatch(r -> "skip_compression".equals(r.verb));
         this.skip_submission = prs.stream().anyMatch(r -> "skip_submission".equals(r.verb));
 
@@ -169,12 +173,16 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
     private List<HttpRule> rules_copy_session_field;
     private List<HttpRule> rules_remove;
     private List<HttpRule> rules_remove_if;
+    private List<HttpRule> rules_remove_if_found;
     private List<HttpRule> rules_remove_unless;
+    private List<HttpRule> rules_remove_unless_found;
     private List<HttpRule> rules_replace;
     private List<HttpRule> rules_sample;
     private List<HttpRule> rules_stop;
     private List<HttpRule> rules_stop_if;
+    private List<HttpRule> rules_stop_if_found;
     private List<HttpRule> rules_stop_unless;
+    private List<HttpRule> rules_stop_unless_found;
 
     /**
      * Returns rules specified when creating this logger.
@@ -253,10 +261,18 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
         for (HttpRule r : rules_stop)
             for (String[] d : details)
                 if (r.scope.matcher(d[0]).matches()) return null;
+        for (HttpRule r : rules_stop_if_found)
+            for (String[] d : details)
+                if (r.scope.matcher(d[0]).matches() && ((Pattern) r.param1).matcher(d[1]).find()) return null;
         for (HttpRule r : rules_stop_if)
             for (String[] d : details)
                 if (r.scope.matcher(d[0]).matches() && ((Pattern) r.param1).matcher(d[1]).matches()) return null;
         int passed = 0;
+        for (HttpRule r : rules_stop_unless_found)
+            for (String[] d : details)
+                if (r.scope.matcher(d[0]).matches() && ((Pattern) r.param1).matcher(d[1]).find()) passed++;
+        if (passed != rules_stop_unless_found.size()) return null;
+        passed = 0;
         for (HttpRule r : rules_stop_unless)
             for (String[] d : details)
                 if (r.scope.matcher(d[0]).matches() && ((Pattern) r.param1).matcher(d[1]).matches()) passed++;
@@ -268,6 +284,10 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
         // winnow sensitive details based on remove rules if configured
         for (HttpRule r : rules_remove)
             details.removeIf(d -> r.scope.matcher(d[0]).matches());
+        for (HttpRule r : rules_remove_unless_found)
+            details.removeIf(d -> r.scope.matcher(d[0]).matches() && !((Pattern) r.param1).matcher(d[1]).find());
+        for (HttpRule r : rules_remove_if_found)
+            details.removeIf(d -> r.scope.matcher(d[0]).matches() && ((Pattern) r.param1).matcher(d[1]).find());
         for (HttpRule r : rules_remove_unless)
             details.removeIf(d -> r.scope.matcher(d[0]).matches() && !((Pattern) r.param1).matcher(d[1]).matches());
         for (HttpRule r : rules_remove_if)
