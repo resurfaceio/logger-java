@@ -14,12 +14,27 @@ import java.util.regex.PatternSyntaxException;
 public class HttpRules {
 
     /**
-     * Basic rules used by default when no other rules are provided.
+     * Rules used by default when no other rules are provided.
      */
-    public static String getBasicRules() {
+    public static String getStandardRules() {
         return "/request_header:cookie|response_header:set-cookie/ remove\n" +
                 "/(request|response)_body|request_param/ replace /[a-zA-Z0-9.!#$%&’*+\\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)/, /x@y.com/\n" +
                 "/request_body|request_param|response_body/ replace /[0-9\\.\\-\\/]{9,}/, /xyxy/\n";
+    }
+
+    /**
+     * Rules providing all details for debugging an application.
+     */
+    public static String getDebugRules() {
+        return "allow_http_url\ncopy_session_field /.*/\n";
+    }
+
+    /**
+     * Rules providing details for a traditional weblog.
+     */
+    public static String getWeblogRules() {
+        return "/request_url/ replace /([^\\?;]+).*/, /$1/\n" +
+                "/request_body|response_body|request_param:.*|request_header:(?!user-agent).*|response_header:(?!(content-length)|(content-type)).*/ remove\n";
     }
 
     /**
@@ -28,7 +43,9 @@ public class HttpRules {
     public static List<HttpRule> parse(String rules) {
         List<HttpRule> result = new ArrayList<>();
         if (rules != null) {
-            rules = rules.replaceAll("(?m)^\\s*include basic\\s*$", Matcher.quoteReplacement(getBasicRules()));
+            rules = rules.replaceAll("(?m)^\\s*include debug\\s*$", Matcher.quoteReplacement(getDebugRules()));
+            rules = rules.replaceAll("(?m)^\\s*include standard\\s*$", Matcher.quoteReplacement(getStandardRules()));
+            rules = rules.replaceAll("(?m)^\\s*include weblog\\s*$", Matcher.quoteReplacement(getWeblogRules()));
             for (String rule : rules.split("\\r?\\n")) {
                 HttpRule parsed = parseRule(rule);
                 if (parsed != null) result.add(parsed);
@@ -55,7 +72,8 @@ public class HttpRules {
         m = REGEX_REMOVE_UNLESS.matcher(r);
         if (m.matches()) return new HttpRule("remove_unless", parseRegex(r, m.group(1)), parseRegex(r, m.group(2)), null);
         m = REGEX_REMOVE_UNLESS_FOUND.matcher(r);
-        if (m.matches()) return new HttpRule("remove_unless_found", parseRegex(r, m.group(1)), parseRegexFind(r, m.group(2)), null);
+        if (m.matches())
+            return new HttpRule("remove_unless_found", parseRegex(r, m.group(1)), parseRegexFind(r, m.group(2)), null);
         m = REGEX_REPLACE.matcher(r);
         if (m.matches())
             return new HttpRule("replace", parseRegex(r, m.group(1)), parseRegexFind(r, m.group(2)), parseString(r, m.group(3)));

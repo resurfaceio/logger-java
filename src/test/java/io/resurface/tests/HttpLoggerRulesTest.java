@@ -20,18 +20,9 @@ import static io.resurface.tests.Helper.*;
 public class HttpLoggerRulesTest {
 
     @Test
-    public void includesPredefinedRulesTest() {
-        expect(HttpLogger.getDefaultRules()).toEqual(HttpRules.getBasicRules());
+    public void managesDefaultRulesTest() {
+        expect(HttpLogger.getDefaultRules()).toEqual(HttpRules.getStandardRules());
         try {
-            HttpLogger.setDefaultRules("include basic");
-            List<HttpRule> rules = HttpRules.parse(HttpLogger.getDefaultRules());
-            expect(rules.size()).toEqual(HttpRules.parse(HttpRules.getBasicRules()).size());
-
-            HttpLogger.setDefaultRules("include basic\nsample 50");
-            rules = HttpRules.parse(HttpLogger.getDefaultRules());
-            expect(rules.size()).toEqual(HttpRules.parse(HttpRules.getBasicRules()).size() + 1);
-            expect(rules.stream().filter(r -> "sample".equals(r.verb)).count()).toEqual(1);
-
             HttpLogger.setDefaultRules("");
             expect(HttpLogger.getDefaultRules()).toEqual("");
             expect(HttpRules.parse(HttpLogger.getDefaultRules()).size()).toEqual(0);
@@ -46,20 +37,20 @@ public class HttpLoggerRulesTest {
             expect(HttpRules.parse(HttpLogger.getDefaultRules()).size()).toEqual(0);
 
             HttpLogger.setDefaultRules("include default\ninclude default\nsample 42");
-            rules = HttpRules.parse(HttpLogger.getDefaultRules());
+            List<HttpRule> rules = HttpRules.parse(HttpLogger.getDefaultRules());
             expect(rules.size()).toEqual(1);
             expect(rules.stream().filter(r -> "sample".equals(r.verb)).count()).toEqual(1);
         } finally {
-            HttpLogger.setDefaultRules(HttpRules.getBasicRules());
+            HttpLogger.setDefaultRules(HttpRules.getStandardRules());
         }
     }
 
     @Test
     public void overridesDefaultRulesTest() {
-        expect(HttpLogger.getDefaultRules()).toEqual(HttpRules.getBasicRules());
+        expect(HttpLogger.getDefaultRules()).toEqual(HttpRules.getStandardRules());
         try {
             HttpLogger logger = new HttpLogger("https://mysite.com");
-            expect(logger.getRules()).toEqual(HttpRules.getBasicRules());
+            expect(logger.getRules()).toEqual(HttpRules.getStandardRules());
             logger = new HttpLogger("https://mysite.com", "# 123");
             expect(logger.getRules()).toEqual("# 123");
 
@@ -81,7 +72,7 @@ public class HttpLoggerRulesTest {
             logger = new HttpLogger("https://mysite.com", "include default\nskip_submission\n");
             expect(logger.getRules()).toEqual("sample 42\n\nskip_submission\n");
         } finally {
-            HttpLogger.setDefaultRules(HttpRules.getBasicRules());
+            HttpLogger.setDefaultRules(HttpRules.getStandardRules());
         }
     }
 

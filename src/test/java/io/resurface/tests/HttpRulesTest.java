@@ -16,6 +16,63 @@ import static com.mscharhag.oleaster.matcher.Matchers.expect;
  */
 public class HttpRulesTest {
 
+    @Test
+    public void includesStandardRulesTest() {
+        List<HttpRule> rules = HttpRules.parse("include standard");
+        expect(rules.size()).toEqual(3);
+        expect(rules.stream().filter(r -> "remove".equals(r.verb)).count()).toEqual(1);
+        expect(rules.stream().filter(r -> "replace".equals(r.verb)).count()).toEqual(2);
+
+        rules = HttpRules.parse("include standard\n");
+        expect(rules.size()).toEqual(3);
+        rules = HttpRules.parse("include standard\nsample 50");
+        expect(rules.size()).toEqual(4);
+        expect(rules.stream().filter(r -> "sample".equals(r.verb)).count()).toEqual(1);
+
+        rules = HttpRules.parse(" include standard\ninclude standard");
+        expect(rules.size()).toEqual(6);
+        rules = HttpRules.parse("include standard\nsample 50\ninclude standard");
+        expect(rules.size()).toEqual(7);
+    }
+
+    @Test
+    public void includesDebugRulesTest() {
+        List<HttpRule> rules = HttpRules.parse("include debug");
+        expect(rules.size()).toEqual(2);
+        expect(rules.stream().filter(r -> "allow_http_url".equals(r.verb)).count()).toEqual(1);
+        expect(rules.stream().filter(r -> "copy_session_field".equals(r.verb)).count()).toEqual(1);
+
+        rules = HttpRules.parse("include debug\n");
+        expect(rules.size()).toEqual(2);
+        rules = HttpRules.parse("include debug\nsample 50");
+        expect(rules.size()).toEqual(3);
+        expect(rules.stream().filter(r -> "sample".equals(r.verb)).count()).toEqual(1);
+
+        rules = HttpRules.parse(" include debug\ninclude debug");
+        expect(rules.size()).toEqual(4);
+        rules = HttpRules.parse("include debug\nsample 50\ninclude debug");
+        expect(rules.size()).toEqual(5);
+    }
+
+    @Test
+    public void includesWeblogRulesTest() {
+        List<HttpRule> rules = HttpRules.parse("include weblog");
+        expect(rules.size()).toEqual(2);
+        expect(rules.stream().filter(r -> "remove".equals(r.verb)).count()).toEqual(1);
+        expect(rules.stream().filter(r -> "replace".equals(r.verb)).count()).toEqual(1);
+
+        rules = HttpRules.parse("include weblog\n");
+        expect(rules.size()).toEqual(2);
+        rules = HttpRules.parse("include weblog\nsample 50");
+        expect(rules.size()).toEqual(3);
+        expect(rules.stream().filter(r -> "sample".equals(r.verb)).count()).toEqual(1);
+
+        rules = HttpRules.parse(" include weblog\ninclude weblog");
+        expect(rules.size()).toEqual(4);
+        rules = HttpRules.parse("include weblog\nsample 50\ninclude weblog");
+        expect(rules.size()).toEqual(5);
+    }
+
     private void parse_fail(String line) {
         try {
             HttpRules.parseRule(line);
@@ -785,36 +842,6 @@ public class HttpRulesTest {
         } catch (IllegalArgumentException iae) {
             expect(iae.getMessage()).toEqual("Unescaped separator (!) in rule: !!! stop");
         }
-    }
-
-    @Test
-    public void usesBasicRulesTest() {
-        List<HttpRule> rules = HttpRules.parse(HttpRules.getBasicRules());
-        expect(rules.size()).toEqual(3);
-        expect(rules.stream().filter(r -> "remove".equals(r.verb)).count()).toEqual(1);
-        expect(rules.stream().filter(r -> "replace".equals(r.verb)).count()).toEqual(2);
-
-        rules = HttpRules.parse("include basic");
-        expect(rules.size()).toEqual(3);
-        expect(rules.stream().filter(r -> "remove".equals(r.verb)).count()).toEqual(1);
-        expect(rules.stream().filter(r -> "replace".equals(r.verb)).count()).toEqual(2);
-
-        rules = HttpRules.parse("include basic\n");
-        expect(rules.size()).toEqual(3);
-        expect(rules.stream().filter(r -> "remove".equals(r.verb)).count()).toEqual(1);
-        expect(rules.stream().filter(r -> "replace".equals(r.verb)).count()).toEqual(2);
-
-        rules = HttpRules.parse("include basic\nsample 50");
-        expect(rules.size()).toEqual(4);
-        expect(rules.stream().filter(r -> "sample".equals(r.verb)).count()).toEqual(1);
-
-        rules = HttpRules.parse(" include basic\ninclude basic");
-        expect(rules.size()).toEqual(6);
-        expect(rules.stream().filter(r -> "remove".equals(r.verb)).count()).toEqual(2);
-        expect(rules.stream().filter(r -> "replace".equals(r.verb)).count()).toEqual(4);
-
-        rules = HttpRules.parse("include basic\nsample 50\ninclude basic");
-        expect(rules.size()).toEqual(7);
     }
 
 }
