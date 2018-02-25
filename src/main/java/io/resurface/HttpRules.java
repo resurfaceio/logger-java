@@ -14,7 +14,14 @@ import java.util.regex.PatternSyntaxException;
 public class HttpRules {
 
     /**
-     * Rules used by default when no other rules are provided.
+     * Rules providing all details for debugging an application.
+     */
+    public static String getDebugRules() {
+        return "allow_http_url\ncopy_session_field /.*/\n";
+    }
+
+    /**
+     * Rules that block common kinds of sensitive data.
      */
     public static String getStandardRules() {
         return "/request_header:cookie|response_header:set-cookie/ remove\n" +
@@ -23,16 +30,9 @@ public class HttpRules {
     }
 
     /**
-     * Rules providing all details for debugging an application.
+     * Rules providing minimal details, used by default.
      */
-    public static String getDebugRules() {
-        return "allow_http_url\ncopy_session_field /.*/\n";
-    }
-
-    /**
-     * Rules providing details for a traditional weblog.
-     */
-    public static String getWeblogRules() {
+    public static String getStrictRules() {
         return "/request_url/ replace /([^\\?;]+).*/, /$1/\n" +
                 "/request_body|response_body|request_param:.*|request_header:(?!user-agent).*|response_header:(?!(content-length)|(content-type)).*/ remove\n";
     }
@@ -45,7 +45,7 @@ public class HttpRules {
         if (rules != null) {
             rules = rules.replaceAll("(?m)^\\s*include debug\\s*$", Matcher.quoteReplacement(getDebugRules()));
             rules = rules.replaceAll("(?m)^\\s*include standard\\s*$", Matcher.quoteReplacement(getStandardRules()));
-            rules = rules.replaceAll("(?m)^\\s*include weblog\\s*$", Matcher.quoteReplacement(getWeblogRules()));
+            rules = rules.replaceAll("(?m)^\\s*include strict\\s*$", Matcher.quoteReplacement(getStrictRules()));
             for (String rule : rules.split("\\r?\\n")) {
                 HttpRule parsed = parseRule(rule);
                 if (parsed != null) result.add(parsed);

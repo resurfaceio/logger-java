@@ -15,7 +15,7 @@ import static io.resurface.tests.Helper.*;
  */
 public class HttpLoggerJsonTest {
 
-    private final HttpLogger logger = new HttpLogger();
+    private final HttpLogger logger = new HttpLogger("", "include standard");
 
     @Test
     public void formatRequestTest() {

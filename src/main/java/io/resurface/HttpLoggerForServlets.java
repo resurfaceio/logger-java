@@ -20,13 +20,15 @@ public class HttpLoggerForServlets implements Filter {
      */
     public HttpLoggerForServlets() {
         this.queue = null;
+        this.rules = null;
     }
 
     /**
      * Initialize filter using supplied queue.
      */
-    public HttpLoggerForServlets(List<String> queue) {
+    public HttpLoggerForServlets(List<String> queue, String rules) {
         this.queue = queue;
+        this.rules = rules;
     }
 
     /**
@@ -42,7 +44,7 @@ public class HttpLoggerForServlets implements Filter {
     public void init(FilterConfig config) {
         this.config = config;
         if (this.queue != null) {
-            this.logger = new HttpLogger(queue);
+            this.logger = new HttpLogger(queue, rules);
         } else if (config != null) {
             this.logger = new HttpLogger(config.getInitParameter("url"), config.getInitParameter("rules"));
         } else {
@@ -93,5 +95,6 @@ public class HttpLoggerForServlets implements Filter {
     protected FilterConfig config;
     protected HttpLogger logger;
     protected final List<String> queue;
+    protected final String rules;
 
 }

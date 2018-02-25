@@ -29,7 +29,7 @@ HttpLogger logger = new HttpLogger();
 logger = new HttpLogger("https://...");
 
 // with specific url and rules
-logger = new HttpLogger("https://...", "include standard");
+logger = new HttpLogger("https://...", "include strict");
 ```
 
 <a name="logging_http"/>
@@ -76,18 +76,18 @@ logger.log(request, response);
 
 ## Setting Default Rules
 
-If no rules are provided when creating a logger, the default value of `include standard` will be applied. A different default
-value can be specified as shown below.
+If no <a href="https://resurface.io/rules.html">rules</a> are provided when creating a logger, the default value of 
+`include strict` will be applied. A different default value can be specified as shown below.
 
 ```java
-HttpLogger.setDefaultRules("include weblog");
+HttpLogger.setDefaultRules("include debug");
 ```
 
 When specifying multiple default rules, put each on a separate line.
 
 ```java
 HttpLogger.setDefaultRules(
-    "include weblog\n" +
+    "include debug\n" +
     "sample 10\n"
 );
 ```

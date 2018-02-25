@@ -37,7 +37,7 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
         defaultRules = r.replaceAll("(?m)^\\s*include default\\s*$", "");
     }
 
-    private static String defaultRules = HttpRules.getStandardRules();
+    private static String defaultRules = HttpRules.getStrictRules();
 
     /**
      * Returns true if content type indicates string data.

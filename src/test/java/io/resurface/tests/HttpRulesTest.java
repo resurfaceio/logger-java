@@ -17,25 +17,6 @@ import static com.mscharhag.oleaster.matcher.Matchers.expect;
 public class HttpRulesTest {
 
     @Test
-    public void includesStandardRulesTest() {
-        List<HttpRule> rules = HttpRules.parse("include standard");
-        expect(rules.size()).toEqual(3);
-        expect(rules.stream().filter(r -> "remove".equals(r.verb)).count()).toEqual(1);
-        expect(rules.stream().filter(r -> "replace".equals(r.verb)).count()).toEqual(2);
-
-        rules = HttpRules.parse("include standard\n");
-        expect(rules.size()).toEqual(3);
-        rules = HttpRules.parse("include standard\nsample 50");
-        expect(rules.size()).toEqual(4);
-        expect(rules.stream().filter(r -> "sample".equals(r.verb)).count()).toEqual(1);
-
-        rules = HttpRules.parse(" include standard\ninclude standard");
-        expect(rules.size()).toEqual(6);
-        rules = HttpRules.parse("include standard\nsample 50\ninclude standard");
-        expect(rules.size()).toEqual(7);
-    }
-
-    @Test
     public void includesDebugRulesTest() {
         List<HttpRule> rules = HttpRules.parse("include debug");
         expect(rules.size()).toEqual(2);
@@ -55,21 +36,40 @@ public class HttpRulesTest {
     }
 
     @Test
-    public void includesWeblogRulesTest() {
-        List<HttpRule> rules = HttpRules.parse("include weblog");
+    public void includesStandardRulesTest() {
+        List<HttpRule> rules = HttpRules.parse("include standard");
+        expect(rules.size()).toEqual(3);
+        expect(rules.stream().filter(r -> "remove".equals(r.verb)).count()).toEqual(1);
+        expect(rules.stream().filter(r -> "replace".equals(r.verb)).count()).toEqual(2);
+
+        rules = HttpRules.parse("include standard\n");
+        expect(rules.size()).toEqual(3);
+        rules = HttpRules.parse("include standard\nsample 50");
+        expect(rules.size()).toEqual(4);
+        expect(rules.stream().filter(r -> "sample".equals(r.verb)).count()).toEqual(1);
+
+        rules = HttpRules.parse(" include standard\ninclude standard");
+        expect(rules.size()).toEqual(6);
+        rules = HttpRules.parse("include standard\nsample 50\ninclude standard");
+        expect(rules.size()).toEqual(7);
+    }
+
+    @Test
+    public void includesStrictRulesTest() {
+        List<HttpRule> rules = HttpRules.parse("include strict");
         expect(rules.size()).toEqual(2);
         expect(rules.stream().filter(r -> "remove".equals(r.verb)).count()).toEqual(1);
         expect(rules.stream().filter(r -> "replace".equals(r.verb)).count()).toEqual(1);
 
-        rules = HttpRules.parse("include weblog\n");
+        rules = HttpRules.parse("include strict\n");
         expect(rules.size()).toEqual(2);
-        rules = HttpRules.parse("include weblog\nsample 50");
+        rules = HttpRules.parse("include strict\nsample 50");
         expect(rules.size()).toEqual(3);
         expect(rules.stream().filter(r -> "sample".equals(r.verb)).count()).toEqual(1);
 
-        rules = HttpRules.parse(" include weblog\ninclude weblog");
+        rules = HttpRules.parse(" include strict\ninclude strict");
         expect(rules.size()).toEqual(4);
-        rules = HttpRules.parse("include weblog\nsample 50\ninclude weblog");
+        rules = HttpRules.parse("include strict\nsample 50\ninclude strict");
         expect(rules.size()).toEqual(5);
     }
 

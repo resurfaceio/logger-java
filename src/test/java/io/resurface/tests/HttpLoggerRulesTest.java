@@ -21,7 +21,7 @@ public class HttpLoggerRulesTest {
 
     @Test
     public void managesDefaultRulesTest() {
-        expect(HttpLogger.getDefaultRules()).toEqual(HttpRules.getStandardRules());
+        expect(HttpLogger.getDefaultRules()).toEqual(HttpRules.getStrictRules());
         try {
             HttpLogger.setDefaultRules("");
             expect(HttpLogger.getDefaultRules()).toEqual("");
@@ -41,16 +41,16 @@ public class HttpLoggerRulesTest {
             expect(rules.size()).toEqual(1);
             expect(rules.stream().filter(r -> "sample".equals(r.verb)).count()).toEqual(1);
         } finally {
-            HttpLogger.setDefaultRules(HttpRules.getStandardRules());
+            HttpLogger.setDefaultRules(HttpRules.getStrictRules());
         }
     }
 
     @Test
     public void overridesDefaultRulesTest() {
-        expect(HttpLogger.getDefaultRules()).toEqual(HttpRules.getStandardRules());
+        expect(HttpLogger.getDefaultRules()).toEqual(HttpRules.getStrictRules());
         try {
             HttpLogger logger = new HttpLogger("https://mysite.com");
-            expect(logger.getRules()).toEqual(HttpRules.getStandardRules());
+            expect(logger.getRules()).toEqual(HttpRules.getStrictRules());
             logger = new HttpLogger("https://mysite.com", "# 123");
             expect(logger.getRules()).toEqual("# 123");
 
@@ -72,7 +72,7 @@ public class HttpLoggerRulesTest {
             logger = new HttpLogger("https://mysite.com", "include default\nskip_submission\n");
             expect(logger.getRules()).toEqual("sample 42\n\nskip_submission\n");
         } finally {
-            HttpLogger.setDefaultRules(HttpRules.getStandardRules());
+            HttpLogger.setDefaultRules(HttpRules.getStrictRules());
         }
     }
 

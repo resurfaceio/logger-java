@@ -23,7 +23,7 @@ public class HttpLoggerForServletsTest {
     @Test
     public void logsHtmlTest() throws IOException, ServletException {
         List<String> queue = new ArrayList<>();
-        HttpLoggerForServlets filter = new HttpLoggerForServlets(queue);
+        HttpLoggerForServlets filter = new HttpLoggerForServlets(queue, "include standard");
         filter.init(null);
         filter.doFilter(mockRequest(), mockResponse(), mockHtmlApp());
         expect(queue.size()).toEqual(1);
@@ -43,7 +43,7 @@ public class HttpLoggerForServletsTest {
     @Test
     public void logsJsonTest() throws IOException, ServletException {
         List<String> queue = new ArrayList<>();
-        HttpLoggerForServlets filter = new HttpLoggerForServlets(queue);
+        HttpLoggerForServlets filter = new HttpLoggerForServlets(queue, "include standard");
         filter.init(null);
         filter.doFilter(mockRequest(), mockResponse(), mockJsonApp());
         expect(queue.size()).toEqual(1);
@@ -61,7 +61,7 @@ public class HttpLoggerForServletsTest {
     @Test
     public void logsJsonPostTest() throws IOException, ServletException {
         List<String> queue = new ArrayList<>();
-        HttpLoggerForServlets filter = new HttpLoggerForServlets(queue);
+        HttpLoggerForServlets filter = new HttpLoggerForServlets(queue, "include standard");
         filter.init(null);
         filter.doFilter(mockRequestWithJson(), mockResponse(), mockJsonApp());
         expect(queue.size()).toEqual(1);
@@ -79,7 +79,7 @@ public class HttpLoggerForServletsTest {
     @Test
     public void logsJsonPostWithHeadersTest() throws IOException, ServletException {
         List<String> queue = new ArrayList<>();
-        HttpLoggerForServlets filter = new HttpLoggerForServlets(queue);
+        HttpLoggerForServlets filter = new HttpLoggerForServlets(queue, "include standard");
         filter.init(null);
         filter.doFilter(mockRequestWithJson2(), mockResponse(), mockHtmlApp());
         expect(queue.size()).toEqual(1);
@@ -102,7 +102,7 @@ public class HttpLoggerForServletsTest {
     @Test
     public void skipsExceptionTest() {
         List<String> queue = new ArrayList<>();
-        HttpLoggerForServlets filter = new HttpLoggerForServlets(queue);
+        HttpLoggerForServlets filter = new HttpLoggerForServlets(queue, "include standard");
         filter.init(null);
         try {
             filter.doFilter(mockRequest(), mockResponse(), mockExceptionApp());
@@ -116,7 +116,7 @@ public class HttpLoggerForServletsTest {
     @Test
     public void skipsLoggingTest() throws IOException, ServletException {
         List<String> queue = new ArrayList<>();
-        HttpLoggerForServlets filter = new HttpLoggerForServlets(queue);
+        HttpLoggerForServlets filter = new HttpLoggerForServlets(queue, "include standard");
         filter.init(null);
         filter.doFilter(mockRequest(), mockResponse(), mockCustomApp());
         filter.doFilter(mockRequest(), mockResponse(), mockCustom404App());
