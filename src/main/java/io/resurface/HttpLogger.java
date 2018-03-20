@@ -136,6 +136,7 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
         // read rules from param or defaults
         if (rules != null) {
             this.rules = rules.replaceAll("(?m)^\\s*include default\\s*$", Matcher.quoteReplacement(defaultRules));
+            if (this.rules.trim().length() == 0) this.rules = defaultRules;
         } else {
             this.rules = defaultRules;
         }

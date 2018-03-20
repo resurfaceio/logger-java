@@ -57,6 +57,8 @@ public class HttpLoggerRulesTest {
             HttpLogger.setDefaultRules("");
             logger = new HttpLogger("https://mysite.com");
             expect(logger.getRules()).toEqual("");
+            logger = new HttpLogger("https://mysite.com", "   ");
+            expect(logger.getRules()).toEqual("");
             logger = new HttpLogger("https://mysite.com", " sample 42");
             expect(logger.getRules()).toEqual(" sample 42");
 
@@ -68,6 +70,8 @@ public class HttpLoggerRulesTest {
 
             HttpLogger.setDefaultRules("sample 42\n");
             logger = new HttpLogger("https://mysite.com");
+            expect(logger.getRules()).toEqual("sample 42\n");
+            logger = new HttpLogger("https://mysite.com", "   ");
             expect(logger.getRules()).toEqual("sample 42\n");
             logger = new HttpLogger("https://mysite.com", "include default\nskip_submission\n");
             expect(logger.getRules()).toEqual("sample 42\n\nskip_submission\n");
