@@ -11,6 +11,7 @@ Logging usage of Java cloud apps, with user privacy by design.
 <li><a href="#logging_from_servlet_filter">Logging From Servlet Filter</a></li>
 <li><a href="#logging_from_spring_boot">Logging From Spring Boot</a></li>
 <li><a href="#logging_from_spark_framework">Logging From Spark Framework</a></li>
+<li><a href="#logging_from_jersey">Logging From Jersey</a></li>
 <li><a href="#logging_with_api">Logging With API</a></li>
 <li><a href="#privacy">Protecting User Privacy</a></li>
 </ul>
@@ -19,7 +20,7 @@ Logging usage of Java cloud apps, with user privacy by design.
 
 ## Dependencies
 
-Requires Java 8. No other dependencies to conflict with your app.
+Requires Java 8+ and Java servlet classes, which are not included. No other dependencies to conflict with your app.
 
 <a name="installing_with_maven"/>
 
@@ -28,13 +29,21 @@ Requires Java 8. No other dependencies to conflict with your app.
 Add this section to `pom.xml`:
 
 ```xml
-<dependencies>
-    <dependency>
-        <groupId>io.resurface</groupId>
-        <artifactId>resurfaceio-logger</artifactId>
-        <version>RELEASE</version>
-    </dependency>
-</dependencies>
+<dependency>
+    <groupId>io.resurface</groupId>
+    <artifactId>resurfaceio-logger</artifactId>
+    <version>RELEASE</version>
+</dependency>
+```
+
+Add this section too if servlet classes are not already available.
+
+```xml
+<dependency>
+    <groupId>javax.servlet</groupId>
+    <artifactId>javax.servlet-api</artifactId>
+    <version>RELEASE</version>
+</dependency>
 ```
 
 <a name="logging_from_servlet_filter"/>
@@ -126,6 +135,19 @@ after((request, response) -> {
         logger.log(request.raw(), response.raw(), response.body(), request.body());
     }
 });
+```
+
+<a name="logging_from_jersey"/>
+
+## Logging From Jersey
+
+After <a href="#installing_with_maven">installing the library</a>, register a logger as a Jersey filter/interceptor.
+Note this will only log usage when a response body is returned.
+
+```java
+ResourceConfig resourceConfig = new ResourceConfig(...);
+resourceConfig.register(new io.resurface.HttpLoggerForJersey("https://...", "include strict"));
+HttpServer server = GrizzlyHttpServerFactory.createHttpServer(BASE_URI, resourceConfig, false);
 ```
 
 <a name="logging_with_api"/>
