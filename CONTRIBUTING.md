@@ -76,7 +76,7 @@ Configure Maven settings (in `.m2/settings.xml`):
 Push artifacts to [Maven Central](https://search.maven.org/):
 
 ```
-(remove -SNAPSHOT from end of version string)
+(remove -SNAPSHOT from end of version string, in pom.xml and BaseLogger.java)
 git add -A
 git commit -m "Update version to 1.x.x"
 mvn deploy
@@ -91,7 +91,8 @@ git tag v1.x.x
 git push origin master --tags
 ```
 
-Start the next version by incrementing the version number, and adding `-SNAPSHOT` to the end.
+Start the next version by incrementing the version number and adding `-SNAPSHOT`,
+in `pom.xml` and `Baselogger.java`.
 
 ## Errata
 

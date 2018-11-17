@@ -202,16 +202,10 @@ public class BaseLogger<T extends BaseLogger> {
     }
 
     /**
-     * Retrieves version number from runtime properties file.
+     * Returns version number for this logger.
      */
     public static String version_lookup() {
-        try (InputStream is = BaseLogger.class.getResourceAsStream("/version.properties")) {
-            Properties p = new Properties();
-            p.load(is);
-            return p.getProperty("version", null);
-        } catch (Exception e) {
-            throw new RuntimeException("Version could not be loaded: " + e.getMessage());
-        }
+        return "1.9.2-SNAPSHOT";
     }
 
     protected final String agent;
