@@ -1,4 +1,4 @@
-// © 2016-2017 Resurface Labs LLC
+// © 2016-2019 Resurface Labs Inc.
 
 package io.resurface.tests;
 

@@ -1,5 +1,5 @@
 # resurfaceio-logger-java
-&copy; 2016-2018 Resurface Labs LLC
+&copy; 2016-2019 Resurface Labs Inc.
 
 ## Logger API
 
