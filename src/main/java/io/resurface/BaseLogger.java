@@ -205,7 +205,7 @@ public class BaseLogger<T extends BaseLogger> {
      * Returns version number for this logger.
      */
     public static String version_lookup() {
-        return "1.9.3-SNAPSHOT";
+        return "1.9.4-SNAPSHOT";
     }
 
     protected final String agent;
