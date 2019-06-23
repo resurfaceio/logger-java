@@ -25,6 +25,8 @@ public class BaseLoggerTest {
         expect(logger.getAgent()).toEqual(MOCK_AGENT);
         expect(logger.isEnableable()).toBeFalse();
         expect(logger.isEnabled()).toBeFalse();
+        expect(logger.getQueue()).toBeNull();
+        expect(logger.getUrl()).toBeNull();
     }
 
     @Test
@@ -138,9 +140,6 @@ public class BaseLoggerTest {
         String json = Json.stringify(message);
         expect(parseable(json)).toBeTrue();
         expect(logger.submit(json)).toBeTrue();
-        logger.setSkipCompression(true);
-        expect(logger.getSkipCompression()).toBeTrue();
-        expect(logger.submit(json)).toBeTrue();
     }
 
     @Test
@@ -152,6 +151,22 @@ public class BaseLoggerTest {
         message.add(new String[]{"version", logger.getVersion()});
         message.add(new String[]{"now", String.valueOf(MOCK_NOW)});
         message.add(new String[]{"protocol", "http"});
+        String json = Json.stringify(message);
+        expect(parseable(json)).toBeTrue();
+        expect(logger.submit(json)).toBeTrue();
+    }
+
+    @Test
+    public void submitsToDemoUrlWithoutCompressionTest() {
+        BaseLogger logger = new BaseLogger(MOCK_AGENT, Helper.DEMO_URL);
+        logger.setSkipCompression(true);
+        expect(logger.getSkipCompression()).toBeTrue();
+        List<String[]> message = new ArrayList<>();
+        message.add(new String[]{"agent", logger.getAgent()});
+        message.add(new String[]{"version", logger.getVersion()});
+        message.add(new String[]{"now", String.valueOf(MOCK_NOW)});
+        message.add(new String[]{"protocol", "https"});
+        message.add(new String[]{"skip_compression", "true"});
         String json = Json.stringify(message);
         expect(parseable(json)).toBeTrue();
         expect(logger.submit(json)).toBeTrue();
@@ -171,6 +186,7 @@ public class BaseLoggerTest {
     public void submitsToQueueTest() {
         List<String> queue = new ArrayList<>();
         BaseLogger logger = new BaseLogger(MOCK_AGENT, queue);
+        expect(logger.getQueue()).toEqual(queue);
         expect(logger.getUrl()).toBeNull();
         expect(logger.isEnableable()).toBeTrue();
         expect(logger.isEnabled()).toBeTrue();

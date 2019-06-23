@@ -109,6 +109,13 @@ public class BaseLogger<T extends BaseLogger> {
     }
 
     /**
+     * Returns queue destination where messages are sent.
+     */
+    public List<String> getQueue() {
+        return queue;
+    }
+
+    /**
      * Returns true if message compression is being skipped.
      */
     public boolean getSkipCompression() {
