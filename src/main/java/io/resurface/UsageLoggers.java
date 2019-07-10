@@ -36,7 +36,8 @@ public final class UsageLoggers {
      * Returns url to use by default.
      */
     public static String urlByDefault() {
-        return System.getenv("USAGE_LOGGERS_URL");
+        String url = System.getProperty("USAGE_LOGGERS_URL");
+        return (url == null) ? System.getenv("USAGE_LOGGERS_URL") : url;
     }
 
 }
