@@ -6,7 +6,7 @@
 
     <groupId>io.resurface</groupId>
     <artifactId>resurfaceio-logger</artifactId>
-    <version>1.9.6-SNAPSHOT</version>
+    <version>1.9.6</version>
     <name>resurfaceio-logger</name>
     <description>Library for usage logging</description>
     <url>https://github.com/resurfaceio/logger-java</url>
