@@ -21,6 +21,8 @@ public class HttpLoggerTest {
         expect(logger.getAgent()).toEqual(HttpLogger.AGENT);
         expect(logger.isEnableable()).toBeFalse();
         expect(logger.isEnabled()).toBeFalse();
+        expect(logger.getQueue()).toBeNull();
+        expect(logger.getUrl()).toBeNull();
     }
 
     @Test
