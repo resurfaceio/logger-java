@@ -1,6 +1,8 @@
 # resurfaceio-logger-java
 Logging usage of Java-based services, with user privacy by design.
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.resurface/resurfaceio-logger/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.resurface/resurfaceio-logger)
+
 ## Contents
 
 <ul>
