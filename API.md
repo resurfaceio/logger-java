@@ -1,7 +1,6 @@
-# resurfaceio-logger-java
-&copy; 2016-2019 Resurface Labs Inc.
+# API
 
-## Logger API
+## Contents
 
 <ul>
 <li><a href="#creating_loggers">Creating Loggers</a></li>
@@ -140,3 +139,6 @@ java -DUSAGE_LOGGERS_DISABLE="true" ...
 // for Heroku app
 heroku config:set USAGE_LOGGERS_DISABLE=true
 ```
+
+---
+<small>&copy; 2016-2019 <a href="https://resurface.io">Resurface Labs Inc.</a></small>
