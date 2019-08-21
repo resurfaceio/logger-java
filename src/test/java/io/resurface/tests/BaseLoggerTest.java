@@ -137,9 +137,9 @@ public class BaseLoggerTest {
         message.add(new String[]{"version", logger.getVersion()});
         message.add(new String[]{"now", String.valueOf(MOCK_NOW)});
         message.add(new String[]{"protocol", "https"});
-        String json = Json.stringify(message);
-        expect(parseable(json)).toBeTrue();
-        expect(logger.submit(json)).toBeTrue();
+        String msg = Json.stringify(message);
+        expect(parseable(msg)).toBeTrue();
+        expect(logger.submit(msg)).toBeTrue();
     }
 
     @Test
@@ -151,9 +151,9 @@ public class BaseLoggerTest {
         message.add(new String[]{"version", logger.getVersion()});
         message.add(new String[]{"now", String.valueOf(MOCK_NOW)});
         message.add(new String[]{"protocol", "http"});
-        String json = Json.stringify(message);
-        expect(parseable(json)).toBeTrue();
-        expect(logger.submit(json)).toBeTrue();
+        String msg = Json.stringify(message);
+        expect(parseable(msg)).toBeTrue();
+        expect(logger.submit(msg)).toBeTrue();
     }
 
     @Test
@@ -167,9 +167,9 @@ public class BaseLoggerTest {
         message.add(new String[]{"now", String.valueOf(MOCK_NOW)});
         message.add(new String[]{"protocol", "https"});
         message.add(new String[]{"skip_compression", "true"});
-        String json = Json.stringify(message);
-        expect(parseable(json)).toBeTrue();
-        expect(logger.submit(json)).toBeTrue();
+        String msg = Json.stringify(message);
+        expect(parseable(msg)).toBeTrue();
+        expect(logger.submit(msg)).toBeTrue();
     }
 
     @Test

@@ -153,10 +153,10 @@ public class Helper {
         return r;
     }
 
-    static boolean parseable(String json) {
-        if (json == null || !json.startsWith("[") || !json.endsWith("]")) return false;
+    static boolean parseable(String msg) {
+        if (msg == null || !msg.startsWith("[") || !msg.endsWith("]")) return false;
         try {
-            parser.fromJson(json, Object.class);
+            parser.fromJson(msg, Object.class);
             return true;
         } catch (com.google.gson.JsonSyntaxException ex) {
             return false;

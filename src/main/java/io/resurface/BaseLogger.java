@@ -174,11 +174,11 @@ public class BaseLogger<T extends BaseLogger> {
     /**
      * Submits JSON message to intended destination.
      */
-    public boolean submit(String json) {
-        if (json == null || this.skip_submission || !isEnabled()) {
+    public boolean submit(String msg) {
+        if (msg == null || this.skip_submission || !isEnabled()) {
             return true;
         } else if (queue != null) {
-            queue.add(json);
+            queue.add(msg);
             return true;
         } else {
             try {
@@ -191,10 +191,10 @@ public class BaseLogger<T extends BaseLogger> {
                 if (!this.skip_compression) url_connection.setRequestProperty("Content-Encoding", "deflated");
                 try (OutputStream os = url_connection.getOutputStream()) {
                     if (this.skip_compression) {
-                        os.write(json.getBytes());
+                        os.write(msg.getBytes());
                     } else {
                         try (DeflaterOutputStream dos = new DeflaterOutputStream(os, true)) {
-                            dos.write(json.getBytes());
+                            dos.write(msg.getBytes());
                             dos.finish();
                             dos.flush();
                         }
