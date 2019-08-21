@@ -33,13 +33,14 @@ public class HttpLoggerJsonTest {
 
     @Test
     public void formatRequestWithBodyTest() {
-        String json = logger.format(mockRequestWithJson(), mockResponse(), null, MOCK_JSON);
+        String json = logger.format(mockRequestWithJson(), mockResponse(), null, MOCK_HTML);
         expect(parseable(json)).toBeTrue();
-        expect(json).toContain("[\"request_body\",\"" + MOCK_JSON_ESCAPED + "\"]");
+        expect(json).toContain("[\"request_body\",\"" + MOCK_HTML + "\"]");
         expect(json).toContain("[\"request_header:content-type\",\"Application/JSON\"]");
         expect(json).toContain("[\"request_method\",\"POST\"]");
         expect(json).toContain("[\"request_param:message\",\"" + MOCK_JSON_ESCAPED + "\"]");
         expect(json).toContain("[\"request_url\",\"" + MOCK_URL + '?' + MOCK_QUERY_STRING + "\"]");
+        expect(json.contains("request_param:foo")).toBeFalse();
     }
 
     @Test
@@ -56,6 +57,7 @@ public class HttpLoggerJsonTest {
         expect(json).toContain("[\"request_param:message\",\"" + MOCK_JSON_ESCAPED + "\"]");
         expect(json).toContain("[\"request_url\",\"" + MOCK_URL + '?' + MOCK_QUERY_STRING + "\"]");
         expect(json.contains("request_body")).toBeFalse();
+        expect(json.contains("request_param:foo")).toBeFalse();
     }
 
     @Test

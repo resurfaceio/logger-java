@@ -148,10 +148,8 @@ public class Helper {
     }
 
     static HttpServletResponseImpl mockResponseWithHtml() {
-        HttpServletResponseImpl r = new HttpServletResponseImpl();
-        r.setCharacterEncoding("UTF-8");
+        HttpServletResponseImpl r = mockResponse();
         r.setContentType("text/html; charset=utf-8");
-        r.setStatus(200);
         return r;
     }
 
