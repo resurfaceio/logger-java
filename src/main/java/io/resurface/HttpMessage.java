@@ -20,7 +20,7 @@ public class HttpMessage {
     public static List<String[]> build(HttpServletRequest request, HttpServletResponse response,
                                        String response_body, String request_body) {
         List<String[]> message = new ArrayList<>();
-        message.add(new String[]{"request_method", request.getMethod()});
+        if (request.getMethod() != null) message.add(new String[]{"request_method", request.getMethod()});
         String formatted_url = formatURL(request);
         if (formatted_url != null) message.add(new String[]{"request_url", formatted_url});
         message.add(new String[]{"response_code", String.valueOf(response.getStatus())});

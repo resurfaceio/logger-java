@@ -69,6 +69,7 @@ public class HttpLoggerJsonTest {
         expect(msg.contains("request_method")).toBeFalse();
         expect(msg.contains("request_param")).toBeFalse();
         expect(msg.contains("request_url")).toBeFalse();
+        expect(msg.contains("[]")).toBeFalse();
     }
 
     @Test
@@ -105,5 +106,6 @@ public class HttpLoggerJsonTest {
         expect(msg).toContain("[\"response_code\",\"0\"]");
         expect(msg.contains("response_body")).toBeFalse();
         expect(msg.contains("response_header")).toBeFalse();
+        expect(msg.contains("[]")).toBeFalse();
     }
 }
