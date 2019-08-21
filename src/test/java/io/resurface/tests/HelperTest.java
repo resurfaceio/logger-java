@@ -14,7 +14,6 @@ public class HelperTest {
 
     @Test
     public void detectsGoodJsonTest() {
-        expect(parseable("[]")).toBeTrue();
         expect(parseable("[ ]")).toBeTrue();
         expect(parseable("[\n]")).toBeTrue();
         expect(parseable("[\n\t\n]")).toBeTrue();
@@ -31,6 +30,9 @@ public class HelperTest {
         expect(parseable("1234")).toBeFalse();
         expect(parseable("archer")).toBeFalse();
         expect(parseable("\"sterling archer\"")).toBeFalse();
+        expect(parseable(",,")).toBeFalse();
+        expect(parseable("[]")).toBeFalse();
+        expect(parseable("[,,]")).toBeFalse();
         expect(parseable("[\"]")).toBeFalse();
         expect(parseable("[:,]")).toBeFalse();
         expect(parseable(",")).toBeFalse();
