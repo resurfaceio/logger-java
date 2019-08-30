@@ -104,13 +104,13 @@ public class HttpRules {
      * Parses regex for matching.
      */
     private static Pattern parseRegex(String r, String regex) {
-        String str = parseString(r, regex);
-        if ("*".equals(str) || "+".equals(str) || "?".equals(str))
+        String s = parseString(r, regex);
+        if ("*".equals(s) || "+".equals(s) || "?".equals(s))
             throw new IllegalArgumentException(String.format("Invalid regex (%s) in rule: %s", regex, r));
-        if (!str.startsWith("^")) str = "^" + str;
-        if (!str.endsWith("$")) str = str + "$";
+        if (!s.startsWith("^")) s = "^" + s;
+        if (!s.endsWith("$")) s = s + "$";
         try {
-            return Pattern.compile(str);
+            return Pattern.compile(s);
         } catch (PatternSyntaxException pse) {
             throw new IllegalArgumentException(String.format("Invalid regex (%s) in rule: %s", regex, r));
         }
@@ -130,9 +130,9 @@ public class HttpRules {
     /**
      * Parses delimited string expression.
      */
-    private static String parseString(String r, String str) {
+    private static String parseString(String r, String expr) {
         for (String sep : new String[]{"~", "!", "%", "|", "/"}) {
-            Matcher m = Pattern.compile(String.format("^[%s](.*)[%s]$", sep, sep)).matcher(str);
+            Matcher m = Pattern.compile(String.format("^[%s](.*)[%s]$", sep, sep)).matcher(expr);
             if (m.matches()) {
                 String m1 = m.group(1);
                 if (Pattern.compile(String.format("^[%s].*|.*[^\\\\][%s].*", sep, sep)).matcher(m1).matches())
@@ -140,7 +140,7 @@ public class HttpRules {
                 return m1.replace("\\" + sep, sep);
             }
         }
-        throw new IllegalArgumentException(String.format("Invalid expression (%s) in rule: %s", str, r));
+        throw new IllegalArgumentException(String.format("Invalid expression (%s) in rule: %s", expr, r));
     }
 
     private static final Pattern REGEX_ALLOW_HTTP_URL = Pattern.compile("^\\s*allow_http_url\\s*(#.*)?$");
