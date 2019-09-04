@@ -57,13 +57,14 @@ HttpServletRequest request = new HttpServletRequestImpl();
 request.setCharacterEncoding("UTF-8");
 request.setContentType("application/json");
 request.setHeader("A", "123");
-request.setMethod("GET");
-request.setRequestURL("http://google.com");
+request.setMethod("POST");
+request.setParam("B", "234");   // POST param
+request.setRequestURL("http://resurface.io");
 
 // define response to log
 HttpServletResponse response = new HttpServletResponseImpl();
 response.setCharacterEncoding("UTF-8");
-response.setContentType("text/html");
+response.setContentType("text/html; charset=utf-8");
 response.setHeader("B", "234");
 response.setStatus(200);
 
