@@ -307,7 +307,7 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
         // finish message
         details.add(new String[]{"now", String.valueOf(now)});
         details.add(new String[]{"agent", this.agent});
-        details.add(new String[]{"hostname", this.hostname});
+        details.add(new String[]{"host", this.host});
         details.add(new String[]{"version", this.version});
         return Json.stringify(details);
     }

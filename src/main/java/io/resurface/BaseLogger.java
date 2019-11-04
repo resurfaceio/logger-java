@@ -41,7 +41,7 @@ public class BaseLogger<T extends BaseLogger> {
      */
     public BaseLogger(String agent, String url, boolean enabled) {
         this.agent = agent;
-        this.hostname = hostname_lookup();
+        this.host = host_lookup();
         this.version = version_lookup();
         this.queue = null;
 
@@ -78,7 +78,7 @@ public class BaseLogger<T extends BaseLogger> {
      */
     public BaseLogger(String agent, List<String> queue, boolean enabled) {
         this.agent = agent;
-        this.hostname = hostname_lookup();
+        this.host = host_lookup();
         this.version = version_lookup();
         this.enabled = enabled;
         this.queue = queue;
@@ -110,10 +110,10 @@ public class BaseLogger<T extends BaseLogger> {
     }
 
     /**
-     * Returns cached hostname.
+     * Returns cached host identifier.
      */
-    public String getHostname() {
-        return hostname;
+    public String getHost() {
+        return host;
     }
 
     /**
@@ -217,9 +217,9 @@ public class BaseLogger<T extends BaseLogger> {
     }
 
     /**
-     * Returns server hostname for this logger.
+     * Returns host identifier for this logger.
      */
-    public static String hostname_lookup() {
+    public static String host_lookup() {
         String dyno = System.getenv("DYNO");
         if (dyno != null) return dyno;
         try {
@@ -239,7 +239,7 @@ public class BaseLogger<T extends BaseLogger> {
     protected final String agent;
     protected boolean enableable;
     protected boolean enabled;
-    protected final String hostname;
+    protected final String host;
     protected final List<String> queue;
     protected boolean skip_compression = false;
     protected boolean skip_submission = false;
