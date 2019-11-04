@@ -3,12 +3,11 @@
 package io.resurface;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.URL;
 import java.util.List;
-import java.util.Properties;
 import java.util.zip.DeflaterOutputStream;
 
 /**
@@ -42,6 +41,7 @@ public class BaseLogger<T extends BaseLogger> {
      */
     public BaseLogger(String agent, String url, boolean enabled) {
         this.agent = agent;
+        this.hostname = hostname_lookup();
         this.version = version_lookup();
         this.queue = null;
 
@@ -78,6 +78,7 @@ public class BaseLogger<T extends BaseLogger> {
      */
     public BaseLogger(String agent, List<String> queue, boolean enabled) {
         this.agent = agent;
+        this.hostname = hostname_lookup();
         this.version = version_lookup();
         this.enabled = enabled;
         this.queue = queue;
@@ -106,6 +107,13 @@ public class BaseLogger<T extends BaseLogger> {
      */
     public String getAgent() {
         return agent;
+    }
+
+    /**
+     * Returns cached hostname.
+     */
+    public String getHostname() {
+        return hostname;
     }
 
     /**
@@ -209,6 +217,17 @@ public class BaseLogger<T extends BaseLogger> {
     }
 
     /**
+     * Returns server hostname for this logger.
+     */
+    public static String hostname_lookup() {
+        try {
+            return InetAddress.getLocalHost().getHostName();
+        } catch (Exception e) {
+            return "unknown";
+        }
+    }
+
+    /**
      * Returns version number for this logger.
      */
     public static String version_lookup() {
@@ -218,6 +237,7 @@ public class BaseLogger<T extends BaseLogger> {
     protected final String agent;
     protected boolean enableable;
     protected boolean enabled;
+    protected final String hostname;
     protected final List<String> queue;
     protected boolean skip_compression = false;
     protected boolean skip_submission = false;

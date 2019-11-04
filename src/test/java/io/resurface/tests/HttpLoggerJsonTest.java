@@ -22,6 +22,7 @@ public class HttpLoggerJsonTest {
         String msg = logger.format(mockRequest(), mockResponse(), null, null, MOCK_NOW);
         expect(parseable(msg)).toBeTrue();
         expect(msg).toContain("[\"agent\",\"" + logger.getAgent() + "\"]");
+        expect(msg).toContain("[\"hostname\",\"" + logger.getHostname() + "\"]");
         expect(msg).toContain("[\"version\",\"" + logger.getVersion() + "\"]");
         expect(msg).toContain("[\"now\",\"" + MOCK_NOW + "\"]");
         expect(msg).toContain("[\"request_method\",\"GET\"]");

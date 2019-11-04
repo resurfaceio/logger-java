@@ -66,6 +66,14 @@ public class BaseLoggerTest {
     }
 
     @Test
+    public void hasValidHostnameTest() {
+        String hostname = BaseLogger.hostname_lookup();
+        expect(hostname).toBeNotNull();
+        expect(hostname.length()).toBeGreaterThan(0);
+        expect(hostname.contentEquals("unknown")).toBeFalse();
+    }
+
+    @Test
     public void hasValidVersionTest() {
         String version = BaseLogger.version_lookup();
         expect(version).toBeNotNull();
