@@ -220,6 +220,8 @@ public class BaseLogger<T extends BaseLogger> {
      * Returns server hostname for this logger.
      */
     public static String hostname_lookup() {
+        String dyno = System.getenv("DYNO");
+        if (dyno != null) return dyno;
         try {
             return InetAddress.getLocalHost().getHostName();
         } catch (Exception e) {
