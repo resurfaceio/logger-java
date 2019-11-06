@@ -71,6 +71,7 @@ public class BaseLoggerTest {
         expect(host).toBeNotNull();
         expect(host.length()).toBeGreaterThan(0);
         expect(host.contentEquals("unknown")).toBeFalse();
+        expect(host).toEqual(new BaseLogger(MOCK_AGENT).getHost());
     }
 
     @Test
