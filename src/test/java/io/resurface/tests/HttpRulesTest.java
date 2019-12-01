@@ -73,6 +73,28 @@ public class HttpRulesTest {
         expect(rules.size()).toEqual(5);
     }
 
+    @Test
+    public void loadsRulesFromFileTest() {
+        List<HttpRule> rules = HttpRules.parse("file://./test/rules1.txt");
+        expect(rules.size()).toEqual(1);
+        expect(rules.stream().filter(r -> "sample".equals(r.verb)).count()).toEqual(1);
+        expect(rules.stream().filter(r -> "sample".equals(r.verb)).findFirst().get().param1).toEqual(55);
+
+        rules = HttpRules.parse("file://./test/rules2.txt");
+        expect(rules.size()).toEqual(3);
+        expect(rules.stream().filter(r -> "allow_http_url".equals(r.verb)).count()).toEqual(1);
+        expect(rules.stream().filter(r -> "copy_session_field".equals(r.verb)).count()).toEqual(1);
+        expect(rules.stream().filter(r -> "sample".equals(r.verb)).count()).toEqual(1);
+        expect(rules.stream().filter(r -> "sample".equals(r.verb)).findFirst().get().param1).toEqual(56);
+
+        rules = HttpRules.parse("file://./test/rules3.txt ");
+        expect(rules.size()).toEqual(3);
+        expect(rules.stream().filter(r -> "remove".equals(r.verb)).count()).toEqual(1);
+        expect(rules.stream().filter(r -> "replace".equals(r.verb)).count()).toEqual(1);
+        expect(rules.stream().filter(r -> "sample".equals(r.verb)).count()).toEqual(1);
+        expect(rules.stream().filter(r -> "sample".equals(r.verb)).findFirst().get().param1).toEqual(57);
+    }
+
     private void parse_fail(String line) {
         try {
             HttpRules.parseRule(line);
@@ -111,11 +133,11 @@ public class HttpRulesTest {
 
     @Test
     public void parsesEmptyRulesTest() {
-        expect(HttpRules.parse(null)).toBeEmpty();
-        expect(HttpRules.parse("")).toBeEmpty();
-        expect(HttpRules.parse(" ")).toBeEmpty();
-        expect(HttpRules.parse("\t")).toBeEmpty();
-        expect(HttpRules.parse("\n")).toBeEmpty();
+        expect(HttpRules.parse(null)).toNotBeEmpty();
+        expect(HttpRules.parse("")).toNotBeEmpty();
+        expect(HttpRules.parse(" ")).toNotBeEmpty();
+        expect(HttpRules.parse("\t")).toNotBeEmpty();
+        expect(HttpRules.parse("\n")).toNotBeEmpty();
 
         expect(HttpRules.parseRule(null)).toBeNull();
         expect(HttpRules.parseRule("")).toBeNull();
@@ -808,6 +830,13 @@ public class HttpRulesTest {
 
     @Test
     public void raisesExpectedErrorsTest() {
+        try {
+            HttpRules.parse("file://~/bleepblorpbleepblorp12345");
+            expect(false).toBeTrue();
+        } catch (IllegalArgumentException iae) {
+            expect(iae.getMessage()).toEqual("Failed to load rules: ~/bleepblorpbleepblorp12345");
+        }
+
         try {
             HttpRules.parseRule("/*! stop");
             expect(false).toBeTrue();

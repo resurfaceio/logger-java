@@ -29,6 +29,9 @@ logger = new HttpLogger("https://...");
 
 // with specific url and rules
 logger = new HttpLogger("https://...", "include strict");
+
+// with specific url and rules from local file
+logger = new HttpLogger("https://...", "file://./rules.txt");
 ```
 
 <a name="logging_http"/>

@@ -2,6 +2,8 @@
 
 package io.resurface;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -41,15 +43,32 @@ public class HttpRules {
      * Parses rules from multi-line string.
      */
     public static List<HttpRule> parse(String rules) {
-        List<HttpRule> result = new ArrayList<>();
-        if (rules != null) {
-            rules = rules.replaceAll("(?m)^\\s*include debug\\s*$", Matcher.quoteReplacement(getDebugRules()));
-            rules = rules.replaceAll("(?m)^\\s*include standard\\s*$", Matcher.quoteReplacement(getStandardRules()));
-            rules = rules.replaceAll("(?m)^\\s*include strict\\s*$", Matcher.quoteReplacement(getStrictRules()));
-            for (String rule : rules.split("\\r?\\n")) {
-                HttpRule parsed = parseRule(rule);
-                if (parsed != null) result.add(parsed);
+        if (rules == null) rules = "";
+
+        // load rules from external files
+        if (rules.startsWith("file://")) {
+            String rfile = rules.substring(7).trim();
+            try {
+                rules = new String(Files.readAllBytes(Paths.get(rfile)));
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Failed to load rules: " + rfile);
             }
+        }
+
+        // force default rules if necessary
+        rules = rules.replaceAll("(?m)^\\s*include default\\s*$", Matcher.quoteReplacement(HttpLogger.getDefaultRules()));
+        if (rules.trim().length() == 0) rules = HttpLogger.getDefaultRules();
+
+        // expand rule includes
+        rules = rules.replaceAll("(?m)^\\s*include debug\\s*$", Matcher.quoteReplacement(getDebugRules()));
+        rules = rules.replaceAll("(?m)^\\s*include standard\\s*$", Matcher.quoteReplacement(getStandardRules()));
+        rules = rules.replaceAll("(?m)^\\s*include strict\\s*$", Matcher.quoteReplacement(getStrictRules()));
+
+        // parse all rules
+        List<HttpRule> result = new ArrayList<>();
+        for (String rule : rules.split("\\r?\\n")) {
+            HttpRule parsed = parseRule(rule);
+            if (parsed != null) result.add(parsed);
         }
         return result;
     }
