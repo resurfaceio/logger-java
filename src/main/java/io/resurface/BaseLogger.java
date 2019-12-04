@@ -233,7 +233,7 @@ public class BaseLogger<T extends BaseLogger> {
      * Returns version number for this logger.
      */
     public static String version_lookup() {
-        return "1.10.2-SNAPSHOT";
+        return "2.0.0-SNAPSHOT";
     }
 
     protected final String agent;
