@@ -6,7 +6,6 @@ import io.resurface.HttpRule;
 import io.resurface.HttpRules;
 import org.junit.Test;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
 import static com.mscharhag.oleaster.matcher.Matchers.expect;
@@ -17,82 +16,108 @@ import static com.mscharhag.oleaster.matcher.Matchers.expect;
 public class HttpRulesTest {
 
     @Test
+    public void changesDefaultRulesTest() {
+        expect(HttpRules.getDefaultRules()).toEqual(HttpRules.getStrictRules());
+        try {
+            HttpRules.setDefaultRules("");
+            expect(HttpRules.getDefaultRules()).toEqual("");
+            expect(new HttpRules(HttpRules.getDefaultRules()).size).toEqual(0);
+
+            HttpRules.setDefaultRules(" include default");
+            expect(HttpRules.getDefaultRules()).toEqual("");
+
+            HttpRules.setDefaultRules("include default\n");
+            expect(HttpRules.getDefaultRules()).toEqual("");
+
+            HttpRules.setDefaultRules("include default\ninclude default\n");
+            expect(new HttpRules(HttpRules.getDefaultRules()).size).toEqual(0);
+
+            HttpRules.setDefaultRules("include default\ninclude default\nsample 42");
+            HttpRules rules = new HttpRules(HttpRules.getDefaultRules());
+            expect(rules.size).toEqual(1);
+            expect(rules.sample.size()).toEqual(1);
+        } finally {
+            HttpRules.setDefaultRules(HttpRules.getStrictRules());
+        }
+    }
+
+    @Test
     public void includesDebugRulesTest() {
-        List<HttpRule> rules = HttpRules.parse("include debug");
-        expect(rules.size()).toEqual(2);
-        expect(rules.stream().filter(r -> "allow_http_url".equals(r.verb)).count()).toEqual(1);
-        expect(rules.stream().filter(r -> "copy_session_field".equals(r.verb)).count()).toEqual(1);
+        HttpRules rules = new HttpRules("include debug");
+        expect(rules.size).toEqual(2);
+        expect(rules.allow_http_url).toBeTrue();
+        expect(rules.copy_session_field.size()).toEqual(1);
 
-        rules = HttpRules.parse("include debug\n");
-        expect(rules.size()).toEqual(2);
-        rules = HttpRules.parse("include debug\nsample 50");
-        expect(rules.size()).toEqual(3);
-        expect(rules.stream().filter(r -> "sample".equals(r.verb)).count()).toEqual(1);
+        rules = new HttpRules("include debug\n");
+        expect(rules.size).toEqual(2);
+        rules = new HttpRules("include debug\nsample 50");
+        expect(rules.size).toEqual(3);
+        expect(rules.sample.size()).toEqual(1);
 
-        rules = HttpRules.parse(" include debug\ninclude debug");
-        expect(rules.size()).toEqual(4);
-        rules = HttpRules.parse("include debug\nsample 50\ninclude debug");
-        expect(rules.size()).toEqual(5);
+        rules = new HttpRules(" include debug\ninclude debug");
+        expect(rules.size).toEqual(4);
+        rules = new HttpRules("include debug\nsample 50\ninclude debug");
+        expect(rules.size).toEqual(5);
     }
 
     @Test
     public void includesStandardRulesTest() {
-        List<HttpRule> rules = HttpRules.parse("include standard");
-        expect(rules.size()).toEqual(3);
-        expect(rules.stream().filter(r -> "remove".equals(r.verb)).count()).toEqual(1);
-        expect(rules.stream().filter(r -> "replace".equals(r.verb)).count()).toEqual(2);
+        HttpRules rules = new HttpRules("include standard");
+        expect(rules.size).toEqual(3);
+        expect(rules.remove.size()).toEqual(1);
+        expect(rules.replace.size()).toEqual(2);
 
-        rules = HttpRules.parse("include standard\n");
-        expect(rules.size()).toEqual(3);
-        rules = HttpRules.parse("include standard\nsample 50");
-        expect(rules.size()).toEqual(4);
-        expect(rules.stream().filter(r -> "sample".equals(r.verb)).count()).toEqual(1);
+        rules = new HttpRules("include standard\n");
+        expect(rules.size).toEqual(3);
+        rules = new HttpRules("include standard\nsample 50");
+        expect(rules.size).toEqual(4);
+        expect(rules.sample.size()).toEqual(1);
 
-        rules = HttpRules.parse(" include standard\ninclude standard");
-        expect(rules.size()).toEqual(6);
-        rules = HttpRules.parse("include standard\nsample 50\ninclude standard");
-        expect(rules.size()).toEqual(7);
+        rules = new HttpRules(" include standard\ninclude standard");
+        expect(rules.size).toEqual(6);
+        rules = new HttpRules("include standard\nsample 50\ninclude standard");
+        expect(rules.size).toEqual(7);
     }
 
     @Test
     public void includesStrictRulesTest() {
-        List<HttpRule> rules = HttpRules.parse("include strict");
-        expect(rules.size()).toEqual(2);
-        expect(rules.stream().filter(r -> "remove".equals(r.verb)).count()).toEqual(1);
-        expect(rules.stream().filter(r -> "replace".equals(r.verb)).count()).toEqual(1);
+        HttpRules rules = new HttpRules("include strict");
+        expect(rules.size).toEqual(2);
+        expect(rules.remove.size()).toEqual(1);
+        expect(rules.replace.size()).toEqual(1);
 
-        rules = HttpRules.parse("include strict\n");
-        expect(rules.size()).toEqual(2);
-        rules = HttpRules.parse("include strict\nsample 50");
-        expect(rules.size()).toEqual(3);
-        expect(rules.stream().filter(r -> "sample".equals(r.verb)).count()).toEqual(1);
+        rules = new HttpRules("include strict\n");
+        expect(rules.size).toEqual(2);
+        rules = new HttpRules("include strict\nsample 50");
+        expect(rules.size).toEqual(3);
+        expect(rules.sample.size()).toEqual(1);
 
-        rules = HttpRules.parse(" include strict\ninclude strict");
-        expect(rules.size()).toEqual(4);
-        rules = HttpRules.parse("include strict\nsample 50\ninclude strict");
-        expect(rules.size()).toEqual(5);
+        rules = new HttpRules(" include strict\ninclude strict");
+        expect(rules.size).toEqual(4);
+        rules = new HttpRules("include strict\nsample 50\ninclude strict");
+        expect(rules.size).toEqual(5);
     }
 
     @Test
     public void loadsRulesFromFileTest() {
-        List<HttpRule> rules = HttpRules.parse("file://./test/rules1.txt");
-        expect(rules.size()).toEqual(1);
-        expect(rules.stream().filter(r -> "sample".equals(r.verb)).count()).toEqual(1);
-        expect(rules.stream().filter(r -> "sample".equals(r.verb)).findFirst().get().param1).toEqual(55);
+        HttpRules rules = new HttpRules("file://./test/rules1.txt");
+        expect(rules.size).toEqual(1);
+        expect(rules.sample.size()).toEqual(1);
+        expect(rules.sample.get(0).param1).toEqual(55);
 
-        rules = HttpRules.parse("file://./test/rules2.txt");
-        expect(rules.size()).toEqual(3);
-        expect(rules.stream().filter(r -> "allow_http_url".equals(r.verb)).count()).toEqual(1);
-        expect(rules.stream().filter(r -> "copy_session_field".equals(r.verb)).count()).toEqual(1);
-        expect(rules.stream().filter(r -> "sample".equals(r.verb)).count()).toEqual(1);
-        expect(rules.stream().filter(r -> "sample".equals(r.verb)).findFirst().get().param1).toEqual(56);
+        rules = new HttpRules("file://./test/rules2.txt");
+        expect(rules.size).toEqual(3);
+        expect(rules.allow_http_url).toBeTrue();
+        expect(rules.copy_session_field.size()).toEqual(1);
+        expect(rules.sample.size()).toEqual(1);
+        expect(rules.sample.get(0).param1).toEqual(56);
 
-        rules = HttpRules.parse("file://./test/rules3.txt ");
-        expect(rules.size()).toEqual(3);
-        expect(rules.stream().filter(r -> "remove".equals(r.verb)).count()).toEqual(1);
-        expect(rules.stream().filter(r -> "replace".equals(r.verb)).count()).toEqual(1);
-        expect(rules.stream().filter(r -> "sample".equals(r.verb)).count()).toEqual(1);
-        expect(rules.stream().filter(r -> "sample".equals(r.verb)).findFirst().get().param1).toEqual(57);
+        rules = new HttpRules("file://./test/rules3.txt ");
+        expect(rules.size).toEqual(3);
+        expect(rules.remove.size()).toEqual(1);
+        expect(rules.replace.size()).toEqual(1);
+        expect(rules.sample.size()).toEqual(1);
+        expect(rules.sample.get(0).param1).toEqual(57);
     }
 
     private void parse_fail(String line) {
@@ -133,11 +158,11 @@ public class HttpRulesTest {
 
     @Test
     public void parsesEmptyRulesTest() {
-        expect(HttpRules.parse(null)).toNotBeEmpty();
-        expect(HttpRules.parse("")).toNotBeEmpty();
-        expect(HttpRules.parse(" ")).toNotBeEmpty();
-        expect(HttpRules.parse("\t")).toNotBeEmpty();
-        expect(HttpRules.parse("\n")).toNotBeEmpty();
+        expect(new HttpRules(null).size).toEqual(2);
+        expect(new HttpRules("").size).toEqual(2);
+        expect(new HttpRules(" ").size).toEqual(2);
+        expect(new HttpRules("\t").size).toEqual(2);
+        expect(new HttpRules("\n").size).toEqual(2);
 
         expect(HttpRules.parseRule(null)).toBeNull();
         expect(HttpRules.parseRule("")).toBeNull();
@@ -831,42 +856,42 @@ public class HttpRulesTest {
     @Test
     public void raisesExpectedErrorsTest() {
         try {
-            HttpRules.parse("file://~/bleepblorpbleepblorp12345");
+            new HttpRules("file://~/bleepblorpbleepblorp12345");
             expect(false).toBeTrue();
         } catch (IllegalArgumentException iae) {
             expect(iae.getMessage()).toEqual("Failed to load rules: ~/bleepblorpbleepblorp12345");
         }
 
         try {
-            HttpRules.parseRule("/*! stop");
+            new HttpRules("/*! stop");
             expect(false).toBeTrue();
         } catch (IllegalArgumentException iae) {
             expect(iae.getMessage()).toEqual("Invalid expression (/*!) in rule: /*! stop");
         }
 
         try {
-            HttpRules.parseRule("/*/ stop");
+            new HttpRules("/*/ stop");
             expect(false).toBeTrue();
         } catch (IllegalArgumentException iae) {
             expect(iae.getMessage()).toEqual("Invalid regex (/*/) in rule: /*/ stop");
         }
 
         try {
-            HttpRules.parseRule("/boo");
+            new HttpRules("/boo");
             expect(false).toBeTrue();
         } catch (IllegalArgumentException iae) {
             expect(iae.getMessage()).toEqual("Invalid rule: /boo");
         }
 
         try {
-            HttpRules.parseRule("sample 123");
+            new HttpRules("sample 123");
             expect(false).toBeTrue();
         } catch (IllegalArgumentException iae) {
             expect(iae.getMessage()).toEqual("Invalid sample percent: 123");
         }
 
         try {
-            HttpRules.parseRule("!!! stop");
+            new HttpRules("!!! stop");
             expect(false).toBeTrue();
         } catch (IllegalArgumentException iae) {
             expect(iae.getMessage()).toEqual("Unescaped separator (!) in rule: !!! stop");

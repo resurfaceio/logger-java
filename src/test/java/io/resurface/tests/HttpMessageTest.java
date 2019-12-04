@@ -3,9 +3,13 @@
 package io.resurface.tests;
 
 import io.resurface.HttpLogger;
+import io.resurface.HttpMessage;
 import io.resurface.HttpServletRequestImpl;
 import io.resurface.HttpServletResponseImpl;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.mscharhag.oleaster.matcher.Matchers.expect;
 import static io.resurface.tests.Helper.*;
@@ -13,13 +17,15 @@ import static io.resurface.tests.Helper.*;
 /**
  * Tests against usage logger for HTTP/HTTPS protocol.
  */
-public class HttpLoggerJsonTest {
-
-    private final HttpLogger logger = new HttpLogger("", "include standard");
+public class HttpMessageTest {
 
     @Test
     public void formatRequestTest() {
-        String msg = logger.format(mockRequest(), mockResponse(), null, null, MOCK_NOW);
+        List<String> queue = new ArrayList<>();
+        HttpLogger logger = new HttpLogger(queue, "include debug");
+        HttpMessage.send(logger, mockRequest(), mockResponse(), null, null, MOCK_NOW, 0);
+        expect(queue.size()).toEqual(1);
+        String msg = queue.get(0);
         expect(parseable(msg)).toBeTrue();
         expect(msg).toContain("[\"agent\",\"" + logger.getAgent() + "\"]");
         expect(msg).toContain("[\"host\",\"" + logger.getHost() + "\"]");
@@ -30,11 +36,16 @@ public class HttpLoggerJsonTest {
         expect(msg.contains("request_body")).toBeFalse();
         expect(msg.contains("request_header")).toBeFalse();
         expect(msg.contains("request_param")).toBeFalse();
+        expect(msg.contains("interval")).toBeFalse();
     }
 
     @Test
     public void formatRequestWithBodyTest() {
-        String msg = logger.format(mockRequestWithJson(), mockResponse(), null, MOCK_HTML);
+        List<String> queue = new ArrayList<>();
+        HttpLogger logger = new HttpLogger(queue, "include debug");
+        HttpMessage.send(logger, mockRequestWithJson(), mockResponse(), null, MOCK_HTML);
+        expect(queue.size()).toEqual(1);
+        String msg = queue.get(0);
         expect(parseable(msg)).toBeTrue();
         expect(msg).toContain("[\"request_body\",\"" + MOCK_HTML + "\"]");
         expect(msg).toContain("[\"request_header:content-type\",\"Application/JSON\"]");
@@ -46,7 +57,11 @@ public class HttpLoggerJsonTest {
 
     @Test
     public void formatRequestWithEmptyBodyTest() {
-        String msg = logger.format(mockRequestWithJson2(), mockResponse(), null, "");
+        List<String> queue = new ArrayList<>();
+        HttpLogger logger = new HttpLogger(queue, "include debug");
+        HttpMessage.send(logger, mockRequestWithJson2(), mockResponse(), null, "");
+        expect(queue.size()).toEqual(1);
+        String msg = queue.get(0);
         expect(parseable(msg)).toBeTrue();
         expect(msg).toContain("[\"request_header:a\",\"1\"]");
         expect(msg).toContain("[\"request_header:a\",\"2\"]");
@@ -63,7 +78,11 @@ public class HttpLoggerJsonTest {
 
     @Test
     public void formatRequestWithMissingDetailsTest() {
-        String msg = logger.format(new HttpServletRequestImpl(), mockResponse(), null, null, MOCK_NOW);
+        List<String> queue = new ArrayList<>();
+        HttpLogger logger = new HttpLogger(queue, "include debug");
+        HttpMessage.send(logger, new HttpServletRequestImpl(), mockResponse(), null, null, MOCK_NOW, 0);
+        expect(queue.size()).toEqual(1);
+        String msg = queue.get(0);
         expect(parseable(msg)).toBeTrue();
         expect(msg.contains("request_body")).toBeFalse();
         expect(msg.contains("request_header")).toBeFalse();
@@ -74,7 +93,11 @@ public class HttpLoggerJsonTest {
 
     @Test
     public void formatResponseTest() {
-        String msg = logger.format(mockRequest(), mockResponse());
+        List<String> queue = new ArrayList<>();
+        HttpLogger logger = new HttpLogger(queue, "include debug");
+        HttpMessage.send(logger, mockRequest(), mockResponse());
+        expect(queue.size()).toEqual(1);
+        String msg = queue.get(0);
         expect(parseable(msg)).toBeTrue();
         expect(msg).toContain("[\"response_code\",\"200\"]");
         expect(msg.contains("response_body")).toBeFalse();
@@ -83,7 +106,11 @@ public class HttpLoggerJsonTest {
 
     @Test
     public void formatResponseWithBodyTest() {
-        String msg = logger.format(mockRequest(), mockResponseWithHtml(), MOCK_HTML2);
+        List<String> queue = new ArrayList<>();
+        HttpLogger logger = new HttpLogger(queue, "include debug");
+        HttpMessage.send(logger, mockRequest(), mockResponseWithHtml(), MOCK_HTML2);
+        expect(queue.size()).toEqual(1);
+        String msg = queue.get(0);
         expect(parseable(msg)).toBeTrue();
         expect(msg).toContain("[\"response_body\",\"" + MOCK_HTML2 + "\"]");
         expect(msg).toContain("[\"response_code\",\"200\"]");
@@ -92,7 +119,11 @@ public class HttpLoggerJsonTest {
 
     @Test
     public void formatResponseWithEmptyBodyTest() {
-        String msg = logger.format(mockRequest(), mockResponseWithHtml(), "");
+        List<String> queue = new ArrayList<>();
+        HttpLogger logger = new HttpLogger(queue, "include debug");
+        HttpMessage.send(logger, mockRequest(), mockResponseWithHtml(), "");
+        expect(queue.size()).toEqual(1);
+        String msg = queue.get(0);
         expect(parseable(msg)).toBeTrue();
         expect(msg).toContain("[\"response_code\",\"200\"]");
         expect(msg).toContain("[\"response_header:content-type\",\"text/html; charset=utf-8\"]");
@@ -101,7 +132,11 @@ public class HttpLoggerJsonTest {
 
     @Test
     public void formatResponseWithMissingDetailsTest() {
-        String msg = logger.format(mockRequest(), new HttpServletResponseImpl());
+        List<String> queue = new ArrayList<>();
+        HttpLogger logger = new HttpLogger(queue, "include debug");
+        HttpMessage.send(logger, mockRequest(), new HttpServletResponseImpl());
+        expect(queue.size()).toEqual(1);
+        String msg = queue.get(0);
         expect(parseable(msg)).toBeTrue();
         expect(msg).toContain("[\"response_code\",\"0\"]");
         expect(msg.contains("response_body")).toBeFalse();

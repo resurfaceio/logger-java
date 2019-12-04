@@ -2,7 +2,6 @@
 
 package io.resurface;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
@@ -182,12 +181,11 @@ public class BaseLogger<T extends BaseLogger> {
     /**
      * Submits JSON message to intended destination.
      */
-    public boolean submit(String msg) {
+    public void submit(String msg) {
         if (msg == null || this.skip_submission || !isEnabled()) {
-            return true;
+            // do nothing
         } else if (queue != null) {
             queue.add(msg);
-            return true;
         } else {
             try {
                 URL url_parsed = new URL(this.url);
@@ -209,9 +207,11 @@ public class BaseLogger<T extends BaseLogger> {
                     }
                     os.flush();
                 }
-                return url_connection.getResponseCode() == 204;
-            } catch (IOException ioe) {
-                return false;
+                // if (url_connection.getResponseCode() != 204) {
+                // todo count as error
+                // }
+            } catch (Exception e) {
+                // todo count as error
             }
         }
     }

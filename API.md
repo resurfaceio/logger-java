@@ -43,13 +43,13 @@ as response body and request body content when these are available.
 
 ```java
 // with standard objects
-logger.log(request, response);
+HttpMessage.send(logger, request, response);
 
 // with response body
-logger.log(request, response, "my-response-body");
+HttpMessage.send(logger, request, response, "my-response-body");
 
 // with response and request body
-logger.log(request, response, "my-response-body", "my-request-body");
+HttpMessage.send(logger, request, response, "my-response-body", "my-request-body");
 ```
 
 If standard request and response objects aren't available in your case, create mock implementations to pass instead.
@@ -72,7 +72,7 @@ response.setHeader("B", "234");
 response.setStatus(200);
 
 // log objects defined above
-logger.log(request, response);
+HttpMessage.send(logger, request, response);
 ```
 
 <a name="setting_default_rules"/>

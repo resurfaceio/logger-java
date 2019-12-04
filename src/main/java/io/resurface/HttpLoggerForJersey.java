@@ -102,7 +102,7 @@ public class HttpLoggerForJersey implements ContainerResponseFilter, ReaderInter
             byte[] rbb = (byte[]) context.getProperty("resurfaceio.requestBodyBytes");
             String requestBody = (rbb == null) ? null : new String(rbb, StandardCharsets.UTF_8);
             HttpServletRequestImpl request = (HttpServletRequestImpl) context.getProperty("resurfaceio.request");
-            logger.submit(logger.format(request, response, responseBody, requestBody));
+            HttpMessage.send(logger, request, response, responseBody, requestBody);
         } else {
             context.proceed();
         }

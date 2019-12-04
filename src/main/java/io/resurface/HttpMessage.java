@@ -4,15 +4,75 @@ package io.resurface;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Message implementation for HTTP logger.
  */
 public class HttpMessage {
+
+    /**
+     * Submits request and response through logger.
+     */
+    public static void send(HttpLogger logger, HttpServletRequest request, HttpServletResponse response) {
+        send(logger, request, response, null, null, 0, 0);
+    }
+
+    /**
+     * Submits request and response through logger.
+     */
+    public static void send(HttpLogger logger, HttpServletRequest request, HttpServletResponse response, String response_body) {
+        send(logger, request, response, response_body, null, 0, 0);
+    }
+
+    /**
+     * Submits request and response through logger.
+     */
+    public static void send(HttpLogger logger, HttpServletRequest request, HttpServletResponse response,
+                            String response_body, String request_body) {
+        send(logger, request, response, response_body, request_body, 0, 0);
+    }
+
+    /**
+     * Submits request and response through logger.
+     */
+    public static void send(HttpLogger logger, HttpServletRequest request, HttpServletResponse response,
+                            String response_body, String request_body, long now, long interval) {
+
+        if (!logger.isEnabled()) return;
+
+        // copy details from request & response
+        List<String[]> details = HttpMessage.build(request, response, response_body, request_body);
+
+        // copy data from session if configured
+        if (!logger.getRules().copy_session_field.isEmpty()) {
+            HttpSession ssn = request.getSession(false);
+            if (ssn != null) {
+                for (HttpRule r : logger.getRules().copy_session_field) {
+                    Enumeration<String> names = ssn.getAttributeNames();
+                    while (names.hasMoreElements()) {
+                        String d = names.nextElement();
+                        if (((Pattern) r.param1).matcher(d).matches()) {
+                            String val = ssn.getAttribute(d).toString();
+                            details.add(new String[]{"session_field:" + d, val});
+                        }
+                    }
+                }
+            }
+        }
+
+        // add timing details
+        if (now == 0) now = System.currentTimeMillis();
+        details.add(new String[]{"now", String.valueOf(now)});
+        if (interval != 0) details.add(new String[]{"interval", String.valueOf(interval)});
+
+        logger.submitIfPassing(details);
+    }
 
     /**
      * Builds list of key/value pairs for HTTP request and response.

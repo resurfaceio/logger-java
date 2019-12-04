@@ -128,16 +128,6 @@ public class BaseLoggerTest {
     }
 
     @Test
-    public void skipsLoggingWhenDisabledTest() {
-        for (String url : MOCK_URLS_DENIED) {
-            BaseLogger logger = new BaseLogger(MOCK_AGENT, url).disable();
-            expect(logger.isEnableable()).toBeTrue();
-            expect(logger.isEnabled()).toBeFalse();
-            expect(logger.submit(null)).toBeTrue();  // would fail if enabled
-        }
-    }
-
-    @Test
     public void submitsToDemoUrlTest() {
         BaseLogger logger = new BaseLogger(MOCK_AGENT, Helper.DEMO_URL);
         expect(logger.getUrl()).toEqual(Helper.DEMO_URL);
@@ -148,7 +138,7 @@ public class BaseLoggerTest {
         message.add(new String[]{"protocol", "https"});
         String msg = Json.stringify(message);
         expect(parseable(msg)).toBeTrue();
-        expect(logger.submit(msg)).toBeTrue();
+        logger.submit(msg);
     }
 
     @Test
@@ -162,7 +152,7 @@ public class BaseLoggerTest {
         message.add(new String[]{"protocol", "http"});
         String msg = Json.stringify(message);
         expect(parseable(msg)).toBeTrue();
-        expect(logger.submit(msg)).toBeTrue();
+        logger.submit(msg);
     }
 
     @Test
@@ -178,16 +168,16 @@ public class BaseLoggerTest {
         message.add(new String[]{"skip_compression", "true"});
         String msg = Json.stringify(message);
         expect(parseable(msg)).toBeTrue();
-        expect(logger.submit(msg)).toBeTrue();
+        logger.submit(msg);
     }
 
     @Test
-    public void submitsToDeniedUrlAndFailsTest() {
+    public void submitsToDeniedUrlTest() {
         for (String url : MOCK_URLS_DENIED) {
             BaseLogger logger = new BaseLogger(MOCK_AGENT, url);
             expect(logger.isEnableable()).toBeTrue();
             expect(logger.isEnabled()).toBeTrue();
-            expect(logger.submit("{}")).toBeFalse();
+            logger.submit("{}");
         }
     }
 
@@ -200,9 +190,9 @@ public class BaseLoggerTest {
         expect(logger.isEnableable()).toBeTrue();
         expect(logger.isEnabled()).toBeTrue();
         expect(queue.size()).toEqual(0);
-        expect(logger.submit("{}")).toBeTrue();
+        logger.submit("{}");
         expect(queue.size()).toEqual(1);
-        expect(logger.submit("{}")).toBeTrue();
+        logger.submit("{}");
         expect(queue.size()).toEqual(2);
     }
 

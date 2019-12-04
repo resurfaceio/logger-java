@@ -112,19 +112,19 @@ public FilterRegistrationBean httpLoggerFilter() {
 After <a href="#installing_with_maven">installing the library</a>, create a logger and call it from the routes of interest.
 
 ```java
-import io.resurface.HttpLogger;
+import io.resurface.*;
 
 HttpLogger logger = new HttpLogger("https://...", "include strict");
 
 get("/hello", (request, response) -> {
     String response_body = "Hello World";
-    logger.log(request.raw(), response.raw(), response_body);
+    HttpMessage.send(logger, request.raw(), response.raw(), response_body);
     return response_body;
 });
 
 post("/hello_post", (request, response) -> {
     String response_body = "POSTED: " + request.body();
-    logger.log(request.raw(), response.raw(), response_body, request.body());
+    HttpMessage.send(logger, request.raw(), response.raw(), response_body, request.body());
     return response_body;
 });
 ```
@@ -134,7 +134,7 @@ Alternatively configure an `after` filter to log across multiple routes at once.
 ```java
 after((request, response) -> {
     if (response.body() != null) {  // log successful responses only, not 404/500s
-        logger.log(request.raw(), response.raw(), response.body(), request.body());
+        HttpMessage.send(logger, request.raw(), response.raw(), response.body(), request.body());
     }
 });
 ```

@@ -6,71 +6,62 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Parser and utilities for HTTP logger rules.
  */
 public class HttpRules {
 
+    public static final String DEBUG_RULES = "allow_http_url\ncopy_session_field /.*/\n";
+
+    public static final String STANDARD_RULES = "/request_header:cookie|response_header:set-cookie/remove\n" +
+            "/(request|response)_body|request_param/ replace /[a-zA-Z0-9.!#$%&’*+\\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)/, /x@y.com/\n" +
+            "/request_body|request_param|response_body/ replace /[0-9\\.\\-\\/]{9,}/, /xyxy/\n";
+
+    public static final String STRICT_RULES = "/request_url/ replace /([^\\?;]+).*/, /$1/\n" +
+            "/request_body|response_body|request_param:.*|request_header:(?!user-agent).*|response_header:(?!(content-length)|(content-type)).*/ remove\n";
+
+    private static String defaultRules = HttpRules.getStrictRules();
+
+    /**
+     * Returns rules used by default when none are declared.
+     */
+    public static String getDefaultRules() {
+        return defaultRules;
+    }
+
+    /**
+     * Updates rules used by default when none are declared.
+     */
+    public static void setDefaultRules(String r) {
+        defaultRules = r.replaceAll("(?m)^\\s*include default\\s*$", "");
+    }
+
     /**
      * Rules providing all details for debugging an application.
      */
     public static String getDebugRules() {
-        return "allow_http_url\ncopy_session_field /.*/\n";
+        return DEBUG_RULES;
     }
 
     /**
      * Rules that block common kinds of sensitive data.
      */
     public static String getStandardRules() {
-        return "/request_header:cookie|response_header:set-cookie/ remove\n" +
-                "/(request|response)_body|request_param/ replace /[a-zA-Z0-9.!#$%&’*+\\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)/, /x@y.com/\n" +
-                "/request_body|request_param|response_body/ replace /[0-9\\.\\-\\/]{9,}/, /xyxy/\n";
+        return STANDARD_RULES;
     }
 
     /**
      * Rules providing minimal details, used by default.
      */
     public static String getStrictRules() {
-        return "/request_url/ replace /([^\\?;]+).*/, /$1/\n" +
-                "/request_body|response_body|request_param:.*|request_header:(?!user-agent).*|response_header:(?!(content-length)|(content-type)).*/ remove\n";
-    }
-
-    /**
-     * Parses rules from multi-line string.
-     */
-    public static List<HttpRule> parse(String rules) {
-        if (rules == null) rules = "";
-
-        // load rules from external files
-        if (rules.startsWith("file://")) {
-            String rfile = rules.substring(7).trim();
-            try {
-                rules = new String(Files.readAllBytes(Paths.get(rfile)));
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Failed to load rules: " + rfile);
-            }
-        }
-
-        // force default rules if necessary
-        rules = rules.replaceAll("(?m)^\\s*include default\\s*$", Matcher.quoteReplacement(HttpLogger.getDefaultRules()));
-        if (rules.trim().length() == 0) rules = HttpLogger.getDefaultRules();
-
-        // expand rule includes
-        rules = rules.replaceAll("(?m)^\\s*include debug\\s*$", Matcher.quoteReplacement(getDebugRules()));
-        rules = rules.replaceAll("(?m)^\\s*include standard\\s*$", Matcher.quoteReplacement(getStandardRules()));
-        rules = rules.replaceAll("(?m)^\\s*include strict\\s*$", Matcher.quoteReplacement(getStrictRules()));
-
-        // parse all rules
-        List<HttpRule> result = new ArrayList<>();
-        for (String rule : rules.split("\\r?\\n")) {
-            HttpRule parsed = parseRule(rule);
-            if (parsed != null) result.add(parsed);
-        }
-        return result;
+        return STRICT_RULES;
     }
 
     /**
@@ -162,6 +153,138 @@ public class HttpRules {
         throw new IllegalArgumentException(String.format("Invalid expression (%s) in rule: %s", expr, r));
     }
 
+    /**
+     * Initialize a new set of rules.
+     */
+    public HttpRules(String rules) {
+        if (rules != null) {
+            // load rules from external files
+            if (rules.startsWith("file://")) {
+                String rfile = rules.substring(7).trim();
+                try {
+                    rules = new String(Files.readAllBytes(Paths.get(rfile)));
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Failed to load rules: " + rfile);
+                }
+            }
+
+            // force default rules if necessary
+            rules = rules.replaceAll("(?m)^\\s*include default\\s*$", Matcher.quoteReplacement(HttpRules.getDefaultRules()));
+            if (rules.trim().length() == 0) rules = HttpRules.getDefaultRules();
+
+            // expand rule includes
+            rules = rules.replaceAll("(?m)^\\s*include debug\\s*$", Matcher.quoteReplacement(getDebugRules()));
+            rules = rules.replaceAll("(?m)^\\s*include standard\\s*$", Matcher.quoteReplacement(getStandardRules()));
+            rules = rules.replaceAll("(?m)^\\s*include strict\\s*$", Matcher.quoteReplacement(getStrictRules()));
+            this.text = rules;
+        } else {
+            this.text = HttpRules.getDefaultRules();
+        }
+
+        // parse all rules
+        List<HttpRule> prs = new ArrayList<>();
+        for (String rule : this.text.split("\\r?\\n")) {
+            HttpRule parsed = parseRule(rule);
+            if (parsed != null) prs.add(parsed);
+        }
+        this.size = prs.size();
+
+        // break out rules by verb
+        this.allow_http_url = prs.stream().anyMatch(r -> "allow_http_url".equals(r.verb));
+        this.copy_session_field = prs.stream().filter(r -> "copy_session_field".equals(r.verb)).collect(toList());
+        this.remove = prs.stream().filter(r -> "remove".equals(r.verb)).collect(toList());
+        this.remove_if = prs.stream().filter(r -> "remove_if".equals(r.verb)).collect(toList());
+        this.remove_if_found = prs.stream().filter(r -> "remove_if_found".equals(r.verb)).collect(toList());
+        this.remove_unless = prs.stream().filter(r -> "remove_unless".equals(r.verb)).collect(toList());
+        this.remove_unless_found = prs.stream().filter(r -> "remove_unless_found".equals(r.verb)).collect(toList());
+        this.replace = prs.stream().filter(r -> "replace".equals(r.verb)).collect(toList());
+        this.sample = prs.stream().filter(r -> "sample".equals(r.verb)).collect(toList());
+        this.skip_compression = prs.stream().anyMatch(r -> "skip_compression".equals(r.verb));
+        this.skip_submission = prs.stream().anyMatch(r -> "skip_submission".equals(r.verb));
+        this.stop = prs.stream().filter(r -> "stop".equals(r.verb)).collect(toList());
+        this.stop_if = prs.stream().filter(r -> "stop_if".equals(r.verb)).collect(toList());
+        this.stop_if_found = prs.stream().filter(r -> "stop_if_found".equals(r.verb)).collect(toList());
+        this.stop_unless = prs.stream().filter(r -> "stop_unless".equals(r.verb)).collect(toList());
+        this.stop_unless_found = prs.stream().filter(r -> "stop_unless_found".equals(r.verb)).collect(toList());
+
+        // finish validating rules
+        if (this.sample.size() > 1) throw new IllegalArgumentException("Multiple sample rules");
+    }
+
+    public final boolean allow_http_url;
+    public final List<HttpRule> copy_session_field;
+    public final List<HttpRule> remove;
+    public final List<HttpRule> remove_if;
+    public final List<HttpRule> remove_if_found;
+    public final List<HttpRule> remove_unless;
+    public final List<HttpRule> remove_unless_found;
+    public final List<HttpRule> replace;
+    public final List<HttpRule> sample;
+    public final boolean skip_compression;
+    public final boolean skip_submission;
+    public final int size;
+    public final List<HttpRule> stop;
+    public final List<HttpRule> stop_if;
+    public final List<HttpRule> stop_if_found;
+    public final List<HttpRule> stop_unless;
+    public final List<HttpRule> stop_unless_found;
+    public final String text;
+
+    /**
+     * Apply current rules to message details.
+     */
+    public List<String[]> apply(List<String[]> details) {
+
+        // stop rules come first
+        for (HttpRule r : stop)
+            for (String[] d : details)
+                if (r.scope.matcher(d[0]).matches()) return null;
+        for (HttpRule r : stop_if_found)
+            for (String[] d : details)
+                if (r.scope.matcher(d[0]).matches() && ((Pattern) r.param1).matcher(d[1]).find()) return null;
+        for (HttpRule r : stop_if)
+            for (String[] d : details)
+                if (r.scope.matcher(d[0]).matches() && ((Pattern) r.param1).matcher(d[1]).matches()) return null;
+        int passed = 0;
+        for (HttpRule r : stop_unless_found)
+            for (String[] d : details)
+                if (r.scope.matcher(d[0]).matches() && ((Pattern) r.param1).matcher(d[1]).find()) passed++;
+        if (passed != stop_unless_found.size()) return null;
+        passed = 0;
+        for (HttpRule r : stop_unless)
+            for (String[] d : details)
+                if (r.scope.matcher(d[0]).matches() && ((Pattern) r.param1).matcher(d[1]).matches()) passed++;
+        if (passed != stop_unless.size()) return null;
+
+        // do sampling if configured
+        if ((sample.size() == 1) && (RANDOM.nextInt(100) >= (Integer) sample.get(0).param1)) return null;
+
+        // winnow sensitive details based on remove rules if configured
+        for (HttpRule r : remove)
+            details.removeIf(d -> r.scope.matcher(d[0]).matches());
+        for (HttpRule r : remove_unless_found)
+            details.removeIf(d -> r.scope.matcher(d[0]).matches() && !((Pattern) r.param1).matcher(d[1]).find());
+        for (HttpRule r : remove_if_found)
+            details.removeIf(d -> r.scope.matcher(d[0]).matches() && ((Pattern) r.param1).matcher(d[1]).find());
+        for (HttpRule r : remove_unless)
+            details.removeIf(d -> r.scope.matcher(d[0]).matches() && !((Pattern) r.param1).matcher(d[1]).matches());
+        for (HttpRule r : remove_if)
+            details.removeIf(d -> r.scope.matcher(d[0]).matches() && ((Pattern) r.param1).matcher(d[1]).matches());
+        if (details.isEmpty()) return null;
+
+        // mask sensitive details based on replace rules if configured
+        for (HttpRule r : replace)
+            for (String[] d : details)
+                if (r.scope.matcher(d[0]).matches()) d[1] = ((Pattern) r.param1).matcher(d[1]).replaceAll((String) r.param2);
+
+        // remove any details with empty values
+        details.removeIf(d -> "".equals(d[1]));
+        if (details.isEmpty()) return null;
+
+        return details;
+    }
+
+    private static final Random RANDOM = new Random();
     private static final Pattern REGEX_ALLOW_HTTP_URL = Pattern.compile("^\\s*allow_http_url\\s*(#.*)?$");
     private static final Pattern REGEX_BLANK_OR_COMMENT = Pattern.compile("^\\s*([#].*)*$");
     private static final Pattern REGEX_COPY_SESSION_FIELD = Pattern.compile("^\\s*copy_session_field\\s+([~!%|/].+[~!%|/])\\s*(#.*)?$");
