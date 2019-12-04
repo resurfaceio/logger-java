@@ -139,6 +139,7 @@ public class BaseLoggerTest {
         String msg = Json.stringify(message);
         expect(parseable(msg)).toBeTrue();
         logger.submit(msg);
+        expect(logger.getSubmitFailures()).toEqual(0);
     }
 
     @Test
@@ -153,6 +154,7 @@ public class BaseLoggerTest {
         String msg = Json.stringify(message);
         expect(parseable(msg)).toBeTrue();
         logger.submit(msg);
+        expect(logger.getSubmitFailures()).toEqual(0);
     }
 
     @Test
@@ -169,6 +171,7 @@ public class BaseLoggerTest {
         String msg = Json.stringify(message);
         expect(parseable(msg)).toBeTrue();
         logger.submit(msg);
+        expect(logger.getSubmitFailures()).toEqual(0);
     }
 
     @Test
@@ -178,6 +181,7 @@ public class BaseLoggerTest {
             expect(logger.isEnableable()).toBeTrue();
             expect(logger.isEnabled()).toBeTrue();
             logger.submit("{}");
+            expect(logger.getSubmitFailures()).toEqual(1);
         }
     }
 
@@ -194,6 +198,7 @@ public class BaseLoggerTest {
         expect(queue.size()).toEqual(1);
         logger.submit("{}");
         expect(queue.size()).toEqual(2);
+        expect(logger.getSubmitFailures()).toEqual(0);
     }
 
     @Test

@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.DeflaterOutputStream;
 
 /**
@@ -207,13 +208,20 @@ public class BaseLogger<T extends BaseLogger> {
                     }
                     os.flush();
                 }
-                // if (url_connection.getResponseCode() != 204) {
-                // todo count as error
-                // }
+                if (url_connection.getResponseCode() != 204) {
+                    submit_failures.incrementAndGet();
+                }
             } catch (Exception e) {
-                // todo count as error
+                submit_failures.incrementAndGet();
             }
         }
+    }
+
+    /**
+     * Returns count of submissions that failed.
+     */
+    public int getSubmitFailures() {
+        return submit_failures.get();
     }
 
     /**
@@ -243,6 +251,7 @@ public class BaseLogger<T extends BaseLogger> {
     protected final List<String> queue;
     protected boolean skip_compression = false;
     protected boolean skip_submission = false;
+    protected AtomicInteger submit_failures = new AtomicInteger();
     protected String url;
     protected final String version;
 

@@ -134,21 +134,17 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
      * Apply logging rules to message details and submit JSON message.
      */
     public void submitIfPassing(List<String[]> details) {
-        try {
-            // apply active rules
-            details = rules.apply(details);
-            if (details == null) return;
+        // apply active rules
+        details = rules.apply(details);
+        if (details == null) return;
 
-            // finalize message
-            details.add(new String[]{"agent", this.agent});
-            details.add(new String[]{"host", this.host});
-            details.add(new String[]{"version", this.version});
+        // finalize message
+        details.add(new String[]{"agent", this.agent});
+        details.add(new String[]{"host", this.host});
+        details.add(new String[]{"version", this.version});
 
-            // let's do this thing
-            submit(Json.stringify(details));
-        } catch (Exception e) {
-            // todo count as error
-        }
+        // let's do this thing
+        submit(Json.stringify(details));
     }
 
 }
