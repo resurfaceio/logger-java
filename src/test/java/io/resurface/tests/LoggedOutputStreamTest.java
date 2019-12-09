@@ -50,4 +50,50 @@ public class LoggedOutputStreamTest {
         assertArrayEquals(test_bytes, los.logged());
     }
 
+    @Test
+    public void writeOverflowByteArrayTest() throws IOException {
+        byte[] testb = {0x00};
+        LoggedOutputStream los = new LoggedOutputStream(new ByteArrayOutputStream(), 100);
+        for (int i = 1; i <= 100; i++) {
+            los.write(testb);
+            expect(los.overflowed()).toBeFalse();
+        }
+        los.write(testb);
+        expect(los.overflowed()).toBeTrue();
+        expect(new String(los.logged())).toEqual("{ \"overflowed\": 101 }");
+        los.write(testb);
+        expect(los.overflowed()).toBeTrue();
+        expect(new String(los.logged())).toEqual("{ \"overflowed\": 102 }");
+    }
+
+    @Test
+    public void writeOverflowByteArrayWithOffsetTest() throws IOException {
+        byte[] testb = {0x00, 0x01, 0x02};
+        LoggedOutputStream los = new LoggedOutputStream(new ByteArrayOutputStream(), 100);
+        for (int i = 1; i <= 50; i++) {
+            los.write(testb, 1, 2);
+            expect(los.overflowed()).toBeFalse();
+        }
+        los.write(testb, 1, 2);
+        expect(los.overflowed()).toBeTrue();
+        expect(new String(los.logged())).toEqual("{ \"overflowed\": 102 }");
+        los.write(testb, 1, 2);
+        expect(los.overflowed()).toBeTrue();
+        expect(new String(los.logged())).toEqual("{ \"overflowed\": 104 }");
+    }
+
+    @Test
+    public void writeOverflowIntTest() throws IOException {
+        LoggedOutputStream los = new LoggedOutputStream(new ByteArrayOutputStream(), 100);
+        for (int i = 1; i <= 25; i++) {
+            los.write(0);
+            expect(los.overflowed()).toBeFalse();
+        }
+        los.write(0);
+        expect(los.overflowed()).toBeTrue();
+        expect(new String(los.logged())).toEqual("{ \"overflowed\": 104 }");
+        los.write(0);
+        expect(los.overflowed()).toBeTrue();
+        expect(new String(los.logged())).toEqual("{ \"overflowed\": 108 }");
+    }
 }

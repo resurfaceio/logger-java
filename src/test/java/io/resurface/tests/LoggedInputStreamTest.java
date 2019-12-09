@@ -6,6 +6,7 @@ import io.resurface.LoggedInputStream;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -22,18 +23,6 @@ public class LoggedInputStreamTest {
     public void badInputTest() throws IOException {
         try {
             InputStream input = null;
-            //noinspection ConstantConditions
-            new LoggedInputStream(input);
-            fail("stream was created with null input");
-        } catch (IllegalArgumentException iae) {
-            expect(iae.getMessage()).toContain("Null input");
-        }
-    }
-
-    @Test
-    public void badInputTest2() {
-        try {
-            byte[] input = null;
             //noinspection ConstantConditions
             new LoggedInputStream(input);
             fail("stream was created with null input");
@@ -62,6 +51,23 @@ public class LoggedInputStreamTest {
         expect(lis.available()).toEqual(48);
         assertArrayEquals(test_bytes, lis.logged());
         assertArrayEquals(test_bytes, lis.logged());  // can read this more than once
+    }
+
+    @Test
+    public void readOverflowTest() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        for (int i = 1; i <= 101; i++) baos.write(0);
+        LoggedInputStream lis = new LoggedInputStream(new ByteArrayInputStream(baos.toByteArray()), 100);
+        expect(new String(lis.logged())).toEqual("{ \"overflowed\": 101 }");
+
+        for (int i = 1; i <= 2000; i++) baos.write(0);
+        lis = new LoggedInputStream(new ByteArrayInputStream(baos.toByteArray()), 1024);
+        expect(new String(lis.logged())).toEqual("{ \"overflowed\": 2101 }");
+
+        for (int i = 1; i <= 10000; i++) baos.write(0);
+        lis = new LoggedInputStream(new ByteArrayInputStream(baos.toByteArray()), 12100);
+        expect(new String(lis.logged())).toEqual("{ \"overflowed\": 12101 }");
     }
 
 }

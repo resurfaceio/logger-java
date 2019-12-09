@@ -5,6 +5,7 @@ package io.resurface;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 
 /**
  * Servlet output stream allowing data to be read after being written/flushed.
@@ -15,7 +16,15 @@ public class LoggedOutputStream extends javax.servlet.ServletOutputStream {
      * Constructor taking original output stream to wrap.
      */
     public LoggedOutputStream(OutputStream output) {
+        this(output, 1024 * 1024);
+    }
+
+    /**
+     * Constructor taking original output stream and limit in bytes.
+     */
+    public LoggedOutputStream(OutputStream output, int limit) {
         if (output == null) throw new IllegalArgumentException("Null output");
+        this.limit = limit;
         this.logged = new ByteArrayOutputStream();
         this.output = output;
     }
@@ -56,7 +65,24 @@ public class LoggedOutputStream extends javax.servlet.ServletOutputStream {
      * Return raw data logged so far.
      */
     public byte[] logged() {
-        return logged.toByteArray();
+        if (overflowed) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PrintWriter pw = new PrintWriter(baos);
+            pw.print("{ \"overflowed\": ");
+            pw.print(logged_bytes);
+            pw.print(" }");
+            pw.flush();
+            return baos.toByteArray();
+        } else {
+            return logged.toByteArray();
+        }
+    }
+
+    /**
+     * Returns true if data limit has been reached.
+     */
+    public boolean overflowed() {
+        return overflowed;
     }
 
     /**
@@ -67,7 +93,13 @@ public class LoggedOutputStream extends javax.servlet.ServletOutputStream {
         try {
             output.write(b);
         } finally {
-            logged.write(b);
+            logged_bytes += 4;
+            if (logged_bytes > limit) {
+                overflowed = true;
+                logged = null;
+            } else {
+                logged.write(b);
+            }
         }
     }
 
@@ -80,7 +112,13 @@ public class LoggedOutputStream extends javax.servlet.ServletOutputStream {
             output.write(b);
         } finally {
             try {
-                logged.write(b);
+                logged_bytes += b.length;
+                if (logged_bytes > limit) {
+                    overflowed = true;
+                    logged = null;
+                } else {
+                    logged.write(b);
+                }
             } catch (IOException ioe) {
                 // do nothing
             }
@@ -95,11 +133,19 @@ public class LoggedOutputStream extends javax.servlet.ServletOutputStream {
         try {
             output.write(b, off, len);
         } finally {
-            logged.write(b, off, len);
+            logged_bytes += len;
+            if (logged_bytes > limit) {
+                overflowed = true;
+                logged = null;
+            } else {
+                logged.write(b, off, len);
+            }
         }
     }
 
-    private final ByteArrayOutputStream logged;
+    private final int limit;
+    private ByteArrayOutputStream logged;
+    private int logged_bytes = 0;
     private final OutputStream output;
-
+    private boolean overflowed = false;
 }

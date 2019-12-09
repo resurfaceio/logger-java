@@ -2,10 +2,7 @@
 
 package io.resurface;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 /**
  * Servlet input stream allowing data to be read more than once.
@@ -13,25 +10,43 @@ import java.io.InputStream;
 public class LoggedInputStream extends javax.servlet.ServletInputStream {
 
     /**
-     * Constructor taking original raw bytes to wrap.
-     */
-    public LoggedInputStream(byte[] input) {
-        if (input == null) throw new IllegalArgumentException("Null input");
-        this.logged = input;
-        this.stream = new ByteArrayInputStream(logged);
-    }
-
-    /**
      * Constructor taking original input stream to wrap.
      */
     public LoggedInputStream(InputStream input) throws IOException {
+        this(input, 1024 * 1024);
+    }
+
+    /**
+     * Constructor taking original input stream and limit in bytes.
+     */
+    public LoggedInputStream(InputStream input, int limit) throws IOException {
         if (input == null) throw new IllegalArgumentException("Null input");
+
+        int logged_bytes = 0;
+        boolean overflowed = false;
+
+        // consume entire input stream, but enforce limit on copying
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        byte buf[] = new byte[1024];
+        byte[] buf = new byte[1024];
         int len;
         while ((len = input.read(buf)) > 0) {
-            os.write(buf, 0, len);
+            logged_bytes += len;
+            if (logged_bytes > limit) {
+                overflowed = true;
+            } else {
+                os.write(buf, 0, len);
+            }
         }
+
+        if (overflowed) {
+            os = new ByteArrayOutputStream();
+            PrintWriter pw = new PrintWriter(os);
+            pw.print("{ \"overflowed\": ");
+            pw.print(logged_bytes);
+            pw.print(" }");
+            pw.flush();
+        }
+
         this.logged = os.toByteArray();
         this.stream = new ByteArrayInputStream(logged);
     }
