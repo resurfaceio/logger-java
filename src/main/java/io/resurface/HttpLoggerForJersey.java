@@ -9,6 +9,7 @@ import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.ext.*;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -69,23 +70,47 @@ public class HttpLoggerForJersey implements ContainerResponseFilter, ReaderInter
     @Override
     public void filter(ContainerRequestContext request, ContainerResponseContext response) {
         if (!logger.enabled) return;
+        List<String[]> message = new ArrayList<>();
+        String method = request.getMethod();
+        if (method != null) message.add(new String[]{"request_method", method});
+        String formatted_url = request.getUriInfo().getRequestUri().toString();
+        if (formatted_url != null) message.add(new String[]{"request_url", formatted_url});
+        message.add(new String[]{"response_code", String.valueOf(response.getStatus())});
+        appendRequestHeaders(message, request);
+        appendRequestParams(message, request);
+        appendResponseHeaders(message, response);
+        request.setProperty("resurfaceio.message", message);
+        request.setProperty("resurfaceio.response", response);
+    }
 
-        // Save request details
-        HttpServletRequestImpl requestImpl = new HttpServletRequestImpl();
-        requestImpl.setMethod(request.getMethod());
-        requestImpl.setRequestURL(request.getUriInfo().getRequestUri().toString());
-        for (Map.Entry<String, List<String>> x : request.getHeaders().entrySet())
-            for (String xv : x.getValue()) requestImpl.addHeader(x.getKey(), xv);
-        for (Map.Entry<String, List<String>> x : request.getUriInfo().getQueryParameters(true).entrySet())
-            for (String xv : x.getValue()) requestImpl.addParam(x.getKey(), xv);
-        request.setProperty("resurfaceio.request", requestImpl);
+    /**
+     * Adds request headers to message.
+     */
+    private static void appendRequestHeaders(List<String[]> message, ContainerRequestContext request) {
+        for (Map.Entry<String, List<String>> x : request.getHeaders().entrySet()) {
+            String name = "request_header:" + x.getKey().toLowerCase();
+            for (String xv : x.getValue()) message.add(new String[]{name, xv});
+        }
+    }
 
-        // Save response details
-        HttpServletResponseImpl responseImpl = new HttpServletResponseImpl();
-        responseImpl.setStatus(response.getStatus());
-        for (Map.Entry<String, List<String>> x : response.getStringHeaders().entrySet())
-            for (String xv : x.getValue()) responseImpl.addHeader(x.getKey(), xv);
-        request.setProperty("resurfaceio.response", responseImpl);
+    /**
+     * Adds request params to message.
+     */
+    private static void appendRequestParams(List<String[]> message, ContainerRequestContext request) {
+        for (Map.Entry<String, List<String>> x : request.getUriInfo().getQueryParameters(true).entrySet()) {
+            String name = "request_param:" + x.getKey().toLowerCase();
+            for (String xv : x.getValue()) message.add(new String[]{name, xv});
+        }
+    }
+
+    /**
+     * Adds response headers to message.
+     */
+    private static void appendResponseHeaders(List<String[]> message, ContainerResponseContext response) {
+        for (Map.Entry<String, List<String>> x : response.getStringHeaders().entrySet()) {
+            String name = "response_header:" + x.getKey().toLowerCase();
+            for (String xv : x.getValue()) message.add(new String[]{name, xv});
+        }
     }
 
     /**
@@ -93,16 +118,19 @@ public class HttpLoggerForJersey implements ContainerResponseFilter, ReaderInter
      */
     @Override
     public void aroundWriteTo(WriterInterceptorContext context) throws IOException, WebApplicationException {
-        HttpServletResponseImpl response = (HttpServletResponseImpl) context.getProperty("resurfaceio.response");
+        ContainerResponseContext response = (ContainerResponseContext) context.getProperty("resurfaceio.response");
         if (logger.enabled && (response.getStatus() < 300 || response.getStatus() == 302)) {
+            List<String[]> message = (List<String[]>) context.getProperty("resurfaceio.message");
             LoggedOutputStream los = new LoggedOutputStream(context.getOutputStream());
             context.setOutputStream(los);
             context.proceed();
-            String responseBody = new String(los.logged(), StandardCharsets.UTF_8);
             byte[] rbb = (byte[]) context.getProperty("resurfaceio.requestBodyBytes");
-            String requestBody = (rbb == null) ? null : new String(rbb, StandardCharsets.UTF_8);
-            HttpServletRequestImpl request = (HttpServletRequestImpl) context.getProperty("resurfaceio.request");
-            HttpMessage.send(logger, request, response, responseBody, requestBody);
+            String request_body = (rbb == null) ? null : new String(rbb, StandardCharsets.UTF_8);
+            if (request_body != null && !request_body.equals("")) message.add(new String[]{"request_body", request_body});
+            String response_body = new String(los.logged(), StandardCharsets.UTF_8);
+            if (!response_body.equals("")) message.add(new String[]{"response_body", response_body});
+            message.add(new String[]{"now", String.valueOf(System.currentTimeMillis())});
+            logger.submitIfPassing(message);
         } else {
             context.proceed();
         }

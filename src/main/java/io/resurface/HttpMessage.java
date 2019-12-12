@@ -47,7 +47,7 @@ public class HttpMessage {
         if (!logger.isEnabled()) return;
 
         // copy details from request & response
-        List<String[]> details = HttpMessage.build(request, response, response_body, request_body);
+        List<String[]> message = HttpMessage.build(request, response, response_body, request_body);
 
         // copy data from session if configured
         if (!logger.getRules().copy_session_field.isEmpty()) {
@@ -59,7 +59,7 @@ public class HttpMessage {
                         String d = names.nextElement();
                         if (((Pattern) r.param1).matcher(d).matches()) {
                             String val = ssn.getAttribute(d).toString();
-                            details.add(new String[]{"session_field:" + d, val});
+                            message.add(new String[]{"session_field:" + d, val});
                         }
                     }
                 }
@@ -68,10 +68,10 @@ public class HttpMessage {
 
         // add timing details
         if (now == 0) now = System.currentTimeMillis();
-        details.add(new String[]{"now", String.valueOf(now)});
-        if (interval != 0) details.add(new String[]{"interval", String.valueOf(interval)});
+        message.add(new String[]{"now", String.valueOf(now)});
+        if (interval != 0) message.add(new String[]{"interval", String.valueOf(interval)});
 
-        logger.submitIfPassing(details);
+        logger.submitIfPassing(message);
     }
 
     /**
@@ -80,7 +80,8 @@ public class HttpMessage {
     public static List<String[]> build(HttpServletRequest request, HttpServletResponse response,
                                        String response_body, String request_body) {
         List<String[]> message = new ArrayList<>();
-        if (request.getMethod() != null) message.add(new String[]{"request_method", request.getMethod()});
+        String method = request.getMethod();
+        if (method != null) message.add(new String[]{"request_method", method});
         String formatted_url = formatURL(request);
         if (formatted_url != null) message.add(new String[]{"request_url", formatted_url});
         message.add(new String[]{"response_code", String.valueOf(response.getStatus())});
