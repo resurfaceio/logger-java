@@ -35,6 +35,8 @@ public class HttpLoggerForServletsTest {
         expect(msg).toContain("[\"response_code\",\"200\"]");
         expect(msg).toContain("[\"response_header:a\",\"Z\"]");
         expect(msg).toContain("[\"response_header:content-type\",\"text/html\"]");
+        expect(msg).toContain("[\"now\",\"");
+        expect(msg).toContain("[\"interval\",\"");
         expect(msg.contains("request_body")).toBeFalse();
         expect(msg.contains("request_header")).toBeFalse();
         expect(msg.contains("request_param")).toBeFalse();

@@ -77,6 +77,8 @@ public class HttpLoggerForServlets implements Filter {
      */
     protected void log(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
+        long start = System.nanoTime();
+
         // Construct response wrapper and pass through filter chain
         LoggedResponseWrapper response_wrapper = new LoggedResponseWrapper(response);
         chain.doFilter(request, response_wrapper);
@@ -88,7 +90,9 @@ public class HttpLoggerForServlets implements Filter {
             String response_encoding = response.getCharacterEncoding();
             response_encoding = (response_encoding == null) ? "ISO-8859-1" : response_encoding;
             String response_body = new String(response_wrapper.logged(), response_encoding);
-            HttpMessage.send(logger, request, response, response_body);
+            long now = System.currentTimeMillis();
+            double interval = (System.nanoTime() - start) / 1000000.0;
+            HttpMessage.send(logger, request, response, response_body, null, now, interval);
         }
     }
 

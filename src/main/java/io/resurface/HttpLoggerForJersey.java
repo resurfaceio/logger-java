@@ -57,6 +57,7 @@ public class HttpLoggerForJersey implements ContainerResponseFilter, ReaderInter
     @Override
     public Object aroundReadFrom(ReaderInterceptorContext context) throws IOException, WebApplicationException {
         if (logger.enabled) {
+            context.setProperty("resurfaceio.start", System.nanoTime());
             LoggedInputStream lis = new LoggedInputStream(context.getInputStream());
             context.setProperty("resurfaceio.requestBodyBytes", lis.logged());
             context.setInputStream(lis);
@@ -130,6 +131,8 @@ public class HttpLoggerForJersey implements ContainerResponseFilter, ReaderInter
             String response_body = new String(los.logged(), StandardCharsets.UTF_8);
             if (!response_body.equals("")) message.add(new String[]{"response_body", response_body});
             message.add(new String[]{"now", String.valueOf(System.currentTimeMillis())});
+            double interval = (System.nanoTime() - (long) context.getProperty("resurfaceio.start")) / 1000000.0;
+            message.add(new String[]{"interval", String.valueOf(interval)});
             logger.submitIfPassing(message);
         } else {
             context.proceed();
