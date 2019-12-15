@@ -42,7 +42,7 @@ public class HttpMessage {
      * Submits request and response through logger.
      */
     public static void send(HttpLogger logger, HttpServletRequest request, HttpServletResponse response,
-                            String response_body, String request_body, long now, long interval) {
+                            String response_body, String request_body, long now, double interval) {
 
         if (!logger.isEnabled()) return;
 
