@@ -140,6 +140,7 @@ public class BaseLoggerTest {
         expect(parseable(msg)).toBeTrue();
         logger.submit(msg);
         expect(logger.getSubmitFailures()).toEqual(0);
+        expect(logger.getSubmitSuccesses()).toEqual(1);
     }
 
     @Test
@@ -155,6 +156,7 @@ public class BaseLoggerTest {
         expect(parseable(msg)).toBeTrue();
         logger.submit(msg);
         expect(logger.getSubmitFailures()).toEqual(0);
+        expect(logger.getSubmitSuccesses()).toEqual(1);
     }
 
     @Test
@@ -172,6 +174,7 @@ public class BaseLoggerTest {
         expect(parseable(msg)).toBeTrue();
         logger.submit(msg);
         expect(logger.getSubmitFailures()).toEqual(0);
+        expect(logger.getSubmitSuccesses()).toEqual(1);
     }
 
     @Test
@@ -182,6 +185,7 @@ public class BaseLoggerTest {
             expect(logger.isEnabled()).toBeTrue();
             logger.submit("{}");
             expect(logger.getSubmitFailures()).toEqual(1);
+            expect(logger.getSubmitSuccesses()).toEqual(0);
         }
     }
 
@@ -199,6 +203,7 @@ public class BaseLoggerTest {
         logger.submit("{}");
         expect(queue.size()).toEqual(2);
         expect(logger.getSubmitFailures()).toEqual(0);
+        expect(logger.getSubmitSuccesses()).toEqual(0);
     }
 
     @Test

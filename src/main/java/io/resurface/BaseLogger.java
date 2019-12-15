@@ -208,7 +208,9 @@ public class BaseLogger<T extends BaseLogger> {
                     }
                     os.flush();
                 }
-                if (url_connection.getResponseCode() != 204) {
+                if (url_connection.getResponseCode() == 204) {
+                    submit_successes.incrementAndGet();
+                } else {
                     submit_failures.incrementAndGet();
                 }
             } catch (Exception e) {
@@ -222,6 +224,13 @@ public class BaseLogger<T extends BaseLogger> {
      */
     public int getSubmitFailures() {
         return submit_failures.get();
+    }
+
+    /**
+     * Returns count of submissions that succeeded.
+     */
+    public int getSubmitSuccesses() {
+        return submit_successes.get();
     }
 
     /**
@@ -252,6 +261,7 @@ public class BaseLogger<T extends BaseLogger> {
     protected boolean skip_compression = false;
     protected boolean skip_submission = false;
     protected AtomicInteger submit_failures = new AtomicInteger();
+    protected AtomicInteger submit_successes = new AtomicInteger();
     protected String url;
     protected final String version;
 
