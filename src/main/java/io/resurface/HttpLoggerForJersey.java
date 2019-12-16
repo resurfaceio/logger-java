@@ -4,6 +4,7 @@ package io.resurface;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.ext.*;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Provider
-public class HttpLoggerForJersey implements ContainerResponseFilter, ReaderInterceptor, WriterInterceptor {
+public class HttpLoggerForJersey implements ContainerRequestFilter, ContainerResponseFilter, ReaderInterceptor, WriterInterceptor {
 
     /**
      * Initialize logger using specified url and default rules.
@@ -52,12 +53,19 @@ public class HttpLoggerForJersey implements ContainerResponseFilter, ReaderInter
     }
 
     /**
+     * Interceptor method called when request is first accepted.
+     */
+    @Override
+    public void filter(ContainerRequestContext context) {
+        context.setProperty("resurfaceio.start", System.nanoTime());
+    }
+
+    /**
      * Interceptor method called when reading from the request body.
      */
     @Override
     public Object aroundReadFrom(ReaderInterceptorContext context) throws IOException, WebApplicationException {
         if (logger.enabled) {
-            context.setProperty("resurfaceio.start", System.nanoTime());
             LoggedInputStream lis = new LoggedInputStream(context.getInputStream());
             context.setProperty("resurfaceio.requestBodyBytes", lis.logged());
             context.setInputStream(lis);
@@ -131,7 +139,7 @@ public class HttpLoggerForJersey implements ContainerResponseFilter, ReaderInter
             String response_body = new String(los.logged(), StandardCharsets.UTF_8);
             if (!response_body.equals("")) message.add(new String[]{"response_body", response_body});
             message.add(new String[]{"now", String.valueOf(System.currentTimeMillis())});
-            double interval = (System.nanoTime() - (long) context.getProperty("resurfaceio.start")) / 1000000.0;
+            double interval = (System.nanoTime() - (Long) context.getProperty("resurfaceio.start")) / 1000000.0;
             message.add(new String[]{"interval", String.valueOf(interval)});
             logger.submitIfPassing(message);
         } else {
