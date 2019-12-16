@@ -189,7 +189,7 @@ public class BaseLogger<T extends BaseLogger> {
             queue.add(msg);
         } else {
             try {
-                URL url_parsed = new URL(this.url);
+                URL url_parsed = new URL(this.url);  // todo cache this
                 HttpURLConnection url_connection = (HttpURLConnection) url_parsed.openConnection();
                 url_connection.setConnectTimeout(5000);
                 url_connection.setReadTimeout(1000);
@@ -260,8 +260,8 @@ public class BaseLogger<T extends BaseLogger> {
     protected final List<String> queue;
     protected boolean skip_compression = false;
     protected boolean skip_submission = false;
-    protected AtomicInteger submit_failures = new AtomicInteger();
-    protected AtomicInteger submit_successes = new AtomicInteger();
+    protected final AtomicInteger submit_failures = new AtomicInteger();
+    protected final AtomicInteger submit_successes = new AtomicInteger();
     protected String url;
     protected final String version;
 
