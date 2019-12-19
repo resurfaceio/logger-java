@@ -83,13 +83,13 @@ If no <a href="https://resurface.io/rules.html">rules</a> are provided when crea
 `include strict` will be applied. A different default value can be specified as shown below.
 
 ```java
-HttpLogger.setDefaultRules("include debug");
+HttpRules.setDefaultRules("include debug");
 ```
 
 When specifying multiple default rules, put each on a separate line.
 
 ```java
-HttpLogger.setDefaultRules(
+HttpRules.setDefaultRules(
     "include debug\n" +
     "sample 10\n"
 );
