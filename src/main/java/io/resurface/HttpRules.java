@@ -157,29 +157,27 @@ public class HttpRules {
      * Initialize a new set of rules.
      */
     public HttpRules(String rules) {
-        if (rules != null) {
-            // load rules from external files
-            if (rules.startsWith("file://")) {
-                String rfile = rules.substring(7).trim();
-                try {
-                    rules = new String(Files.readAllBytes(Paths.get(rfile)));
-                } catch (Exception e) {
-                    throw new IllegalArgumentException("Failed to load rules: " + rfile);
-                }
+        if (rules == null) rules = HttpRules.getDefaultRules();
+
+        // load rules from external files
+        if (rules.startsWith("file://")) {
+            String rfile = rules.substring(7).trim();
+            try {
+                rules = new String(Files.readAllBytes(Paths.get(rfile)));
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Failed to load rules: " + rfile);
             }
-
-            // force default rules if necessary
-            rules = rules.replaceAll("(?m)^\\s*include default\\s*$", Matcher.quoteReplacement(HttpRules.getDefaultRules()));
-            if (rules.trim().length() == 0) rules = HttpRules.getDefaultRules();
-
-            // expand rule includes
-            rules = rules.replaceAll("(?m)^\\s*include debug\\s*$", Matcher.quoteReplacement(getDebugRules()));
-            rules = rules.replaceAll("(?m)^\\s*include standard\\s*$", Matcher.quoteReplacement(getStandardRules()));
-            rules = rules.replaceAll("(?m)^\\s*include strict\\s*$", Matcher.quoteReplacement(getStrictRules()));
-            this.text = rules;
-        } else {
-            this.text = HttpRules.getDefaultRules();
         }
+
+        // force default rules if necessary
+        rules = rules.replaceAll("(?m)^\\s*include default\\s*$", Matcher.quoteReplacement(HttpRules.getDefaultRules()));
+        if (rules.trim().length() == 0) rules = HttpRules.getDefaultRules();
+
+        // expand rule includes
+        rules = rules.replaceAll("(?m)^\\s*include debug\\s*$", Matcher.quoteReplacement(getDebugRules()));
+        rules = rules.replaceAll("(?m)^\\s*include standard\\s*$", Matcher.quoteReplacement(getStandardRules()));
+        rules = rules.replaceAll("(?m)^\\s*include strict\\s*$", Matcher.quoteReplacement(getStrictRules()));
+        this.text = rules;
 
         // parse all rules
         List<HttpRule> prs = new ArrayList<>();

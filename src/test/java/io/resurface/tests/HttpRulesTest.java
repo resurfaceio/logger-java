@@ -58,6 +58,17 @@ public class HttpRulesTest {
         expect(rules.size).toEqual(4);
         rules = new HttpRules("include debug\nsample 50\ninclude debug");
         expect(rules.size).toEqual(5);
+
+        expect(HttpRules.getDefaultRules()).toEqual(HttpRules.getStrictRules());
+        try {
+            HttpRules.setDefaultRules("include debug");
+            rules = new HttpRules("");
+            expect(rules.size).toEqual(2);
+            expect(rules.allow_http_url).toBeTrue();
+            expect(rules.copy_session_field.size()).toEqual(1);
+        } finally {
+            HttpRules.setDefaultRules(HttpRules.getStrictRules());
+        }
     }
 
     @Test
@@ -77,6 +88,17 @@ public class HttpRulesTest {
         expect(rules.size).toEqual(6);
         rules = new HttpRules("include standard\nsample 50\ninclude standard");
         expect(rules.size).toEqual(7);
+
+        expect(HttpRules.getDefaultRules()).toEqual(HttpRules.getStrictRules());
+        try {
+            HttpRules.setDefaultRules("include standard");
+            rules = new HttpRules("");
+            expect(rules.size).toEqual(3);
+            expect(rules.remove.size()).toEqual(1);
+            expect(rules.replace.size()).toEqual(2);
+        } finally {
+            HttpRules.setDefaultRules(HttpRules.getStrictRules());
+        }
     }
 
     @Test
@@ -96,6 +118,17 @@ public class HttpRulesTest {
         expect(rules.size).toEqual(4);
         rules = new HttpRules("include strict\nsample 50\ninclude strict");
         expect(rules.size).toEqual(5);
+
+        expect(HttpRules.getDefaultRules()).toEqual(HttpRules.getStrictRules());
+        try {
+            HttpRules.setDefaultRules("include strict");
+            rules = new HttpRules("");
+            expect(rules.size).toEqual(2);
+            expect(rules.remove.size()).toEqual(1);
+            expect(rules.replace.size()).toEqual(1);
+        } finally {
+            HttpRules.setDefaultRules(HttpRules.getStrictRules());
+        }
     }
 
     @Test
