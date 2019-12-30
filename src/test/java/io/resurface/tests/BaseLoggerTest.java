@@ -203,7 +203,7 @@ public class BaseLoggerTest {
         logger.submit("{}");
         expect(queue.size()).toEqual(2);
         expect(logger.getSubmitFailures()).toEqual(0);
-        expect(logger.getSubmitSuccesses()).toEqual(0);
+        expect(logger.getSubmitSuccesses()).toEqual(2);
     }
 
     @Test

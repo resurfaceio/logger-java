@@ -63,6 +63,8 @@ public class BaseLogger<T extends BaseLogger> {
                 this.enabled = false;
             }
         }
+
+        // finalize internal properties
         this.enableable = (this.url != null);
     }
 
@@ -187,6 +189,7 @@ public class BaseLogger<T extends BaseLogger> {
             // do nothing
         } else if (queue != null) {
             queue.add(msg);
+            submit_successes.incrementAndGet();
         } else {
             try {
                 URL url_parsed = new URL(this.url);  // todo cache this
