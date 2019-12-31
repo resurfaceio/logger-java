@@ -27,7 +27,7 @@ public class HttpRules {
     public static final String STRICT_RULES = "/request_url/ replace /([^\\?;]+).*/, /$1/\n" +
             "/request_body|response_body|request_param:.*|request_header:(?!user-agent).*|response_header:(?!(content-length)|(content-type)).*/ remove\n";
 
-    private static String defaultRules = HttpRules.getStrictRules();
+    private static String defaultRules = STRICT_RULES;
 
     /**
      * Returns rules used by default when none are declared.
