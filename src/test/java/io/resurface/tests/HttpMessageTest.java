@@ -89,6 +89,7 @@ public class HttpMessageTest {
         expect(msg.contains("request_method")).toBeFalse();
         expect(msg.contains("request_param")).toBeFalse();
         expect(msg.contains("request_url")).toBeFalse();
+        expect(msg.contains("interval")).toBeFalse();
     }
 
     @Test
@@ -141,5 +142,6 @@ public class HttpMessageTest {
         expect(msg).toContain("[\"response_code\",\"0\"]");
         expect(msg.contains("response_body")).toBeFalse();
         expect(msg.contains("response_header")).toBeFalse();
+        expect(msg.contains("interval")).toBeFalse();
     }
 }
