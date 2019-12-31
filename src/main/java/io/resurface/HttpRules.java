@@ -232,7 +232,6 @@ public class HttpRules {
      * Apply current rules to message details.
      */
     public List<String[]> apply(List<String[]> details) {
-
         // stop rules come first
         for (HttpRule r : stop)
             for (String[] d : details)
