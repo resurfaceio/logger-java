@@ -197,6 +197,7 @@ public class BaseLogger<T extends BaseLogger> {
                 url_connection.setConnectTimeout(5000);
                 url_connection.setReadTimeout(1000);
                 url_connection.setRequestMethod("POST");
+                url_connection.setRequestProperty("content-type", "application/json; charset=UTF-8");
                 url_connection.setDoOutput(true);
                 if (!this.skip_compression) url_connection.setRequestProperty("Content-Encoding", "deflated");
                 try (OutputStream os = url_connection.getOutputStream()) {
