@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.DeflaterOutputStream;
@@ -203,10 +204,10 @@ public class BaseLogger<T extends BaseLogger> {
                 if (!this.skip_compression) url_connection.setRequestProperty("Content-Encoding", "deflated");
                 try (OutputStream os = url_connection.getOutputStream()) {
                     if (this.skip_compression) {
-                        os.write(msg.getBytes());
+                        os.write(msg.getBytes(StandardCharsets.UTF_8));
                     } else {
                         try (DeflaterOutputStream dos = new DeflaterOutputStream(os, true)) {
-                            dos.write(msg.getBytes());
+                            dos.write(msg.getBytes(StandardCharsets.UTF_8));
                             dos.finish();
                             dos.flush();
                         }
