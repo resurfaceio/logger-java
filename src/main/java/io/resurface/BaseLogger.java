@@ -57,9 +57,11 @@ public class BaseLogger<T extends BaseLogger> {
         // validate url when present
         if (this.url != null) {
             try {
-                if (!new URL(this.url).getProtocol().contains("http")) throw new RuntimeException();
+                this.url_parsed = new URL(this.url);
+                if (!this.url_parsed.getProtocol().contains("http")) throw new RuntimeException();
             } catch (Exception e) {
                 this.url = null;
+                this.url_parsed = null;
                 this.enabled = false;
             }
         }
@@ -192,12 +194,11 @@ public class BaseLogger<T extends BaseLogger> {
             submit_successes.incrementAndGet();
         } else {
             try {
-                URL url_parsed = new URL(this.url);  // todo cache this
-                HttpURLConnection url_connection = (HttpURLConnection) url_parsed.openConnection();
+                HttpURLConnection url_connection = (HttpURLConnection) this.url_parsed.openConnection();
                 url_connection.setConnectTimeout(5000);
                 url_connection.setReadTimeout(1000);
                 url_connection.setRequestMethod("POST");
-                url_connection.setRequestProperty("content-type", "application/json; charset=UTF-8");
+                url_connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
                 url_connection.setDoOutput(true);
                 if (!this.skip_compression) url_connection.setRequestProperty("Content-Encoding", "deflated");
                 try (OutputStream os = url_connection.getOutputStream()) {
@@ -267,6 +268,7 @@ public class BaseLogger<T extends BaseLogger> {
     protected final AtomicInteger submit_failures = new AtomicInteger();
     protected final AtomicInteger submit_successes = new AtomicInteger();
     protected String url;
+    protected URL url_parsed;
     protected final String version;
 
 }
