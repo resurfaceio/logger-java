@@ -2,6 +2,7 @@
 
 package io.resurface;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -109,6 +110,17 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
             this.enableable = false;
             this.enabled = false;
         }
+
+        // submit metadata message
+        if (this.enabled) {
+            List<String[]> details = new ArrayList<>();
+            details.add(new String[]{"message_type", "metadata"});
+            details.add(new String[]{"agent", this.agent});
+            details.add(new String[]{"host", this.host});
+            details.add(new String[]{"version", this.version});
+            details.add(new String[]{"metadata_id", this.metadataId});
+            submit(Json.stringify(details));
+        }
     }
 
     /**
@@ -122,16 +134,9 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
      * Apply logging rules to message details and submit JSON message.
      */
     public void submitIfPassing(List<String[]> details) {
-        // apply active rules
         details = rules.apply(details);
         if (details == null) return;
-
-        // finalize message
-        details.add(new String[]{"agent", this.agent});
-        details.add(new String[]{"host", this.host});
-        details.add(new String[]{"version", this.version});
-
-        // let's do this thing
+        details.add(new String[]{"metadata_id", this.metadataId});
         submit(Json.stringify(details));
     }
 

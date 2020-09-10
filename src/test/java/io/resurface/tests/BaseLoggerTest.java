@@ -75,6 +75,16 @@ public class BaseLoggerTest {
     }
 
     @Test
+    public void hasValidMetadataIdTest() {
+        String metadataId = new BaseLogger(MOCK_AGENT).getMetadataId();
+        expect(metadataId).toBeNotNull();
+        expect(metadataId.length()).toEqual(32);
+        expect(metadataId.contains("\\")).toBeFalse();
+        expect(metadataId.contains("\"")).toBeFalse();
+        expect(metadataId.contains("'")).toBeFalse();
+    }
+
+    @Test
     public void hasValidVersionTest() {
         String version = BaseLogger.version_lookup();
         expect(version).toBeNotNull();

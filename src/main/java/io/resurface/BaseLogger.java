@@ -122,6 +122,13 @@ public class BaseLogger<T extends BaseLogger> {
     }
 
     /**
+     * Returns metadata id hash.
+     */
+    public String getMetadataId() {
+        return metadataId;
+    }
+
+    /**
      * Returns queue destination where messages are sent.
      */
     public List<String> getQueue() {
@@ -263,6 +270,7 @@ public class BaseLogger<T extends BaseLogger> {
     protected boolean enableable;
     protected boolean enabled;
     protected final String host;
+    protected final String metadataId = java.util.UUID.randomUUID().toString().replace("-", "");
     protected final List<String> queue;
     protected boolean skip_compression = false;
     protected boolean skip_submission = false;
