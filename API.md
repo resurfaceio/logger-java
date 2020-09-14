@@ -32,6 +32,12 @@ logger = new HttpLogger("https://...", "include strict");
 
 // with specific url and rules from local file
 logger = new HttpLogger("https://...", "file://./rules.txt");
+
+// with specific url and rules/schema as strings
+logger = new HttpLogger("https://...", "include strict", "type Foo { bar: String }");
+
+// with specific url and rules/schema from local files
+logger = new HttpLogger("https://...", "file://./rules.txt", "file://./schema.txt");
 ```
 
 <a name="logging_http"/>
