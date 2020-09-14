@@ -32,6 +32,7 @@ public class HttpMessageTest {
         expect(msg).toContain("[\"message_type\",\"metadata\"]");
         expect(msg).toContain("[\"metadata_id\",\"" + logger.getMetadataId() + "\"]");
         expect(msg).toContain("[\"version\",\"" + logger.getVersion() + "\"]");
+        expect(msg.contains("[\"graphql_schema")).toBeFalse();
         expect(msg.contains("[\"interval")).toBeFalse();
         expect(msg.contains("[\"now")).toBeFalse();
         expect(msg.contains("[\"request_")).toBeFalse();
