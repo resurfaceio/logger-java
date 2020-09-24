@@ -32,6 +32,13 @@ public class HttpLoggerForJersey implements ContainerRequestFilter, ContainerRes
     }
 
     /**
+     * Initialize logger using specified url, rules and schema.
+     */
+    public HttpLoggerForJersey(String url, String rules, String schema) {
+        logger = new HttpLogger(url, rules, schema);
+    }
+
+    /**
      * Initialize enabled logger using queue and default rules.
      */
     public HttpLoggerForJersey(List<String> queue) {
@@ -43,6 +50,13 @@ public class HttpLoggerForJersey implements ContainerRequestFilter, ContainerRes
      */
     public HttpLoggerForJersey(List<String> queue, String rules) {
         logger = new HttpLogger(queue, rules);
+    }
+
+    /**
+     * Initialize enabled logger using queue and specified rules/schema.
+     */
+    public HttpLoggerForJersey(List<String> queue, String rules, String schema) {
+        logger = new HttpLogger(queue, rules, schema);
     }
 
     /**
