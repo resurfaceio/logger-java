@@ -122,13 +122,6 @@ public class BaseLogger<T extends BaseLogger> {
     }
 
     /**
-     * Returns metadata id hash.
-     */
-    public String getMetadataId() {
-        return metadataId;
-    }
-
-    /**
      * Returns queue destination where messages are sent.
      */
     public List<String> getQueue() {
@@ -263,14 +256,13 @@ public class BaseLogger<T extends BaseLogger> {
      * Returns version number for this logger.
      */
     public static String version_lookup() {
-        return "2.1.0-SNAPSHOT";
+        return "2.0.6-SNAPSHOT";
     }
 
     protected final String agent;
     protected boolean enableable;
     protected boolean enabled;
     protected final String host;
-    protected final String metadataId = java.util.UUID.randomUUID().toString().replace("-", "");
     protected final List<String> queue;
     protected boolean skip_compression = false;
     protected boolean skip_submission = false;
