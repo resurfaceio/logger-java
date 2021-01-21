@@ -29,6 +29,12 @@ git pull --rebase                         (avoid merge bubbles)
 git push origin master
 ```
 
+Check if any newer dependencies are available:
+
+```
+mvn versions:display-dependency-updates
+```
+
 ## Release Process
 
 Publish snapshot build to [mavenrepo](https://github.com/resurfaceio/mavenrepo) for integration testing:
