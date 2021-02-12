@@ -89,7 +89,6 @@ public class HttpLoggerForJersey implements ContainerRequestFilter, ContainerRes
         appendRequestParams(message, request);
         appendResponseHeaders(message, response);
         request.setProperty("resurfaceio.message", message);
-        request.setProperty("resurfaceio.response", response);
     }
 
     /**
@@ -127,8 +126,7 @@ public class HttpLoggerForJersey implements ContainerRequestFilter, ContainerRes
      */
     @Override
     public void aroundWriteTo(WriterInterceptorContext context) throws IOException, WebApplicationException {
-        ContainerResponseContext response = (ContainerResponseContext) context.getProperty("resurfaceio.response");
-        if (logger.enabled && (response.getStatus() < 300 || response.getStatus() == 302)) {
+        if (logger.enabled) {
             List<String[]> message = (List<String[]>) context.getProperty("resurfaceio.message");
             LoggedOutputStream los = new LoggedOutputStream(context.getOutputStream());
             context.setOutputStream(los);

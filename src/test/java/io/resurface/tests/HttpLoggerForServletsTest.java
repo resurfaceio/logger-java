@@ -115,16 +115,4 @@ public class HttpLoggerForServletsTest {
         }
     }
 
-    @Test
-    public void skipsLoggingTest() throws IOException, ServletException {
-        List<String> queue = new ArrayList<>();
-        HttpLoggerForServlets filter = new HttpLoggerForServlets(queue, "include standard");
-        filter.init(null);
-        filter.doFilter(mockRequest(), mockResponse(), mockCustomApp());
-        filter.doFilter(mockRequest(), mockResponse(), mockCustom404App());
-        filter.doFilter(mockRequest(), mockResponse(), mockHtml404App());
-        filter.doFilter(mockRequest(), mockResponse(), mockJson404App());
-        expect(queue.size()).toEqual(0);
-    }
-
 }

@@ -8,8 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-import static io.resurface.HttpLogger.isStringContentType;
-
 /**
  * Servlet filter for HTTP usage logging.
  */
@@ -85,15 +83,12 @@ public class HttpLoggerForServlets implements Filter {
         response_wrapper.flushBuffer();
 
         // Log successful responses having string content types
-        int status = response.getStatus();
-        if ((status < 300 || status == 302) && isStringContentType(response.getContentType())) {
-            String response_encoding = response.getCharacterEncoding();
-            response_encoding = (response_encoding == null) ? "ISO-8859-1" : response_encoding;
-            String response_body = new String(response_wrapper.logged(), response_encoding);
-            long now = System.currentTimeMillis();
-            double interval = (System.nanoTime() - start) / 1000000.0;
-            HttpMessage.send(logger, request, response, response_body, null, now, interval);
-        }
+        String response_encoding = response.getCharacterEncoding();
+        response_encoding = (response_encoding == null) ? "ISO-8859-1" : response_encoding;
+        String response_body = new String(response_wrapper.logged(), response_encoding);
+        long now = System.currentTimeMillis();
+        double interval = (System.nanoTime() - start) / 1000000.0;
+        HttpMessage.send(logger, request, response, response_body, null, now, interval);
     }
 
     protected FilterConfig config;

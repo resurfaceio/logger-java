@@ -3,7 +3,6 @@
 package io.resurface;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Usage logger for HTTP/HTTPS protocol.
@@ -135,15 +134,6 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
         submit(Json.stringify(details));
     }
 
-    /**
-     * Returns true if content type indicates string data.
-     */
-    public static boolean isStringContentType(String s) {
-        return s != null && STRING_TYPES_REGEX.matcher(s).find();
-    }
-
     protected HttpRules rules;
-    protected static final String STRING_TYPES = "(?i)^text/(html|plain|xml)|application/(json|soap|xml|x-www-form-urlencoded)";
-    protected static final Pattern STRING_TYPES_REGEX = Pattern.compile(STRING_TYPES);
 
 }
