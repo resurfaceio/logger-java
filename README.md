@@ -60,11 +60,11 @@ After <a href="#installing_with_maven">installing the library</a>, add a logging
     <filter-class>io.resurface.HttpLoggerForServlets</filter-class>
     <init-param>
         <param-name>url</param-name>
-        <param-value>https://...</param-value>
+        <param-value>http://localhost:4001/message</param-value>
     </init-param>
     <init-param>
         <param-name>rules</param-name>
-        <param-value>include strict</param-value>
+        <param-value>include debug</param-value>
     </init-param>
 </filter>
 <filter-mapping>
@@ -79,7 +79,7 @@ Add a CDATA section when specifying multiple rules at once like this:
     <init-param>
         <param-name>rules</param-name>
         <param-value><![CDATA[
-            include strict
+            include debug
             sample 10
         ]]></param-value>
     </init-param>
@@ -99,8 +99,8 @@ public FilterRegistrationBean httpLoggerFilter() {
     frb.setFilter(new io.resurface.HttpLoggerForServlets());
     frb.setName("HttpLoggerForServlets");
     frb.addUrlPatterns("/*");
-    frb.addInitParameter("url", "https://...");
-    frb.addInitParameter("rules", "include strict");
+    frb.addInitParameter("url", "http://localhost:4001/message");
+    frb.addInitParameter("rules", "include debug");
     return frb;
 }
 ```
@@ -114,7 +114,7 @@ After <a href="#installing_with_maven">installing the library</a>, create a logg
 ```java
 import io.resurface.*;
 
-HttpLogger logger = new HttpLogger("https://...", "include strict");
+HttpLogger logger = new HttpLogger("http://localhost:4001/message", "include debug");
 
 get("/hello", (request, response) -> {
     String response_body = "Hello World";
@@ -148,7 +148,7 @@ Note this will only log usage when a response body is returned.
 
 ```java
 ResourceConfig resourceConfig = new ResourceConfig(...);
-resourceConfig.register(new io.resurface.HttpLoggerForJersey("https://...", "include strict"));
+resourceConfig.register(new io.resurface.HttpLoggerForJersey("http://localhost:4001/message", "include debug"));
 HttpServer server = GrizzlyHttpServerFactory.createHttpServer(BASE_URI, resourceConfig, false);
 ```
 
@@ -166,7 +166,7 @@ the options described above, but also offers the greatest flexibility and contro
 ## Protecting User Privacy
 
 Loggers always have an active set of <a href="https://resurface.io/rules.html">rules</a> that control what data is logged
-and how sensitive data is masked. All of the examples above apply a predefined set of rules (`include strict`),
+and how sensitive data is masked. All of the examples above apply a predefined set of rules (`include debug`),
 but logging rules are easily customized to meet the needs of any application.
 
 <a href="https://resurface.io/rules.html">Logging rules documentation</a>
