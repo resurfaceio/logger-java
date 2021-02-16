@@ -27,9 +27,7 @@ public class HttpMessageTest {
         expect(queue.size()).toEqual(1);
         String msg = queue.get(0);
         expect(parseable(msg)).toBeTrue();
-        expect(msg).toContain("[\"agent\",\"" + logger.getAgent() + "\"]");
         expect(msg).toContain("[\"host\",\"" + logger.getHost() + "\"]");
-        expect(msg).toContain("[\"version\",\"" + logger.getVersion() + "\"]");
         expect(msg).toContain("[\"now\",\"" + MOCK_NOW + "\"]");
         expect(msg).toContain("[\"request_method\",\"GET\"]");
         expect(msg).toContain("[\"request_url\",\"" + MOCK_URL + "\"]");

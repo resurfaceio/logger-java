@@ -126,9 +126,7 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
         if (details == null) return;
 
         // finalize message
-        details.add(new String[]{"agent", this.agent});
         details.add(new String[]{"host", this.host});
-        details.add(new String[]{"version", this.version});
 
         // let's do this thing
         submit(Json.stringify(details));
