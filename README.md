@@ -3,7 +3,10 @@ Logging usage of Java-based services, with user privacy by design.
 
 Visit <a href="https://resurface.io">resurface.io</a> for general information on usage logging.
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.resurface/resurfaceio-logger/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.resurface/resurfaceio-logger)
+[![Maven Central](https://img.shields.io/maven-central/v/io.resurface/resurfaceio-logger?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/io.resurface/resurfaceio-logger)
+[![CodeFactor](https://www.codefactor.io/repository/github/resurfaceio/logger-java/badge?style=for-the-badge)](https://www.codefactor.io/repository/github/resurfaceio/logger-java)
+[![License](https://img.shields.io/github/license/resurfaceio/logger-java?style=for-the-badge)](https://github.com/resurfaceio/logger-java/blob/master/LICENSE)
+[![Contributing](https://img.shields.io/badge/contributions-welcome-green.svg?style=for-the-badge)](https://github.com/resurfaceio/logger-java/blob/master/CONTRIBUTING.md)
 
 ## Contents
 
