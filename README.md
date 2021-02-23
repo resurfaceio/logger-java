@@ -1,7 +1,5 @@
 # resurfaceio-logger-java
-Logging usage of Java-based services, with user privacy by design.
-
-Visit <a href="https://resurface.io">resurface.io</a> for general information on usage logging.
+Log API requests and responses to your own <a href="https://resurface.io">system of record</a>.
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.resurface/resurfaceio-logger?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/io.resurface/resurfaceio-logger)
 [![CodeFactor](https://www.codefactor.io/repository/github/resurfaceio/logger-java/badge?style=for-the-badge)](https://www.codefactor.io/repository/github/resurfaceio/logger-java)
