@@ -1,10 +1,10 @@
 # resurfaceio-logger-java
 Easily log API requests and responses to your own <a href="https://resurface.io">system of record</a>.
 
-[![Maven Central](https://img.shields.io/maven-central/v/io.resurface/resurfaceio-logger?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/io.resurface/resurfaceio-logger)
-[![CodeFactor](https://www.codefactor.io/repository/github/resurfaceio/logger-java/badge?style=for-the-badge)](https://www.codefactor.io/repository/github/resurfaceio/logger-java)
-[![License](https://img.shields.io/github/license/resurfaceio/logger-java?style=for-the-badge)](https://github.com/resurfaceio/logger-java/blob/master/LICENSE)
-[![Contributing](https://img.shields.io/badge/contributions-welcome-green.svg?style=for-the-badge)](https://github.com/resurfaceio/logger-java/blob/master/CONTRIBUTING.md)
+[![Maven Central](https://img.shields.io/maven-central/v/io.resurface/resurfaceio-logger)](https://maven-badges.herokuapp.com/maven-central/io.resurface/resurfaceio-logger)
+[![CodeFactor](https://www.codefactor.io/repository/github/resurfaceio/logger-java/badge)](https://www.codefactor.io/repository/github/resurfaceio/logger-java)
+[![License](https://img.shields.io/github/license/resurfaceio/logger-java)](https://github.com/resurfaceio/logger-java/blob/master/LICENSE)
+[![Contributing](https://img.shields.io/badge/contributions-welcome-green.svg)](https://github.com/resurfaceio/logger-java/blob/master/CONTRIBUTING.md)
 
 ## Contents
 
