@@ -128,56 +128,6 @@ public class BaseLoggerTest {
     }
 
     @Test
-    public void submitsToDemoUrlTest() {
-        BaseLogger logger = new BaseLogger(MOCK_AGENT, Helper.DEMO_URL);
-        expect(logger.getUrl()).toEqual(Helper.DEMO_URL);
-        List<String[]> message = new ArrayList<>();
-        message.add(new String[]{"agent", logger.getAgent()});
-        message.add(new String[]{"version", logger.getVersion()});
-        message.add(new String[]{"now", String.valueOf(MOCK_NOW)});
-        message.add(new String[]{"protocol", "https"});
-        String msg = Json.stringify(message);
-        expect(parseable(msg)).toBeTrue();
-        logger.submit(msg);
-        expect(logger.getSubmitFailures()).toEqual(0);
-        expect(logger.getSubmitSuccesses()).toEqual(1);
-    }
-
-    @Test
-    public void submitsToDemoUrlViaHttpTest() {
-        BaseLogger logger = new BaseLogger(MOCK_AGENT, Helper.DEMO_URL.replace("https://", "http://"));
-        expect(logger.getUrl()).toStartWith("http://");
-        List<String[]> message = new ArrayList<>();
-        message.add(new String[]{"agent", logger.getAgent()});
-        message.add(new String[]{"version", logger.getVersion()});
-        message.add(new String[]{"now", String.valueOf(MOCK_NOW)});
-        message.add(new String[]{"protocol", "http"});
-        String msg = Json.stringify(message);
-        expect(parseable(msg)).toBeTrue();
-        logger.submit(msg);
-        expect(logger.getSubmitFailures()).toEqual(0);
-        expect(logger.getSubmitSuccesses()).toEqual(1);
-    }
-
-    @Test
-    public void submitsToDemoUrlWithoutCompressionTest() {
-        BaseLogger logger = new BaseLogger(MOCK_AGENT, Helper.DEMO_URL);
-        logger.setSkipCompression(true);
-        expect(logger.getSkipCompression()).toBeTrue();
-        List<String[]> message = new ArrayList<>();
-        message.add(new String[]{"agent", logger.getAgent()});
-        message.add(new String[]{"version", logger.getVersion()});
-        message.add(new String[]{"now", String.valueOf(MOCK_NOW)});
-        message.add(new String[]{"protocol", "https"});
-        message.add(new String[]{"skip_compression", "true"});
-        String msg = Json.stringify(message);
-        expect(parseable(msg)).toBeTrue();
-        logger.submit(msg);
-        expect(logger.getSubmitFailures()).toEqual(0);
-        expect(logger.getSubmitSuccesses()).toEqual(1);
-    }
-
-    @Test
     public void submitsToDeniedUrlTest() {
         for (String url : MOCK_URLS_DENIED) {
             BaseLogger logger = new BaseLogger(MOCK_AGENT, url);
