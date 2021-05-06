@@ -59,7 +59,7 @@ public class HttpMessage {
                         String d = names.nextElement();
                         if (((Pattern) r.param1).matcher(d).matches()) {
                             String val = ssn.getAttribute(d).toString();
-                            message.add(new String[]{"session_field:" + d, val});
+                            message.add(new String[]{"session_field:" + d.toLowerCase(), val});
                         }
                     }
                 }
