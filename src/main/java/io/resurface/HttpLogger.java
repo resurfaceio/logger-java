@@ -2,6 +2,7 @@
 
 package io.resurface;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -120,10 +121,14 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
     /**
      * Apply logging rules to message details and submit JSON message.
      */
-    public void submitIfPassing(List<String[]> details) {
+    public void submitIfPassing(List<String[]> details, HashMap<String, String> customFields) {
         // apply active rules
         details = rules.apply(details);
         if (details == null) return;
+
+        for (String field: customFields.keySet()) {
+            details.add(new String[]{field, customFields.get(field)});
+        }
 
         // finalize message
         details.add(new String[]{"host", this.host});

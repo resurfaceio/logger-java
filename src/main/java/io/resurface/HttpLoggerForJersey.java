@@ -139,7 +139,7 @@ public class HttpLoggerForJersey implements ContainerRequestFilter, ContainerRes
             message.add(new String[]{"now", String.valueOf(System.currentTimeMillis())});
             double interval = (System.nanoTime() - (Long) context.getProperty("resurfaceio.start")) / 1000000.0;
             message.add(new String[]{"interval", String.valueOf(interval)});
-            logger.submitIfPassing(message);
+            logger.submitIfPassing(message, null);
         } else {
             context.proceed();
         }
