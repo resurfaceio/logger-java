@@ -61,7 +61,7 @@ After <a href="#installing_with_maven">installing the library</a>, add a logging
     <filter-class>io.resurface.HttpLoggerForServlets</filter-class>
     <init-param>
         <param-name>url</param-name>
-        <param-value>http://localhost:4001/message</param-value>
+        <param-value>http://localhost:7701/message</param-value>
     </init-param>
     <init-param>
         <param-name>rules</param-name>
@@ -100,7 +100,7 @@ public FilterRegistrationBean httpLoggerFilter() {
     frb.setFilter(new io.resurface.HttpLoggerForServlets());
     frb.setName("HttpLoggerForServlets");
     frb.addUrlPatterns("/*");
-    frb.addInitParameter("url", "http://localhost:4001/message");
+    frb.addInitParameter("url", "http://localhost:7701/message");
     frb.addInitParameter("rules", "include debug");
     return frb;
 }
@@ -115,7 +115,7 @@ After <a href="#installing_with_maven">installing the library</a>, create a logg
 ```java
 import io.resurface.*;
 
-HttpLogger logger = new HttpLogger("http://localhost:4001/message", "include debug");
+HttpLogger logger = new HttpLogger("http://localhost:7701/message", "include debug");
 
 get("/hello", (request, response) -> {
     String response_body = "Hello World";
@@ -149,7 +149,7 @@ Note this will only log usage when a response body is returned.
 
 ```java
 ResourceConfig resourceConfig = new ResourceConfig(...);
-resourceConfig.register(new io.resurface.HttpLoggerForJersey("http://localhost:4001/message", "include debug"));
+resourceConfig.register(new io.resurface.HttpLoggerForJersey("http://localhost:7701/message", "include debug"));
 HttpServer server = GrizzlyHttpServerFactory.createHttpServer(BASE_URI, resourceConfig, false);
 ```
 
