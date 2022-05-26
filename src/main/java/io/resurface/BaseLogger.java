@@ -8,6 +8,7 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.DeflaterOutputStream;
 
@@ -41,6 +42,13 @@ public class BaseLogger<T extends BaseLogger> {
      * Initialize enabled/disabled logger using url.
      */
     public BaseLogger(String agent, String url, boolean enabled) {
+        this(agent, url, enabled, 128);
+    }
+
+    /**
+     * Initialize enabled/disabled logger using url.
+     */
+    public BaseLogger(String agent, String url, boolean enabled, int max_queue_depth) {
         this.agent = agent;
         this.host = host_lookup();
         this.version = version_lookup();
@@ -69,6 +77,8 @@ public class BaseLogger<T extends BaseLogger> {
 
         // finalize internal properties
         this.enableable = (this.url != null);
+        this.max_queue_depth = max_queue_depth;
+        initDispatcher();
     }
 
     /**
@@ -185,6 +195,25 @@ public class BaseLogger<T extends BaseLogger> {
     }
 
     /**
+     * Creates a new bounded queue with the max depth passed to the constructor.
+     */
+    public void setMsgQueue() {
+        this.setMsgQueue(this.max_queue_depth);
+    }
+
+    /**
+     * Creates a new bounded queue using a specific depth.
+     * @param max_queue_depth size of the bounded queue
+     */
+    public void setMsgQueue(int max_queue_depth) {
+        if (this.msg_queue == null) {
+            this.msg_queue = new ArrayBlockingQueue<>(max_queue_depth);
+        } else {
+            this.msg_queue = new ArrayBlockingQueue<>(max_queue_depth, false, this.msg_queue);
+        }
+    }
+
+    /**
      * Submits JSON message to intended destination.
      */
     public void submit(String msg) {
@@ -240,6 +269,11 @@ public class BaseLogger<T extends BaseLogger> {
         return submit_successes.get();
     }
 
+    public void initDispatcher() {
+        setMsgQueue();
+        (new Dispatcher(this)).start();
+    }
+
     /**
      * Returns host identifier for this logger.
      */
@@ -272,5 +306,6 @@ public class BaseLogger<T extends BaseLogger> {
     protected String url;
     protected URL url_parsed;
     protected final String version;
-
+    protected int max_queue_depth;
+    protected ArrayBlockingQueue<String> msg_queue;
 }
