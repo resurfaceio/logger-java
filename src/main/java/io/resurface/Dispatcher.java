@@ -16,13 +16,13 @@ public class Dispatcher extends Thread{
         try {
             while (true) {
 //                String msg = (String) this.logger.msg_queue.take();
-                this.buffer.append(this.logger.msg_queue.take());
-                this.buffer.append("\n");
-                if (this.buffer.length() == thresh) {
+                if ((this.logger.msg_queue.peek() == null && this.buffer.length() != 0) || this.buffer.length() == thresh) {
                     String msg = this.buffer.toString();
                     this.buffer = new StringBuilder();
                     this.logger.dispatch(msg);
                 }
+                this.buffer.append(this.logger.msg_queue.take());
+                this.buffer.append("\n");
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
