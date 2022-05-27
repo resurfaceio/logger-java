@@ -213,6 +213,14 @@ public class BaseLogger<T extends BaseLogger> {
         }
     }
 
+    public void handleSubmit(String msg) {
+        try {
+            this.msg_queue.put(msg);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     /**
      * Submits JSON message to intended destination.
      */

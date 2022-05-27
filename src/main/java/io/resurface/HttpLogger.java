@@ -129,7 +129,7 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
         details.add(new String[]{"host", this.host});
 
         // let's do this thing
-        submit(Json.stringify(details));
+        handleSubmit(Json.stringify(details));
     }
 
     protected HttpRules rules;
