@@ -2,6 +2,7 @@
 
 package io.resurface;
 
+import javax.servlet.WriteListener;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -148,4 +149,14 @@ public class LoggedOutputStream extends javax.servlet.ServletOutputStream {
     private int logged_bytes = 0;
     private final OutputStream output;
     private boolean overflowed = false;
+
+    @Override
+    public boolean isReady() {
+        return false;
+    }
+
+    @Override
+    public void setWriteListener(WriteListener writeListener) {
+
+    }
 }

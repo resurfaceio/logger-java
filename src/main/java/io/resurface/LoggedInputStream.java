@@ -2,6 +2,7 @@
 
 package io.resurface;
 
+import javax.servlet.ReadListener;
 import java.io.*;
 
 /**
@@ -94,4 +95,18 @@ public class LoggedInputStream extends javax.servlet.ServletInputStream {
     private byte[] logged;
     private final ByteArrayInputStream stream;
 
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
+
+    @Override
+    public boolean isReady() {
+        return false;
+    }
+
+    @Override
+    public void setReadListener(ReadListener readListener) {
+
+    }
 }
