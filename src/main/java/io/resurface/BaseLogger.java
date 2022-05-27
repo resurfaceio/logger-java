@@ -213,7 +213,11 @@ public class BaseLogger<T extends BaseLogger> {
         }
     }
 
-    public void handleSubmit(String msg) {
+    /**
+     * Adds message to queue for dispatcher thread.
+     * @param msg String with tuple-JSON formatted message. More info: https://resurface.io/docs#json-format
+     */
+    public void submit(String msg) {
         try {
             this.msg_queue.put(msg);
         } catch (InterruptedException ex) {
@@ -224,7 +228,7 @@ public class BaseLogger<T extends BaseLogger> {
     /**
      * Submits JSON message to intended destination.
      */
-    public void submit(String msg) {
+    public void dispatch(String msg) {
         if (msg == null || this.skip_submission || !isEnabled()) {
             // do nothing
         } else if (queue != null) {

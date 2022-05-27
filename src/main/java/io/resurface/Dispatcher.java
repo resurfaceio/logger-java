@@ -10,7 +10,7 @@ public class Dispatcher extends Thread{
         try {
             while (true) {
                 String msg = (String) this.logger.msg_queue.take();
-                this.logger.submit(msg);
+                this.logger.dispatch(msg);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
