@@ -17,12 +17,12 @@ public class HttpServletResponseImpl extends BaseServletResponseImpl {
         stream = new ServletOutputStream() {
             @Override
             public boolean isReady() {
-                return false;
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public void setWriteListener(WriteListener writeListener) {
-
+                throw new UnsupportedOperationException();
             }
 
             @Override

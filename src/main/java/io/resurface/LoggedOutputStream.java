@@ -28,6 +28,7 @@ public class LoggedOutputStream extends javax.servlet.ServletOutputStream {
         this.limit = limit;
         this.logged = new ByteArrayOutputStream();
         this.output = output;
+        this.isClosed = false;
     }
 
     /**
@@ -42,6 +43,8 @@ public class LoggedOutputStream extends javax.servlet.ServletOutputStream {
                 logged.close();
             } catch (IOException ioe) {
                 // do nothing
+            } finally {
+                isClosed = true;
             }
         }
     }
@@ -144,19 +147,20 @@ public class LoggedOutputStream extends javax.servlet.ServletOutputStream {
         }
     }
 
+    @Override
+    public boolean isReady() {
+        return !this.isClosed;
+    }
+
+    @Override
+    public void setWriteListener(WriteListener writeListener) {
+        throw new UnsupportedOperationException();
+    }
+
     private final int limit;
     private ByteArrayOutputStream logged;
     private int logged_bytes = 0;
     private final OutputStream output;
     private boolean overflowed = false;
-
-    @Override
-    public boolean isReady() {
-        return false;
-    }
-
-    @Override
-    public void setWriteListener(WriteListener writeListener) {
-
-    }
+    private boolean isClosed;
 }

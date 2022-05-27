@@ -92,21 +92,21 @@ public class LoggedInputStream extends javax.servlet.ServletInputStream {
         return stream.read(b, off, len);
     }
 
-    private byte[] logged;
-    private final ByteArrayInputStream stream;
-
     @Override
     public boolean isFinished() {
-        return false;
+        return stream.available() == 0;
     }
 
     @Override
     public boolean isReady() {
-        return false;
+        return stream.available() != 0;
     }
 
     @Override
     public void setReadListener(ReadListener readListener) {
-
+        throw new UnsupportedOperationException();
     }
+
+    private byte[] logged;
+    private final ByteArrayInputStream stream;
 }
