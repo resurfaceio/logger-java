@@ -18,7 +18,7 @@ public class Dispatcher extends Thread{
 //                String msg = (String) this.logger.msg_queue.take();
                 this.buffer.append(this.logger.msg_queue.take());
                 this.buffer.append("\n");
-                if (this.buffer.length() != thresh) {
+                if (this.buffer.length() == thresh) {
                     String msg = this.buffer.toString();
                     this.buffer = new StringBuilder();
                     this.logger.dispatch(msg);
