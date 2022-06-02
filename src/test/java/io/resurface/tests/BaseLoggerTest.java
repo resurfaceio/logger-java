@@ -3,15 +3,16 @@
 package io.resurface.tests;
 
 import io.resurface.BaseLogger;
-import io.resurface.Json;
 import io.resurface.UsageLoggers;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.mscharhag.oleaster.matcher.Matchers.expect;
 import static io.resurface.tests.Helper.*;
+import static org.junit.Assert.fail;
 
 /**
  * Tests against basic usage logger to embed or extend.
@@ -27,6 +28,7 @@ public class BaseLoggerTest {
         expect(logger.isEnabled()).toBeFalse();
         expect(logger.getQueue()).toBeNull();
         expect(logger.getUrl()).toBeNull();
+        expect(logger.getMessageQueue()).toBeNull();
     }
 
     @Test
@@ -128,29 +130,34 @@ public class BaseLoggerTest {
     }
 
     @Test
-    public void submitsToDeniedUrlTest() {
+    public void submitsToDeniedUrlTest() throws InterruptedException {
         for (String url : MOCK_URLS_DENIED) {
             BaseLogger logger = new BaseLogger(MOCK_AGENT, url);
             expect(logger.isEnableable()).toBeTrue();
             expect(logger.isEnabled()).toBeTrue();
             logger.submit("{}");
+            logger.stop_dispatcher();
             expect(logger.getSubmitFailures()).toEqual(1);
             expect(logger.getSubmitSuccesses()).toEqual(0);
         }
     }
 
     @Test
-    public void submitsToQueueTest() {
+    public void submitsToQueueTest() throws InterruptedException {
         List<String> queue = new ArrayList<>();
         BaseLogger logger = new BaseLogger(MOCK_AGENT, queue);
+        logger.init_dispatcher();
         expect(logger.getQueue()).toEqual(queue);
         expect(logger.getUrl()).toBeNull();
         expect(logger.isEnableable()).toBeTrue();
         expect(logger.isEnabled()).toBeTrue();
         expect(queue.size()).toEqual(0);
         logger.submit("{}");
+        logger.stop_dispatcher();
         expect(queue.size()).toEqual(1);
+        logger.init_dispatcher();
         logger.submit("{}");
+        logger.stop_dispatcher();
         expect(queue.size()).toEqual(2);
         expect(logger.getSubmitFailures()).toEqual(0);
         expect(logger.getSubmitSuccesses()).toEqual(2);
@@ -172,4 +179,185 @@ public class BaseLoggerTest {
         expect(logger.getSkipSubmission()).toBeTrue();
     }
 
+    @Test
+    public void messageQueueFillTest() {
+        List<String> queue = new ArrayList<>();
+        BaseLogger logger = new BaseLogger(MOCK_AGENT, queue);
+        for (int i = 0; i < 128; i++) {
+            logger.submit(MOCK_MESSAGE);
+        }
+        expect(logger.getMessageQueue().isEmpty()).toBeFalse();
+        expect(logger.getMessageQueue().size()).toEqual(128);
+        expect(logger.getMessageQueue().remainingCapacity()).toEqual(0);
+    }
+
+    @Test
+    public void messageQueueBlockingTakeTest() {
+        List<String> queue = new ArrayList<>();
+        BaseLogger logger = new BaseLogger(MOCK_AGENT, queue);
+        Thread taker = new Thread(() -> {
+            try {
+                Object unused = logger.getMessageQueue().take();
+                fail();
+            } catch (InterruptedException success) {
+                // success!
+            }
+        });
+        try {
+            expect(logger.getMessageQueue().isEmpty()).toBeTrue();
+            taker.start();
+            Thread.sleep(1000);
+            expect(logger.getMessageQueue().isEmpty()).toBeTrue();
+            taker.interrupt();
+            taker.join(1000);
+            expect(taker.isAlive()).toBeFalse();
+        } catch (Exception unexpected) {
+            unexpected.printStackTrace();
+        }
+    }
+
+    @Test
+    public void messageQueueBlockingPutTest() {
+        List<String> queue = new ArrayList<>();
+        BaseLogger logger = new BaseLogger(MOCK_AGENT, queue);
+        Thread taker = new Thread(() -> {
+            try {
+                logger.getMessageQueue().put(MOCK_MESSAGE);
+                fail();
+            } catch (InterruptedException success) {
+                // success!
+            }
+        });
+        try {
+            for (int i = 0; i < 128; i++) {
+                logger.submit(MOCK_MESSAGE);
+            }
+            expect(logger.getMessageQueue().remainingCapacity()).toEqual(0);
+            taker.start();
+            Thread.sleep(1000);
+            expect(logger.getMessageQueue().remainingCapacity()).toEqual(0);
+            taker.interrupt();
+            taker.join(1000);
+            expect(taker.isAlive()).toBeFalse();
+        } catch (Exception unexpected) {
+            unexpected.printStackTrace();
+        }
+    }
+
+    @Test
+    public void messageQueueNoBlockingTakeTest() {
+        List<String> queue = new ArrayList<>();
+        BaseLogger logger = new BaseLogger(MOCK_AGENT, queue);
+        Thread taker = new Thread(() -> {
+            try {
+                Object unused = logger.getMessageQueue().take();
+            } catch (InterruptedException failure) {
+                fail();
+            }
+        });
+        try {
+            taker.start();
+            Thread.sleep(1000);
+            logger.submit(MOCK_MESSAGE);
+            taker.join(1000);
+            expect(taker.isAlive()).toBeFalse();
+        } catch (Exception unexpected) {
+            unexpected.printStackTrace();
+        }
+    }
+
+    @Test
+    public void messageQueueNoBlockingPutTest() {
+        List<String> queue = new ArrayList<>();
+        BaseLogger logger = new BaseLogger(MOCK_AGENT, queue);
+        Thread taker = new Thread(() -> {
+            try {
+                logger.getMessageQueue().put(MOCK_MESSAGE);
+            } catch (InterruptedException failure) {
+                fail();
+            }
+        });
+        try {
+            for (int i = 0; i < 100; i++) {
+                logger.submit(MOCK_MESSAGE);
+            }
+            taker.start();
+            Thread.sleep(1000);
+            logger.submit(MOCK_MESSAGE);
+            taker.join(1000);
+            expect(taker.isAlive()).toBeFalse();
+        } catch (Exception unexpected) {
+            unexpected.printStackTrace();
+        }
+    }
+
+    @Test
+    public void messageQueuePutTakeTest() {
+        final AtomicInteger putSum = new AtomicInteger(0);
+        final AtomicInteger takeSum = new AtomicInteger(0);
+        List<String> queue = new ArrayList<>();
+        BaseLogger logger = new BaseLogger(MOCK_AGENT, queue);
+        Thread producer = new Thread(() -> {
+            try {
+                int seed = (this.hashCode() ^ (int)System.nanoTime());
+                int sum = 0;
+                for (int i = 0; i < 128; i++) {
+                    logger.getMessageQueue().put(seed);
+                    sum += seed;
+                    seed ^= (seed << 3);
+                    seed ^= (seed >>> 13);
+                    seed ^= (seed << 11);
+                }
+                putSum.getAndAdd(sum);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        Thread consumer = new Thread(() -> {
+            try {
+                int sum = 0;
+                for (int i = 0; i < 128; i++) {
+                    sum += (int) logger.getMessageQueue().take();
+                }
+                takeSum.getAndAdd(sum);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        try {
+            producer.start();
+            consumer.start();
+            Thread.sleep(100);
+            producer.join(1000);
+            expect(producer.isAlive()).toBeFalse();
+            consumer.join(1000);
+            expect(consumer.isAlive()).toBeFalse();
+            expect(putSum.get()).toEqual(takeSum.get());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void setMessageQueueTest() {
+        BaseLogger logger = new BaseLogger(MOCK_AGENT);
+        logger.setMessageQueue();
+        expect(logger.getMessageQueue().isEmpty()).toBeTrue();
+        expect(logger.getMessageQueue().size()).toEqual(0);
+        expect(logger.getMessageQueue().remainingCapacity()).toEqual(128);
+    }
+
+    @Test
+    public void dispatcherTest() throws InterruptedException {
+        BaseLogger logger = new BaseLogger(MOCK_AGENT);
+        logger.init_dispatcher();
+        expect(logger.getMessageQueue().isEmpty()).toBeTrue();
+        expect(logger.getMessageQueue().size()).toEqual(0);
+        expect(logger.getMessageQueue().remainingCapacity()).toEqual(128);
+        expect(logger.isWorkerAlive()).toBeTrue();
+        logger.submit(MOCK_MESSAGE);
+        logger.stop_dispatcher();
+        expect(logger.isWorkerAlive()).toBeFalse();
+    }
 }

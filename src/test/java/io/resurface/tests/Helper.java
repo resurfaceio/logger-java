@@ -51,6 +51,8 @@ public class Helper {
     static final String[] MOCK_URLS_INVALID = {"", "noway3is5this1valid2", "ftp:\\www.noway3is5this1valid2.com/",
             "urn:ISSN:1535–3613"};
 
+    static final String MOCK_MESSAGE = "[[\"message\"], [123]]";
+
     static FilterChain mockCustomApp() {
         return (req, res) -> {
             HttpServletResponse response = (HttpServletResponse) res;
