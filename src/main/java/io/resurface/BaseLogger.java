@@ -78,7 +78,6 @@ public class BaseLogger<T extends BaseLogger> {
         // finalize internal properties
         this.enableable = (this.url != null);
         this.max_queue_depth = max_queue_depth;
-        initDispatcher();
     }
 
     /**
@@ -92,6 +91,14 @@ public class BaseLogger<T extends BaseLogger> {
      * Initialize enabled/disabled logger using queue.
      */
     public BaseLogger(String agent, List<String> queue, boolean enabled) {
+        this(agent, queue, enabled, 128);
+    }
+
+
+    /**
+     * Initialize enabled/disabled logger using queue.
+     */
+    public BaseLogger(String agent, List<String> queue, boolean enabled, int max_queue_depth) {
         this.agent = agent;
         this.host = host_lookup();
         this.version = version_lookup();
@@ -99,6 +106,8 @@ public class BaseLogger<T extends BaseLogger> {
         this.queue = queue;
         this.url = null;
         this.enableable = (this.queue != null);
+        this.max_queue_depth = max_queue_depth;
+        setMessageQueue();
     }
 
     /**
@@ -167,6 +176,14 @@ public class BaseLogger<T extends BaseLogger> {
     }
 
     /**
+     * Returns bounded queue used as message buffer for background submissions.
+     * @return Message bounded queue.
+     */
+    public ArrayBlockingQueue<String> getMessageQueue() {
+        return this.msg_queue;
+    }
+
+    /**
      * Returns true if this logger can ever be enabled.
      */
     public boolean isEnableable() {
@@ -179,6 +196,11 @@ public class BaseLogger<T extends BaseLogger> {
     public boolean isEnabled() {
         return enabled && UsageLoggers.isEnabled();
     }
+
+    /**
+     * Returns true if the worker thread is currently alive.
+     */
+    public boolean isWorkerAlive() { return worker.isAlive(); }
 
     /**
      * Sets if message compression will be skipped.
@@ -197,15 +219,15 @@ public class BaseLogger<T extends BaseLogger> {
     /**
      * Creates a new bounded queue with the max depth passed to the constructor.
      */
-    public void setMsgQueue() {
-        this.setMsgQueue(this.max_queue_depth);
+    public void setMessageQueue() {
+        this.setMessageQueue(this.max_queue_depth);
     }
 
     /**
      * Creates a new bounded queue using a specific depth.
      * @param max_queue_depth size of the bounded queue
      */
-    public void setMsgQueue(int max_queue_depth) {
+    public void setMessageQueue(int max_queue_depth) {
         if (this.msg_queue == null) {
             this.msg_queue = new ArrayBlockingQueue<>(max_queue_depth);
         } else {
@@ -218,15 +240,18 @@ public class BaseLogger<T extends BaseLogger> {
      * @param msg String with tuple-JSON formatted message. More info: https://resurface.io/docs#json-format
      */
     public void submit(String msg) {
+        if (queue == null && (worker == null || !worker.isAlive())) {
+            init_dispatcher();
+        }
         try {
             this.msg_queue.put(msg);
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
+        } catch (InterruptedException e) {
+            submit_failures.incrementAndGet();
         }
     }
 
     /**
-     * Submits JSON message to intended destination.
+     * Sends JSON message to intended destination.
      */
     public void dispatch(String msg) {
         if (msg == null || this.skip_submission || !isEnabled()) {
@@ -281,9 +306,22 @@ public class BaseLogger<T extends BaseLogger> {
         return submit_successes.get();
     }
 
-    public void initDispatcher() {
-        setMsgQueue();
-        (new Dispatcher(this)).start();
+    /**
+     * Initializes message queue and starts dispatcher thread.
+     */
+    public void init_dispatcher() {
+        setMessageQueue();
+        worker = new Thread(new Dispatcher(this));
+        worker.start();
+    }
+
+    /**
+     * Stops worker thread using poison pill.
+     * @throws InterruptedException
+     */
+    public void stop_dispatcher() throws InterruptedException {
+        msg_queue.put("POISON PILL");
+        worker.join();
     }
 
     /**
@@ -320,4 +358,5 @@ public class BaseLogger<T extends BaseLogger> {
     protected final String version;
     protected int max_queue_depth;
     protected ArrayBlockingQueue<String> msg_queue;
+    private Thread worker;
 }

@@ -1,34 +1,68 @@
 package io.resurface;
 
-public class Dispatcher extends Thread{
+public class Dispatcher implements Runnable {
 
-    protected Dispatcher(BaseLogger logger) {
+    /**
+     * Initialize dispatcher with default NDJSON buffer size (100 kiB).
+     * @param logger Resurface logger.
+     */
+    public Dispatcher(BaseLogger logger) {
         this(logger, 50 * 1024);
     }
 
-    protected Dispatcher(BaseLogger logger, int threshold) {
+    /**
+     * Initialize dispatcher using buffer size.
+     * @param logger Resurface logger.
+     * @param threshold NDJSON buffer max size - flushAndDispatch will be triggered after reaching this point.
+     */
+    public Dispatcher(BaseLogger logger, int threshold) {
         this.logger = logger;
-        thresh = threshold;
-        buffer = new StringBuilder(thresh);
+        this.batchingThreshold = threshold;
+        this.buffer = new StringBuilder(this.batchingThreshold + 5 * 1024);
     }
 
     public void run() {
         try {
             while (true) {
-//                String msg = (String) this.logger.msg_queue.take();
-                if ((logger.msg_queue.peek() == null && buffer.length() != 0) || buffer.length() == thresh) {
-                    String msg = buffer.toString();
-                    buffer = new StringBuilder();
-                    logger.dispatch(msg);
+                if (buffer.length() >= batchingThreshold || logger.msg_queue.peek() == null) {
+                    flushAndDispatch();
                 }
-                buffer.append(logger.msg_queue.take()).append("\n");
+                String msg = (String) logger.msg_queue.take();
+                if (msg.equals("POISON PILL")) {
+                    flushAndDispatch();
+                    break;
+                }
+                buffer.append(msg).append("\n");
             }
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+                flushAndDispatch();
         }
+    }
+
+    /**
+     * Builds message as an NDJSON-formatted string, and dispatches it. Buffer is reset.
+     */
+    private void flushAndDispatch() {
+        if (buffer.length() != 0) {
+            String msg = buffer.toString();
+            buffer = new StringBuilder();
+            logger.dispatch(msg);
+        }
+    }
+
+    public BaseLogger getLogger() {
+        return logger;
+    }
+
+    public StringBuilder getNDJSONBuffer() {
+        return buffer;
+    }
+
+    public int getBatchingThreshold() {
+        return batchingThreshold;
     }
 
     private final BaseLogger logger;
     private StringBuilder buffer;
-    private final int thresh;
+    private final int batchingThreshold;
 }
