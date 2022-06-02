@@ -3,14 +3,6 @@ package io.resurface;
 public class Dispatcher implements Runnable {
 
     /**
-     * Initialize dispatcher with default NDJSON buffer size (100 kiB).
-     * @param logger Resurface logger.
-     */
-    public Dispatcher(BaseLogger logger) {
-        this(logger, 50 * 1024);
-    }
-
-    /**
      * Initialize dispatcher using buffer size.
      * @param logger Resurface logger.
      * @param threshold NDJSON buffer max size - flushAndDispatch will be triggered after reaching this point.
@@ -48,18 +40,6 @@ public class Dispatcher implements Runnable {
             buffer = new StringBuilder();
             logger.dispatch(msg);
         }
-    }
-
-    public BaseLogger getLogger() {
-        return logger;
-    }
-
-    public StringBuilder getNDJSONBuffer() {
-        return buffer;
-    }
-
-    public int getBatchingThreshold() {
-        return batchingThreshold;
     }
 
     private final BaseLogger logger;

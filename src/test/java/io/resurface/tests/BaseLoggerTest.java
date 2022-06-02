@@ -3,6 +3,7 @@
 package io.resurface.tests;
 
 import io.resurface.BaseLogger;
+import io.resurface.Dispatcher;
 import io.resurface.UsageLoggers;
 import org.junit.Test;
 
@@ -351,13 +352,72 @@ public class BaseLoggerTest {
     @Test
     public void dispatcherTest() throws InterruptedException {
         BaseLogger logger = new BaseLogger(MOCK_AGENT);
+
         logger.init_dispatcher();
         expect(logger.getMessageQueue().isEmpty()).toBeTrue();
         expect(logger.getMessageQueue().size()).toEqual(0);
         expect(logger.getMessageQueue().remainingCapacity()).toEqual(128);
         expect(logger.isWorkerAlive()).toBeTrue();
+
         logger.submit(MOCK_MESSAGE);
         logger.stop_dispatcher();
         expect(logger.isWorkerAlive()).toBeFalse();
+
+    }
+
+    @Test
+    public void singleBatchTest() throws InterruptedException {
+        final int MESSAGE_WNL_LENGTH = (MOCK_MESSAGE + "\n").length();
+        StringBuilder Messages = new StringBuilder(MESSAGE_WNL_LENGTH);
+        for (int i = 0; i < 10; i++) {
+            Messages.append(MOCK_MESSAGE + "\n");
+        }
+        final String NDJSON_BATCH = Messages.toString();
+
+        List<String> queue = new ArrayList<>();
+        BaseLogger logger = new BaseLogger(MOCK_AGENT, queue);
+
+        logger.init_dispatcher();
+        for (int i = 0; i < 10; i++) {
+            logger.submit(MOCK_MESSAGE);
+        }
+        logger.stop_dispatcher();
+
+        expect(queue.size()).toEqual(1);
+        expect(queue.get(0)).toEqual(NDJSON_BATCH);
+        expect(queue.get(0).length()).toEqual(MESSAGE_WNL_LENGTH * 10);
+    }
+
+    @Test
+    public void multiBatchTest() throws InterruptedException {
+        StringBuilder Messages;
+        final int N_BATCHES = 6;
+        final int[] BATCH_SIZES = { 0, 1, 10, 20, 400, 420, 421, 10 * 1024, 50 * 1024 };
+        for (int batchSize: BATCH_SIZES) {
+            final int MESSAGE_COUNT = batchSize <= (MOCK_MESSAGE).length() ? 1 : batchSize / (MOCK_MESSAGE).length();
+
+            Messages = new StringBuilder(MESSAGE_COUNT);
+            for (int i = 0; i < MESSAGE_COUNT * N_BATCHES; i++) {
+                Messages.append(MOCK_MESSAGE + "\n");
+            }
+            final String NDJSON_MESSAGE = Messages.toString();
+
+            List<String> queue = new ArrayList<>();
+            BaseLogger logger = new BaseLogger(MOCK_AGENT, queue);
+
+            logger.init_dispatcher(batchSize);
+            for (int i = 0; i < MESSAGE_COUNT * N_BATCHES; i++) {
+                logger.submit(MOCK_MESSAGE);
+            }
+            logger.stop_dispatcher();
+
+            expect(queue.size()).toBeGreaterThan(N_BATCHES - 1);
+
+            Messages = new StringBuilder(MESSAGE_COUNT);
+            for (String s : queue) {
+                Messages.append(s);
+            }
+            expect(Messages.toString()).toEqual(NDJSON_MESSAGE);
+        }
     }
 }

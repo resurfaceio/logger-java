@@ -310,8 +310,16 @@ public class BaseLogger<T extends BaseLogger> {
      * Initializes message queue and starts dispatcher thread.
      */
     public void init_dispatcher() {
+        this.init_dispatcher(50 * 1024);
+    }
+
+    /**
+     * Initializes message queue and starts dispatcher thread.
+     * @param batchSize threshold for the NDJSON batch
+     */
+    public void init_dispatcher(int batchSize) {
         setMessageQueue();
-        worker = new Thread(new Dispatcher(this));
+        worker = new Thread(new Dispatcher(this, batchSize));
         worker.start();
     }
 
