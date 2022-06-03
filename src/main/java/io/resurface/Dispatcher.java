@@ -1,5 +1,7 @@
 package io.resurface;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class Dispatcher implements Runnable {
 
     /**
@@ -36,6 +38,8 @@ public class Dispatcher implements Runnable {
      */
     private void flushAndDispatch() {
         if (buffer.length() != 0) {
+            if (buffer.length() >= batchingThreshold) full_buffer_count.incrementAndGet();
+            if (logger.msg_queue.peek() == null) empty_queue_count.incrementAndGet();
             String msg = buffer.toString();
             buffer = new StringBuilder();
             logger.dispatch(msg);
@@ -45,4 +49,6 @@ public class Dispatcher implements Runnable {
     private final BaseLogger logger;
     private StringBuilder buffer;
     private final int batchingThreshold;
+    private final AtomicInteger full_buffer_count = new AtomicInteger();
+    private final AtomicInteger empty_queue_count = new AtomicInteger();
 }

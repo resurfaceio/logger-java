@@ -9,6 +9,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.DeflaterOutputStream;
 
@@ -179,7 +180,7 @@ public class BaseLogger<T extends BaseLogger> {
      * Returns bounded queue used as message buffer for background submissions.
      * @return Message bounded queue.
      */
-    public ArrayBlockingQueue<String> getMessageQueue() {
+    public BlockingQueue<String> getMessageQueue() {
         return this.msg_queue;
     }
 
@@ -227,7 +228,7 @@ public class BaseLogger<T extends BaseLogger> {
      * Creates a new bounded queue using a specific depth.
      * @param max_queue_depth size of the bounded queue
      */
-    public void setMessageQueue(int max_queue_depth) {
+    public synchronized void setMessageQueue(int max_queue_depth) {
         if (this.msg_queue == null) {
             this.msg_queue = new ArrayBlockingQueue<>(max_queue_depth);
         } else {
@@ -325,11 +326,14 @@ public class BaseLogger<T extends BaseLogger> {
 
     /**
      * Stops worker thread using poison pill.
-     * @throws InterruptedException
      */
-    public void stop_dispatcher() throws InterruptedException {
-        msg_queue.put("POISON PILL");
-        worker.join();
+    public void stop_dispatcher() {
+        try {
+            msg_queue.put("POISON PILL");
+            worker.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -365,6 +369,6 @@ public class BaseLogger<T extends BaseLogger> {
     protected URL url_parsed;
     protected final String version;
     protected int max_queue_depth;
-    protected ArrayBlockingQueue<String> msg_queue;
+    protected BlockingQueue<String> msg_queue;
     private Thread worker;
 }

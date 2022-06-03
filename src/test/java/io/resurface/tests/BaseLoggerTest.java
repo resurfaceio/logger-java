@@ -3,12 +3,12 @@
 package io.resurface.tests;
 
 import io.resurface.BaseLogger;
-import io.resurface.Dispatcher;
 import io.resurface.UsageLoggers;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.mscharhag.oleaster.matcher.Matchers.expect;
@@ -131,7 +131,7 @@ public class BaseLoggerTest {
     }
 
     @Test
-    public void submitsToDeniedUrlTest() throws InterruptedException {
+    public void submitsToDeniedUrlTest() {
         for (String url : MOCK_URLS_DENIED) {
             BaseLogger logger = new BaseLogger(MOCK_AGENT, url);
             expect(logger.isEnableable()).toBeTrue();
@@ -144,7 +144,7 @@ public class BaseLoggerTest {
     }
 
     @Test
-    public void submitsToQueueTest() throws InterruptedException {
+    public void submitsToQueueTest() {
         List<String> queue = new ArrayList<>();
         BaseLogger logger = new BaseLogger(MOCK_AGENT, queue);
         logger.init_dispatcher();
@@ -296,13 +296,16 @@ public class BaseLoggerTest {
     public void messageQueuePutTakeTest() {
         final AtomicInteger putSum = new AtomicInteger(0);
         final AtomicInteger takeSum = new AtomicInteger(0);
+        final CyclicBarrier barrier = new CyclicBarrier(2);
+        final int messageCount = 128;
+
         List<String> queue = new ArrayList<>();
         BaseLogger logger = new BaseLogger(MOCK_AGENT, queue);
         Thread producer = new Thread(() -> {
             try {
                 int seed = (this.hashCode() ^ (int)System.nanoTime());
                 int sum = 0;
-                for (int i = 0; i < 128; i++) {
+                for (int i = 0; i < messageCount; i++) {
                     logger.getMessageQueue().put(seed);
                     sum += seed;
                     seed ^= (seed << 3);
@@ -310,6 +313,7 @@ public class BaseLoggerTest {
                     seed ^= (seed << 11);
                 }
                 putSum.getAndAdd(sum);
+                barrier.await();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -317,10 +321,11 @@ public class BaseLoggerTest {
         Thread consumer = new Thread(() -> {
             try {
                 int sum = 0;
-                for (int i = 0; i < 128; i++) {
+                for (int i = 0; i < messageCount; i++) {
                     sum += (int) logger.getMessageQueue().take();
                 }
                 takeSum.getAndAdd(sum);
+                barrier.await();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -329,10 +334,9 @@ public class BaseLoggerTest {
         try {
             producer.start();
             consumer.start();
-            Thread.sleep(100);
-            producer.join(1000);
+            barrier.await();
+            barrier.await();
             expect(producer.isAlive()).toBeFalse();
-            consumer.join(1000);
             expect(consumer.isAlive()).toBeFalse();
             expect(putSum.get()).toEqual(takeSum.get());
         } catch (Exception e) {
@@ -350,7 +354,7 @@ public class BaseLoggerTest {
     }
 
     @Test
-    public void dispatcherTest() throws InterruptedException {
+    public void dispatcherTest() {
         BaseLogger logger = new BaseLogger(MOCK_AGENT);
 
         logger.init_dispatcher();
@@ -366,7 +370,7 @@ public class BaseLoggerTest {
     }
 
     @Test
-    public void singleBatchTest() throws InterruptedException {
+    public void singleBatchTest() {
         final int MESSAGE_WNL_LENGTH = (MOCK_MESSAGE + "\n").length();
         StringBuilder Messages = new StringBuilder(MESSAGE_WNL_LENGTH);
         for (int i = 0; i < 10; i++) {
@@ -389,7 +393,7 @@ public class BaseLoggerTest {
     }
 
     @Test
-    public void multiBatchTest() throws InterruptedException {
+    public void multiBatchTest() {
         StringBuilder Messages;
         final int N_BATCHES = 6;
         final int[] BATCH_SIZES = { 0, 1, 10, 20, 400, 420, 421, 10 * 1024, 50 * 1024 };
