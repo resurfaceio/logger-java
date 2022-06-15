@@ -49,7 +49,7 @@ public class HttpMessageTest {
         expect(msg).toContain("[\"request_header:content-type\",\"Application/JSON\"]");
         expect(msg).toContain("[\"request_method\",\"POST\"]");
         expect(msg).toContain("[\"request_param:message\",\"" + MOCK_JSON_ESCAPED + "\"]");
-        expect(msg).toContain("[\"request_url\",\"" + MOCK_URL + '?' + MOCK_QUERY_STRING + "\"]");
+        expect(msg).toContain("[\"request_url\",\"" + MOCK_URL + "\"]");
         expect(msg.contains("request_param:foo")).toBeFalse();
     }
 
@@ -69,7 +69,7 @@ public class HttpMessageTest {
         expect(msg).toContain("[\"request_param:abc\",\"123\"]");
         expect(msg).toContain("[\"request_param:abc\",\"234\"]");
         expect(msg).toContain("[\"request_param:message\",\"" + MOCK_JSON_ESCAPED + "\"]");
-        expect(msg).toContain("[\"request_url\",\"" + MOCK_URL + '?' + MOCK_QUERY_STRING + "\"]");
+        expect(msg).toContain("[\"request_url\",\"" + MOCK_URL + "\"]");
         expect(msg.contains("request_body")).toBeFalse();
         expect(msg.contains("request_param:foo")).toBeFalse();
     }
