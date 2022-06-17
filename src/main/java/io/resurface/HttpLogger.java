@@ -127,7 +127,7 @@ public class HttpLogger extends BaseLogger<HttpLogger> {
         if (details == null) return;
 
         for (String field: customFields.keySet()) {
-            details.add(new String[]{field, customFields.get(field)});
+            details.add(new String[]{"custom_field:" + field, customFields.get(field)});
         }
 
         // finalize message
