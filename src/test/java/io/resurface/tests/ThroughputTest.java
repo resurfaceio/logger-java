@@ -28,7 +28,7 @@ public class ThroughputTest {
     }
 
     @Test
-    public void timedLinkedMessageQueueTest() throws InterruptedException{
+    public void timedLinkedMessageQueueTest() {
         for (int i = 1; i < 10000; i*=10) {
             System.out.printf("LINKED BLOCKING QUEUE (message count = %d)%n", i);
             List<String> queue = new ArrayList<>();
@@ -83,7 +83,7 @@ public class ThroughputTest {
                 consumer.start();
                 barrier.await();
                 barrier.await();
-                results[i] = timer.getTime() / (2 * messageCount);
+                results[i] = timer.getTime() / (2L * messageCount);
                 producer.join();
                 consumer.join();
                 expect(producer.isAlive()).toBeFalse();
@@ -109,52 +109,52 @@ public class ThroughputTest {
 
         System.out.printf("Throughput: %d ns/item (SD = %d)%n", nsPerItem, stDev);
     }
-}
 
-class BarrierTimer implements Runnable {
-    private boolean started;
-    private long startTime, endTime;
-    public synchronized void run() {
-        long t = System.nanoTime();
-        if (!started) {
-            started = true;
-            startTime = t;
-        } else
-            endTime = t;
-    }
-    public synchronized void clear() {
-        started = false;
-    }
-    public synchronized long getTime() {
-        return endTime - startTime;
-    }
-}
-
-class LinkedBaseLogger extends BaseLogger<LinkedBaseLogger> {
-
-    /**
-     * Initialize enabled logger using default url.
-     */
-    public LinkedBaseLogger() {
-        super(MOCK_AGENT);
+    private static class BarrierTimer implements Runnable {
+        private boolean started;
+        private long startTime, endTime;
+        public synchronized void run() {
+            long t = System.nanoTime();
+            if (!started) {
+                started = true;
+                startTime = t;
+            } else
+                endTime = t;
+        }
+        public synchronized void clear() {
+            started = false;
+        }
+        public synchronized long getTime() {
+            return endTime - startTime;
+        }
     }
 
-    /**
-     * Initialize enabled logger using queue.
-     */
-    public LinkedBaseLogger(List<String> queue) {
-        super(MOCK_AGENT, queue);
-    }
+    private static class LinkedBaseLogger extends BaseLogger<LinkedBaseLogger> {
 
-    /**
-     * Initialize enabled logger using queue and message queue bound.
-     */
-    public LinkedBaseLogger(List<String> queue, int max_queue_depth) {
-        super(MOCK_AGENT, queue, true, max_queue_depth);
-    }
+        /**
+         * Initialize enabled logger using default url.
+         */
+        public LinkedBaseLogger() {
+            super(MOCK_AGENT);
+        }
 
-    @Override
-    public void setMessageQueue(int max_queue_depth) {
-        this.msg_queue = new LinkedBlockingQueue<>(max_queue_depth);
+        /**
+         * Initialize enabled logger using queue.
+         */
+        public LinkedBaseLogger(List<String> queue) {
+            super(MOCK_AGENT, queue);
+        }
+
+        /**
+         * Initialize enabled logger using queue and message queue bound.
+         */
+        public LinkedBaseLogger(List<String> queue, int max_queue_depth) {
+            super(MOCK_AGENT, queue, true, max_queue_depth);
+        }
+
+        @Override
+        public void setMessageQueue(int max_queue_depth) {
+            this.msg_queue = new LinkedBlockingQueue<>(max_queue_depth);
+        }
     }
 }

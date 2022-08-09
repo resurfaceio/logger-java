@@ -272,12 +272,12 @@ public class BaseServletRequestImpl implements HttpServletRequest {
     }
 
     @Override
-    public String changeSessionId() { throw new UnsupportedOperationException(); }
-
-    @Override
     public HttpSession getSession(boolean create) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public String changeSessionId() { throw new UnsupportedOperationException(); }
 
     @Override
     public Principal getUserPrincipal() {
