@@ -156,7 +156,7 @@ public class Helper {
     }
 
     static boolean parseable(String msg) {
-        if (msg == null || !msg.startsWith("[") || !msg.endsWith("]")
+        if (msg == null || !msg.trim().startsWith("[") || !msg.trim().endsWith("]")
                 || msg.contains("[]") || (msg.contains(",,"))) return false;
         try {
             parser.fromJson(msg, Object.class);

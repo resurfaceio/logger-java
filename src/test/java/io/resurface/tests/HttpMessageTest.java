@@ -23,7 +23,9 @@ public class HttpMessageTest {
     public void formatRequestTest() {
         List<String> queue = new ArrayList<>();
         HttpLogger logger = new HttpLogger(queue, "include debug");
+        logger.init_dispatcher();
         HttpMessage.send(logger, mockRequest(), mockResponse(), null, null, MOCK_NOW, 0);
+        logger.stop_dispatcher();
         expect(queue.size()).toEqual(1);
         String msg = queue.get(0);
         expect(parseable(msg)).toBeTrue();
@@ -41,7 +43,9 @@ public class HttpMessageTest {
     public void formatRequestWithBodyTest() {
         List<String> queue = new ArrayList<>();
         HttpLogger logger = new HttpLogger(queue, "include debug");
+        logger.init_dispatcher();
         HttpMessage.send(logger, mockRequestWithJson(), mockResponse(), null, MOCK_HTML);
+        logger.stop_dispatcher();
         expect(queue.size()).toEqual(1);
         String msg = queue.get(0);
         expect(parseable(msg)).toBeTrue();
@@ -57,7 +61,9 @@ public class HttpMessageTest {
     public void formatRequestWithEmptyBodyTest() {
         List<String> queue = new ArrayList<>();
         HttpLogger logger = new HttpLogger(queue, "include debug");
+        logger.init_dispatcher();
         HttpMessage.send(logger, mockRequestWithJson2(), mockResponse(), null, "");
+        logger.stop_dispatcher();
         expect(queue.size()).toEqual(1);
         String msg = queue.get(0);
         expect(parseable(msg)).toBeTrue();
@@ -78,7 +84,9 @@ public class HttpMessageTest {
     public void formatRequestWithMissingDetailsTest() {
         List<String> queue = new ArrayList<>();
         HttpLogger logger = new HttpLogger(queue, "include debug");
+        logger.init_dispatcher();
         HttpMessage.send(logger, new HttpServletRequestImpl(), mockResponse(), null, null, MOCK_NOW, 0);
+        logger.stop_dispatcher();
         expect(queue.size()).toEqual(1);
         String msg = queue.get(0);
         expect(parseable(msg)).toBeTrue();
@@ -94,7 +102,9 @@ public class HttpMessageTest {
     public void formatResponseTest() {
         List<String> queue = new ArrayList<>();
         HttpLogger logger = new HttpLogger(queue, "include debug");
+        logger.init_dispatcher();
         HttpMessage.send(logger, mockRequest(), mockResponse());
+        logger.stop_dispatcher();
         expect(queue.size()).toEqual(1);
         String msg = queue.get(0);
         expect(parseable(msg)).toBeTrue();
@@ -107,7 +117,9 @@ public class HttpMessageTest {
     public void formatResponseWithBodyTest() {
         List<String> queue = new ArrayList<>();
         HttpLogger logger = new HttpLogger(queue, "include debug");
+        logger.init_dispatcher();
         HttpMessage.send(logger, mockRequest(), mockResponseWithHtml(), MOCK_HTML2);
+        logger.stop_dispatcher();
         expect(queue.size()).toEqual(1);
         String msg = queue.get(0);
         expect(parseable(msg)).toBeTrue();
@@ -120,7 +132,9 @@ public class HttpMessageTest {
     public void formatResponseWithEmptyBodyTest() {
         List<String> queue = new ArrayList<>();
         HttpLogger logger = new HttpLogger(queue, "include debug");
+        logger.init_dispatcher();
         HttpMessage.send(logger, mockRequest(), mockResponseWithHtml(), "");
+        logger.stop_dispatcher();
         expect(queue.size()).toEqual(1);
         String msg = queue.get(0);
         expect(parseable(msg)).toBeTrue();
@@ -133,7 +147,9 @@ public class HttpMessageTest {
     public void formatResponseWithMissingDetailsTest() {
         List<String> queue = new ArrayList<>();
         HttpLogger logger = new HttpLogger(queue, "include debug");
+        logger.init_dispatcher();
         HttpMessage.send(logger, mockRequest(), new HttpServletResponseImpl());
+        logger.stop_dispatcher();
         expect(queue.size()).toEqual(1);
         String msg = queue.get(0);
         expect(parseable(msg)).toBeTrue();
