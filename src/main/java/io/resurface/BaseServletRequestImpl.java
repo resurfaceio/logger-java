@@ -54,6 +54,9 @@ public class BaseServletRequestImpl implements HttpServletRequest {
     }
 
     @Override
+    public long getContentLengthLong() { throw new UnsupportedOperationException(); }
+
+    @Override
     public String getContentType() {
         throw new UnsupportedOperationException();
     }
@@ -155,6 +158,11 @@ public class BaseServletRequestImpl implements HttpServletRequest {
 
     @Override
     public Part getPart(String name) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T extends HttpUpgradeHandler> T upgrade(Class<T> aClass) throws IOException, ServletException {
         throw new UnsupportedOperationException();
     }
 
@@ -267,6 +275,9 @@ public class BaseServletRequestImpl implements HttpServletRequest {
     public HttpSession getSession(boolean create) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public String changeSessionId() { throw new UnsupportedOperationException(); }
 
     @Override
     public Principal getUserPrincipal() {

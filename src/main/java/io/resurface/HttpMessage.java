@@ -143,15 +143,11 @@ public class HttpMessage {
     }
 
     /**
-     * Returns complete request URL including query string.
+     * Returns complete request URL without query string.
      */
     private static String formatURL(HttpServletRequest request) {
         StringBuffer url = request.getRequestURL();
-        if (url != null) {
-            String queryString = request.getQueryString();
-            if (queryString != null) url.append('?').append(queryString);
-        }
-        return (url == null) ? null : url.toString();
+        return (url == null) ? null : url.toString().split("\\?")[0];
     }
 
 }

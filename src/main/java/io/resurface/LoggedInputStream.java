@@ -2,6 +2,7 @@
 
 package io.resurface;
 
+import javax.servlet.ReadListener;
 import java.io.*;
 
 /**
@@ -91,7 +92,21 @@ public class LoggedInputStream extends javax.servlet.ServletInputStream {
         return stream.read(b, off, len);
     }
 
+    @Override
+    public boolean isFinished() {
+        return stream.available() == 0;
+    }
+
+    @Override
+    public boolean isReady() {
+        return stream.available() != 0;
+    }
+
+    @Override
+    public void setReadListener(ReadListener readListener) {
+        throw new UnsupportedOperationException();
+    }
+
     private byte[] logged;
     private final ByteArrayInputStream stream;
-
 }

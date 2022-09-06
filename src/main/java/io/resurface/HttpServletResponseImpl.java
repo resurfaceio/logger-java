@@ -3,6 +3,7 @@
 package io.resurface;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
@@ -14,6 +15,16 @@ public class HttpServletResponseImpl extends BaseServletResponseImpl {
 
     public HttpServletResponseImpl() {
         stream = new ServletOutputStream() {
+            @Override
+            public boolean isReady() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void setWriteListener(WriteListener writeListener) {
+                throw new UnsupportedOperationException();
+            }
+
             @Override
             public void write(int b) throws IOException {
                 // do nothing

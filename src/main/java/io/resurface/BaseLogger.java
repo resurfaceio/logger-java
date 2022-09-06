@@ -8,6 +8,8 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.DeflaterOutputStream;
 
@@ -41,6 +43,13 @@ public class BaseLogger<T extends BaseLogger> {
      * Initialize enabled/disabled logger using url.
      */
     public BaseLogger(String agent, String url, boolean enabled) {
+        this(agent, url, enabled, 128);
+    }
+
+    /**
+     * Initialize enabled/disabled logger using url.
+     */
+    public BaseLogger(String agent, String url, boolean enabled, int max_queue_depth) {
         this.agent = agent;
         this.host = host_lookup();
         this.version = version_lookup();
@@ -69,6 +78,7 @@ public class BaseLogger<T extends BaseLogger> {
 
         // finalize internal properties
         this.enableable = (this.url != null);
+        this.max_queue_depth = max_queue_depth;
     }
 
     /**
@@ -82,6 +92,14 @@ public class BaseLogger<T extends BaseLogger> {
      * Initialize enabled/disabled logger using queue.
      */
     public BaseLogger(String agent, List<String> queue, boolean enabled) {
+        this(agent, queue, enabled, 128);
+    }
+
+
+    /**
+     * Initialize enabled/disabled logger using queue.
+     */
+    public BaseLogger(String agent, List<String> queue, boolean enabled, int max_queue_depth) {
         this.agent = agent;
         this.host = host_lookup();
         this.version = version_lookup();
@@ -89,6 +107,8 @@ public class BaseLogger<T extends BaseLogger> {
         this.queue = queue;
         this.url = null;
         this.enableable = (this.queue != null);
+        this.max_queue_depth = max_queue_depth;
+        setMessageQueue();
     }
 
     /**
@@ -157,6 +177,14 @@ public class BaseLogger<T extends BaseLogger> {
     }
 
     /**
+     * Returns bounded queue used as message buffer for background submissions.
+     * @return Message bounded queue.
+     */
+    public BlockingQueue<String> getMessageQueue() {
+        return this.msg_queue;
+    }
+
+    /**
      * Returns true if this logger can ever be enabled.
      */
     public boolean isEnableable() {
@@ -169,6 +197,11 @@ public class BaseLogger<T extends BaseLogger> {
     public boolean isEnabled() {
         return enabled && UsageLoggers.isEnabled();
     }
+
+    /**
+     * Returns true if the worker thread is currently alive.
+     */
+    public boolean isWorkerAlive() { return worker.isAlive(); }
 
     /**
      * Sets if message compression will be skipped.
@@ -185,9 +218,43 @@ public class BaseLogger<T extends BaseLogger> {
     }
 
     /**
-     * Submits JSON message to intended destination.
+     * Creates a new bounded queue with the max depth passed to the constructor.
+     */
+    public void setMessageQueue() {
+        this.setMessageQueue(this.max_queue_depth);
+    }
+
+    /**
+     * Creates a new bounded queue using a specific depth.
+     * @param max_queue_depth size of the bounded queue
+     */
+    public synchronized void setMessageQueue(int max_queue_depth) {
+        if (this.msg_queue == null) {
+            this.msg_queue = new ArrayBlockingQueue<>(max_queue_depth);
+        } else {
+            this.msg_queue = new ArrayBlockingQueue<>(max_queue_depth, false, this.msg_queue);
+        }
+    }
+
+    /**
+     * Adds message to queue for dispatcher thread.
+     * @param msg String with tuple-JSON formatted message. More info: https://resurface.io/docs#json-format
      */
     public void submit(String msg) {
+        if (queue == null && (worker == null || !worker.isAlive())) {
+            init_dispatcher();
+        }
+        try {
+            this.msg_queue.put(msg);
+        } catch (InterruptedException e) {
+            submit_failures.incrementAndGet();
+        }
+    }
+
+    /**
+     * Sends JSON message to intended destination.
+     */
+    public void dispatch(String msg) {
         if (msg == null || this.skip_submission || !isEnabled()) {
             // do nothing
         } else if (queue != null) {
@@ -199,7 +266,7 @@ public class BaseLogger<T extends BaseLogger> {
                 url_connection.setConnectTimeout(5000);
                 url_connection.setReadTimeout(1000);
                 url_connection.setRequestMethod("POST");
-                url_connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                url_connection.setRequestProperty("Content-Type", "application/ndjson; charset=UTF-8");
                 url_connection.setRequestProperty("User-Agent", "Resurface/" + version + " (" + agent + ")");
                 url_connection.setDoOutput(true);
                 if (!this.skip_compression) url_connection.setRequestProperty("Content-Encoding", "deflated");
@@ -241,6 +308,35 @@ public class BaseLogger<T extends BaseLogger> {
     }
 
     /**
+     * Initializes message queue and starts dispatcher thread.
+     */
+    public void init_dispatcher() {
+        this.init_dispatcher(50 * 1024);
+    }
+
+    /**
+     * Initializes message queue and starts dispatcher thread.
+     * @param batchSize threshold for the NDJSON batch
+     */
+    public void init_dispatcher(int batchSize) {
+        setMessageQueue();
+        worker = new Thread(new Dispatcher(this, batchSize));
+        worker.start();
+    }
+
+    /**
+     * Stops worker thread using poison pill.
+     */
+    public void stop_dispatcher() {
+        try {
+            msg_queue.put("POISON PILL");
+            worker.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Returns host identifier for this logger.
      */
     public static String host_lookup() {
@@ -272,5 +368,7 @@ public class BaseLogger<T extends BaseLogger> {
     protected String url;
     protected URL url_parsed;
     protected final String version;
-
+    protected int max_queue_depth;
+    protected BlockingQueue<String> msg_queue;
+    private Thread worker;
 }

@@ -25,7 +25,9 @@ public class HttpLoggerForServletsTest {
         List<String> queue = new ArrayList<>();
         HttpLoggerForServlets filter = new HttpLoggerForServlets(queue, "include standard");
         filter.init(null);
+        filter.getLogger().init_dispatcher();
         filter.doFilter(mockRequest(), mockResponse(), mockHtmlApp());
+        filter.getLogger().stop_dispatcher();
         expect(queue.size()).toEqual(1);
         String msg = queue.get(0);
         expect(parseable(msg)).toBeTrue();
@@ -47,7 +49,9 @@ public class HttpLoggerForServletsTest {
         List<String> queue = new ArrayList<>();
         HttpLoggerForServlets filter = new HttpLoggerForServlets(queue, "include standard");
         filter.init(null);
+        filter.getLogger().init_dispatcher();
         filter.doFilter(mockRequest(), mockResponse(), mockJsonApp());
+        filter.getLogger().stop_dispatcher();
         expect(queue.size()).toEqual(1);
         String msg = queue.get(0);
         expect(parseable(msg)).toBeTrue();
@@ -65,14 +69,16 @@ public class HttpLoggerForServletsTest {
         List<String> queue = new ArrayList<>();
         HttpLoggerForServlets filter = new HttpLoggerForServlets(queue, "include standard");
         filter.init(null);
+        filter.getLogger().init_dispatcher();
         filter.doFilter(mockRequestWithJson(), mockResponse(), mockJsonApp());
+        filter.getLogger().stop_dispatcher();
         expect(queue.size()).toEqual(1);
         String msg = queue.get(0);
         expect(parseable(msg)).toBeTrue();
         expect(msg).toContain("[\"request_header:content-type\",\"Application/JSON\"]");
         expect(msg).toContain("[\"request_method\",\"POST\"]");
         expect(msg).toContain("[\"request_param:message\",\"" + MOCK_JSON_ESCAPED + "\"]");
-        expect(msg).toContain("[\"request_url\",\"" + MOCK_URL + '?' + MOCK_QUERY_STRING + "\"]");
+        expect(msg).toContain("[\"request_url\",\"" + MOCK_URL + "\"]");
         expect(msg).toContain("[\"response_body\",\"" + MOCK_JSON_ESCAPED + "\"]");
         expect(msg).toContain("[\"response_code\",\"200\"]");
         expect(msg).toContain("[\"response_header:content-type\",\"application/json; charset=utf-8\"]");
@@ -83,7 +89,9 @@ public class HttpLoggerForServletsTest {
         List<String> queue = new ArrayList<>();
         HttpLoggerForServlets filter = new HttpLoggerForServlets(queue, "include standard");
         filter.init(null);
+        filter.getLogger().init_dispatcher();
         filter.doFilter(mockRequestWithJson2(), mockResponse(), mockHtmlApp());
+        filter.getLogger().stop_dispatcher();
         expect(queue.size()).toEqual(1);
         String msg = queue.get(0);
         expect(parseable(msg)).toBeTrue();
@@ -94,7 +102,7 @@ public class HttpLoggerForServletsTest {
         expect(msg).toContain("[\"request_param:abc\",\"123\"]");
         expect(msg).toContain("[\"request_param:abc\",\"234\"]");
         expect(msg).toContain("[\"request_param:message\",\"" + MOCK_JSON_ESCAPED + "\"]");
-        expect(msg).toContain("[\"request_url\",\"" + MOCK_URL + '?' + MOCK_QUERY_STRING + "\"]");
+        expect(msg).toContain("[\"request_url\",\"" + MOCK_URL + "\"]");
         expect(msg).toContain("[\"response_body\",\"" + MOCK_HTML + "\"]");
         expect(msg).toContain("[\"response_code\",\"200\"]");
         expect(msg).toContain("[\"response_header:a\",\"Z\"]");
@@ -106,6 +114,7 @@ public class HttpLoggerForServletsTest {
         List<String> queue = new ArrayList<>();
         HttpLoggerForServlets filter = new HttpLoggerForServlets(queue, "include standard");
         filter.init(null);
+        filter.getLogger().init_dispatcher();
         try {
             filter.doFilter(mockRequest(), mockResponse(), mockExceptionApp());
         } catch (UnsupportedEncodingException uee) {

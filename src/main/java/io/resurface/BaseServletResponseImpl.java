@@ -161,6 +161,9 @@ public class BaseServletResponseImpl implements HttpServletResponse {
     }
 
     @Override
+    public void setContentLengthLong(long l) { throw new UnsupportedOperationException(); }
+
+    @Override
     public void setContentType(String contentType) {
         throw new UnsupportedOperationException();
     }
