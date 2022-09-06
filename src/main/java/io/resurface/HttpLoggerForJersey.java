@@ -11,6 +11,7 @@ import javax.ws.rs.ext.*;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -139,7 +140,8 @@ public class HttpLoggerForJersey implements ContainerRequestFilter, ContainerRes
             message.add(new String[]{"now", String.valueOf(System.currentTimeMillis())});
             double interval = (System.nanoTime() - (Long) context.getProperty("resurfaceio.start")) / 1000000.0;
             message.add(new String[]{"interval", String.valueOf(interval)});
-            logger.submitIfPassing(message, null);
+            HashMap<String,String> customFields = new HashMap<>();
+            logger.submitIfPassing(message, customFields);
         } else {
             context.proceed();
         }

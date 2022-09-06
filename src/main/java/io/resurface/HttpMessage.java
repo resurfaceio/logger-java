@@ -21,14 +21,14 @@ public class HttpMessage {
      * Submits request and response through logger.
      */
     public static void send(HttpLogger logger, HttpServletRequest request, HttpServletResponse response) {
-        send(logger, request, response, null, null, 0, 0, new HashMap<String,String>());
+        send(logger, request, response, null, null, 0, 0, new HashMap<>());
     }
 
     /**
      * Submits request and response through logger.
      */
     public static void send(HttpLogger logger, HttpServletRequest request, HttpServletResponse response, String response_body) {
-        send(logger, request, response, response_body, null, 0, 0, new HashMap<String,String>());
+        send(logger, request, response, response_body, null, 0, 0, new HashMap<>());
     }
 
     /**
@@ -36,7 +36,7 @@ public class HttpMessage {
      */
     public static void send(HttpLogger logger, HttpServletRequest request, HttpServletResponse response,
                             String response_body, String request_body) {
-        send(logger, request, response, response_body, request_body, 0, 0, new HashMap<String,String>());
+        send(logger, request, response, response_body, request_body, 0, 0, new HashMap<>());
     }
 
     /**
@@ -44,7 +44,7 @@ public class HttpMessage {
      */
     public static void send(HttpLogger logger, HttpServletRequest request, HttpServletResponse response,
                             String response_body, String request_body, long now, double interval) {
-        send(logger, request, response, response_body, request_body, now, interval, new HashMap<String,String>());
+        send(logger, request, response, response_body, request_body, now, interval, new HashMap<>());
     }
 
     /**
