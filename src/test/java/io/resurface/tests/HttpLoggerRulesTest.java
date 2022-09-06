@@ -604,8 +604,9 @@ public class HttpLoggerRulesTest {
     }
 
     @Test
-    public void usesSampleRulesTest() {
+    public void usesSampleRulesTest() throws InterruptedException {
         List<String> queue = new ArrayList<>();
+        List<String> flat_queue = new ArrayList<>();
 
         try {
             new HttpLogger(queue, "sample 10\nsample 99");
@@ -619,8 +620,15 @@ public class HttpLoggerRulesTest {
         for (int i = 1; i <= 100; i++) {
             HttpMessage.send(logger, mockRequestWithJson2(), mockResponseWithHtml());
         }
+        Thread.sleep(10);
         logger.stop_dispatcher();
-        expect(queue.size()).toBeBetween(2, 20);
+        for (String batch: queue) {
+            for (String msg: batch.split("\n")) {
+                flat_queue.add(msg);
+            }
+        }
+        if (flat_queue.size() > 20 || flat_queue.size() < 2) System.out.println(flat_queue);
+        expect(flat_queue.size()).toBeBetween(2, 20);
     }
 
     @Test
