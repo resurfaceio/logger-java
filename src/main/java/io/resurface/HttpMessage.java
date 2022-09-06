@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 
 /**
@@ -20,14 +21,14 @@ public class HttpMessage {
      * Submits request and response through logger.
      */
     public static void send(HttpLogger logger, HttpServletRequest request, HttpServletResponse response) {
-        send(logger, request, response, null, null, 0, 0);
+        send(logger, request, response, null, null, 0, 0, null);
     }
 
     /**
      * Submits request and response through logger.
      */
     public static void send(HttpLogger logger, HttpServletRequest request, HttpServletResponse response, String response_body) {
-        send(logger, request, response, response_body, null, 0, 0);
+        send(logger, request, response, response_body, null, 0, 0, null);
     }
 
     /**
@@ -35,7 +36,7 @@ public class HttpMessage {
      */
     public static void send(HttpLogger logger, HttpServletRequest request, HttpServletResponse response,
                             String response_body, String request_body) {
-        send(logger, request, response, response_body, request_body, 0, 0);
+        send(logger, request, response, response_body, request_body, 0, 0, null);
     }
 
     /**
@@ -43,6 +44,15 @@ public class HttpMessage {
      */
     public static void send(HttpLogger logger, HttpServletRequest request, HttpServletResponse response,
                             String response_body, String request_body, long now, double interval) {
+        send(logger, request, response, response_body, request_body, now, interval, null);
+    }
+
+    /**
+     * Submits request and response through logger.
+     */
+    public static void send(HttpLogger logger, HttpServletRequest request, HttpServletResponse response,
+                            String response_body, String request_body, long now, double interval,
+                            HashMap<String, String> customFields) {
 
         if (!logger.isEnabled()) return;
 
@@ -71,7 +81,7 @@ public class HttpMessage {
         message.add(new String[]{"now", String.valueOf(now)});
         if (interval != 0) message.add(new String[]{"interval", String.valueOf(interval)});
 
-        logger.submitIfPassing(message);
+        logger.submitIfPassing(message, customFields);
     }
 
     /**
