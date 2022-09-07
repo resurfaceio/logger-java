@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.mscharhag.oleaster.matcher.Matchers.expect;
@@ -296,7 +295,6 @@ public class BaseLoggerTest {
     public void messageQueuePutTakeTest() {
         final AtomicInteger putSum = new AtomicInteger(0);
         final AtomicInteger takeSum = new AtomicInteger(0);
-        final CyclicBarrier barrier = new CyclicBarrier(2);
         final int messageCount = 128;
 
         List<String> queue = new ArrayList<>();
@@ -313,7 +311,6 @@ public class BaseLoggerTest {
                     seed ^= (seed << 11);
                 }
                 putSum.getAndAdd(sum);
-                barrier.await();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -325,7 +322,6 @@ public class BaseLoggerTest {
                     sum += (int) logger.getMessageQueue().take();
                 }
                 takeSum.getAndAdd(sum);
-                barrier.await();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -334,9 +330,9 @@ public class BaseLoggerTest {
         try {
             producer.start();
             consumer.start();
-            barrier.await();
-            barrier.await();
+            producer.join();
             expect(producer.isAlive()).toBeFalse();
+            consumer.join();
             expect(consumer.isAlive()).toBeFalse();
             expect(putSum.get()).toEqual(takeSum.get());
         } catch (Exception e) {
