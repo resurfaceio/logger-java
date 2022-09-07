@@ -2,6 +2,7 @@ package io.resurface.tests;
 
 import io.resurface.BaseLogger;
 import io.resurface.Dispatcher;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import static com.mscharhag.oleaster.matcher.Matchers.expect;
 import static io.resurface.tests.Helper.MOCK_AGENT;
 
 
+@Ignore
 public class ThroughputTest {
     @Test
     public void timedArrayMessageQueueTest() {
