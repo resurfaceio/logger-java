@@ -37,15 +37,6 @@ mvn versions:display-dependency-updates
 
 ## Release Process
 
-Publish snapshot build to [mavenrepo](https://github.com/resurfaceio/mavenrepo) for integration testing:
-
-```
-mvn install
-(merge changes .m2 to resurfaceio/mavenrepo)
-```
-
-All [integration tests](https://github.com/resurfaceio/logger-tests) must pass before proceeding.
-
 Configure environment variables (in `.bash_profile`):
 
 ```
@@ -81,9 +72,8 @@ Configure Maven settings (in `.m2/settings.xml`):
 Push artifacts to [Maven Central](https://search.maven.org/):
 
 ```
-(remove -SNAPSHOT from end of version string, in pom.xml and BaseLogger.java)
 git add -A
-git commit -m "Update version to 1.x.x"
+git commit -m "Update version to 2.2.#"
 mvn deploy
 ```
 
@@ -92,9 +82,8 @@ Log into `oss.sonatype.org` and close/release the latest staging repository.
 Tag release version:
 
 ```
-git tag v1.x.x
+git tag v2.2.#
 git push origin master --tags
 ```
 
-Start the next version by incrementing the version number and adding `-SNAPSHOT`,
-in `pom.xml` and `Baselogger.java`.
+Start the next version by incrementing the version number in `pom.xml` and `Baselogger.java`.
