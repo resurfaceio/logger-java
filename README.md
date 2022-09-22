@@ -35,7 +35,7 @@ Add this section to `pom.xml`:
 <dependency>
     <groupId>io.resurface</groupId>
     <artifactId>resurfaceio-logger</artifactId>
-    <version>RELEASE</version>
+    <version>2.2.0</version>
 </dependency>
 ```
 
