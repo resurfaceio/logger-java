@@ -1,5 +1,5 @@
 # resurfaceio-logger-java
-Easily log API requests and responses to your own <a href="https://resurface.io">system of record</a>.
+Easily log API requests and responses to your own <a href="https://resurface.io">security data lake</a>.
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.resurface/resurfaceio-logger)](https://maven-badges.herokuapp.com/maven-central/io.resurface/resurfaceio-logger)
 [![CodeFactor](https://www.codefactor.io/repository/github/resurfaceio/logger-java/badge)](https://www.codefactor.io/repository/github/resurfaceio/logger-java)
