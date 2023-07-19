@@ -98,24 +98,6 @@
         </dependency>
     </dependencies>
 
-    <developers>
-        <developer>
-            <id>RobDickinson</id>
-            <name>Rob Dickinson</name>
-            <url>https://github.com/RobDickinson</url>
-            <organization>resurface.io</organization>
-            <organizationUrl>https://resurface.io</organizationUrl>
-            <roles>
-                <role>architect</role>
-                <role>developer</role>
-            </roles>
-            <timezone>America/Denver</timezone>
-            <properties>
-                <picUrl>https://resurface.io/headshot_rob_128.jpg</picUrl>
-            </properties>
-        </developer>
-    </developers>
-
     <issueManagement>
         <system>GitHub</system>
         <url>https://github.com/resurfaceio/logger-java/issues</url>
